@@ -92,26 +92,10 @@ void drawCue(int numSteps, float radius, float hl, Ball* whiteBall, float cueRot
     glPopMatrix();
 }
 
-bool moveBalls(Ball** balls, float time, float tableLength, float tableWidth, int& scoreStripped, int& scoreSolid) {
-
-    bool gameEnded = false;
+void moveBalls(Ball** balls, float time, float tableLength, float tableWidth) {
     for (int i = 0; i < 16; i++) {
         bool enteredHole = balls[i]->updatePosAndVel(time, tableLength, tableWidth, balls);
-
-        if (enteredHole && !balls[i]->isWhiteBall()) {
-            if (i == 4)
-                gameEnded = true;
-            else if (i < 9)
-                scoreStripped++;
-            else
-                scoreSolid++;
-        }
     }
-
-    if (scoreStripped == 7 || scoreSolid == 7)
-        gameEnded = true;
-
-    return gameEnded;
 }
 
 void hitBall(Ball* whiteBall, float cueRotAng1, float cueRotAng2, int strength) {
@@ -253,10 +237,9 @@ void drawRoom() {
     int roomHeight = 20;
     float roomFloor = -2.49;
 
-    // Floor
-
     glColor3ub(230, 230, 230);
 
+    // Floor
     glBegin(GL_QUADS);
     glNormal3f(0, 1, 0);
     glVertex3f(roomLength, roomFloor, roomWidth);
@@ -333,20 +316,12 @@ bool** getCollisionMatrix() {
     return colliding;
 }
 
-void setLighting(float lightPositionX, float lightPositionZ, int lightColor) {
-
+void setLighting() {
     float lightR = 1.0f;
     float lightG = 1.0f;
     float lightB = 1.0f;
 
-    if (lightColor == 1)
-        lightR = 8.0f;
-    if (lightColor == 2)
-        lightG = 8.0f;
-    if (lightColor == 3)
-        lightB = 8.0f;
-
-    GLfloat position[] = { lightPositionX, 5, lightPositionZ, 1 };
+    GLfloat position[] = { 0, 5, 0, 1 };
     GLfloat ambient[] = { lightR / 10, lightG / 10, lightB / 10, 0.4f };
     GLfloat specular[] = { lightR, lightG, lightB, 2.0f };
     GLfloat diffuse[] = { lightR, lightG, lightB, 2.0f };
@@ -373,20 +348,7 @@ void setLighting(float lightPositionX, float lightPositionZ, int lightColor) {
     glPopMatrix();
 }
 
-void drawHUD(int time, int scoreStripped, int scoreSolid, float strength, bool gameEnded) {
-
-    float red = 0;
-    float green = 255;
-    float strProportion = (strength - 4.0) / 16.0;
-
-    if (strProportion <= 0.5) {
-        red = 255 * strProportion * 2;
-    }
-    else {
-        red = 255;
-        green = 255 * (1 - strProportion) * 2;
-    }
-
+void drawHUD(int time) {
     // Draw HUD
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -399,51 +361,19 @@ void drawHUD(int time, int scoreStripped, int scoreSolid, float strength, bool g
     glDisable(GL_LIGHTING);
 
     string timeLabel = "Time: " + to_string(time);
-    string scoreLabel1 = "Stripped: " + to_string(scoreStripped);
-    string scoreLabel2 = "Solid: " + to_string(scoreSolid);
-    string endGameLabel = "Game finished!";
     string helpLabel = "Press H for Help";
 
     glColor3ub(170, 170, 170);
-
-    glRasterPos2f(0.25, 0.96);
-    for (int i = 0; i < scoreLabel1.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, scoreLabel1[i]);
 
     glRasterPos2f(0.1, 0.96);
     for (int i = 0; i < timeLabel.size(); i++)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, timeLabel[i]);
 
-    glRasterPos2f(0.35, 0.96);
-    for (int i = 0; i < scoreLabel2.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, scoreLabel2[i]);
-
     glRasterPos2f(0.65, 0.96);
     for (int i = 0; i < helpLabel.size(); i++)
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, helpLabel[i]);
 
-    if (gameEnded) {
-        glRasterPos2f(0.5, 0.96);
-        for (int i = 0; i < endGameLabel.size(); i++)
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, endGameLabel[i]);
-    }
-
-    glBegin(GL_QUADS);
-    glColor3ub(red, green, 0);
-    glVertex2f(0.8, 0.94);
-    glVertex2f(0.8, 0.97);
-    glVertex2f(0.81 + strProportion * 0.1, 0.97);
-    glVertex2f(0.81 + strProportion * 0.1, 0.94);
-    glEnd();
-
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(0.8, 0.94);
-    glVertex2f(0.8, 0.97);
-    glVertex2f(0.91, 0.97);
-    glVertex2f(0.91, 0.94);
-    glVertex2f(0.8, 0.94);
-    glEnd();
-
+    /**/
     glBegin(GL_QUADS);
     glColor3ub(30, 30, 30);
     glVertex2f(0, 0.9);
@@ -503,15 +433,8 @@ int main(int argc, char* argv[]) {
     int viewMode = 0;
     bool quit = false;
     bool pause = false;
-    bool wireframe = false;
     bool slowMotion = false;
-    bool flatShading = false;
     auto lastFrameTime = clock();
-    int lightColor = 0;
-    int scoreStripped = 0;
-    int scoreSolid = 0;
-    float lightPositionX = 0;
-    float lightPositionZ = 0;
     bool showMenu = false;
     bool gameEnded = false;
 
@@ -531,22 +454,22 @@ int main(int argc, char* argv[]) {
         else
             camOnTopOfCue(cueRotAng1, cueRotAng2, balls[0]);
 
-        setLighting(lightPositionX, lightPositionZ, lightColor);
+        setLighting();
 
         // Draw objects and apply physics
         drawRoom();
         drawBalls(balls);
         if (ballsNotMoving(balls))
             drawCue(10, 0.04, cueLength, balls[0], cueRotAng1, cueRotAng2, strength);
-        if (!pause && !gameEnded) {
+        if (!pause) {
             applyCollisions(balls, ballRad, colliding);
             if (slowMotion)
-                gameEnded = moveBalls(balls, frameTime / 120, tableLength, tableWidth, scoreStripped, scoreSolid);
+                moveBalls(balls, frameTime / 120, tableLength, tableWidth);
             else
-                gameEnded = moveBalls(balls, frameTime / 40, tableLength, tableWidth, scoreStripped, scoreSolid);
+                moveBalls(balls, frameTime / 40, tableLength, tableWidth);
         }
 
-        drawHUD(currentTime / 1000, scoreStripped, scoreSolid, strength, gameEnded);
+        drawHUD(currentTime / 1000);
 
         // Process events
         int xm, ym;
@@ -606,81 +529,17 @@ int main(int argc, char* argv[]) {
                 case SDLK_q:
                     quit = true;
                     break;
-                case SDLK_v:
-                    viewMode++;
-                    if (viewMode > 2)
-                        viewMode = 0;
-                    break;
                 case SDLK_p:
                     pause = !pause;
                     break;
                 case SDLK_m:
                     slowMotion = !slowMotion;
                     break;
-                case SDLK_n:
-                    if (wireframe)
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-                    else
-                        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                    wireframe = !wireframe;
-                    break;
-                case SDLK_c:
-                    if (flatShading)
-                        glShadeModel(GL_SMOOTH);
-                    else
-                        glShadeModel(GL_FLAT);
-                    flatShading = !flatShading;
-                    break;
-                case SDLK_l:
-                    lightColor++;
-                    if (lightColor > 3)
-                        lightColor = 0;
-                    break;
-                case SDLK_h:
-                    showMenu = !showMenu;
-                    break;
                 default:
                     break;
                 }
             }
-            case SDL_KEYDOWN: {
-                switch (event.key.keysym.sym) {
-
-                case SDLK_s: {
-                    if (viewMode == 0) {
-                        camRad -= .05;
-                        updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
-                    }
-                }
-                           break;
-                case SDLK_w: {
-                    if (camRad < 0 && viewMode == 0)
-                        camRad += .05;
-                    updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
-                }
-                           break;
-                case SDLK_DOWN:
-                    if (lightPositionX > -5)
-                        lightPositionX -= .5;
-                    break;
-                case SDLK_UP:
-                    if (lightPositionX < 5)
-                        lightPositionX += .5;
-                    break;
-                case SDLK_RIGHT:
-                    if (lightPositionZ < 5)
-                        lightPositionZ += .5;
-                    break;
-                case SDLK_LEFT:
-                    if (lightPositionZ > -5)
-                        lightPositionZ -= .5;
-                    break;
-
-                default:
-                    break;
-                }
-            }
-                            break;
+           break;
             default:
                 break;
             }
