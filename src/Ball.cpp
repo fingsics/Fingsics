@@ -197,12 +197,10 @@ void Ball::setPos(Point* pos){
     posZ = pos->getZ();
 }
 
-void Ball::draw(float lats, float longs, GLuint texture) {
+void Ball::draw(float lats, float longs) {
 
     if (inHole) return;
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, texture);
     glPushMatrix();
 
     // Ball movement
@@ -213,10 +211,6 @@ void Ball::draw(float lats, float longs, GLuint texture) {
         Rotation* rot = (Rotation*)(*it);
         glRotatef(rot->getAngle(), rot->getDirection()->getX(), rot->getDirection()->getY(), rot->getDirection()->getZ()); // Ball rotation when it moves
     }
-
-    // To fix texture initial position
-    glRotatef(110,0,1,0);
-    glRotatef(-90,1,0,0);
 
     // Draw sphere
     for(int i = 0; i <= lats; i++)
@@ -242,11 +236,9 @@ void Ball::draw(float lats, float longs, GLuint texture) {
             s2 = ((double) i + 1) / lats;
             t = ((double) j) / longs;
 
-            glTexCoord2d(s1, t);
             glNormal3d(x * zr0, y * zr0, z0);
             glVertex3d(rad*x * zr0, rad*y * zr0, rad*z0);
 
-            glTexCoord2d(s2, t);
             glNormal3d(x * zr1, y * zr1, z1);
             glVertex3d(rad*x * zr1,rad* y * zr1, rad*z1);
         }
@@ -254,5 +246,4 @@ void Ball::draw(float lats, float longs, GLuint texture) {
 
     }
     glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
  }

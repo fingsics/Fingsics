@@ -11,7 +11,7 @@
 
 using namespace std;
 
-class Ball{
+class Ball {
     private:
         double posX;
         double posY;
@@ -35,7 +35,7 @@ class Ball{
         Ball(double, double, double, double, double, Color*, bool);
         void setVelocity(double, double, double);
         void setVelocity(Point*);
-        void draw(float, float, GLuint);
+        void draw(float, float);
         bool updatePosAndVel(double, double, double, Ball**);
         double getPosX();
         double getPosY();

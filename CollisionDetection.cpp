@@ -4,11 +4,9 @@
 #include <iostream>
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
-#include "FreeImage.h"
 #include "include/Color.h"
 #include "include/Point.h"
 #include "include/Ball.h"
-//#include <unistd.h>
 #include <thread>
 #include <glm/glm.hpp>
 #include <glut.h>
@@ -85,10 +83,8 @@ void drawCue(int numSteps, float radius, float hl, Ball* whiteBall, float cueRot
         float x = cos(a) * radius;
         float y = sin(a) * radius;
         glNormal3f(x / radius, y / radius, 0);
-        //glTexCoord2f(0,i*2*radius*M_PI/numSteps);
         glVertex3f(x, y, -hl);
         glNormal3f(x / radius, y / radius, 0);
-        //glTexCoord2f(2*hl,i*2*radius*M_PI/numSteps);
         glVertex3f(x, y, hl);
         a += step;
     }
@@ -96,7 +92,7 @@ void drawCue(int numSteps, float radius, float hl, Ball* whiteBall, float cueRot
     glPopMatrix();
 }
 
-bool moveBalls(Ball** balls, float time, float tableLength, float tableWidth, GLuint* ballTextures, int& scoreStripped, int& scoreSolid) {
+bool moveBalls(Ball** balls, float time, float tableLength, float tableWidth, int& scoreStripped, int& scoreSolid) {
 
     bool gameEnded = false;
     for (int i = 0; i < 16; i++) {
@@ -203,45 +199,6 @@ void applyCollisions(Ball** balls, double ballRad, bool** colliding) {
             applyCollision(balls, i, j, ballRad, colliding);
 }
 
-GLuint loadTexture(string file) {
-    FREE_IMAGE_FORMAT fif = FreeImage_GetFIFFromFilename(file.c_str());
-    FIBITMAP* bitmap = FreeImage_Load(fif, file.c_str());
-    bitmap = FreeImage_ConvertTo24Bits(bitmap);
-    int texW = FreeImage_GetWidth(bitmap);
-    int texH = FreeImage_GetHeight(bitmap);
-    void* data = FreeImage_GetBits(bitmap);
-    GLuint texture;
-
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texW, texH, 0, GL_BGR, GL_UNSIGNED_BYTE, data);
-    //delete data;
-    return texture;
-}
-
-GLuint* loadBallTextures() {
-    GLuint* textures = new GLuint[15];
-
-    // Get the texture of all 15 balls
-    for (int i = 1; i <= 15; i++) {
-        string file = "resources/ball" + to_string(i) + ".jpg";
-        textures[i - 1] = loadTexture(file);
-    }
-
-    // Swap 8th ball into the corresponding position
-    GLuint aux = textures[3];
-    textures[3] = textures[7];
-    textures[7] = aux;
-
-    return textures;
-}
-
-
 bool ballsNotMoving(Ball** balls) {
     for (int i = 0; i < 16; i++)
         if (balls[i]->isMoving())
@@ -249,45 +206,14 @@ bool ballsNotMoving(Ball** balls) {
     return true;
 }
 
-void drawBalls(Ball** balls, GLuint* textures, bool applyTextures) {
+void drawBalls(Ball** balls) {
     int i = 0;
     if (balls[0]->isInHole() && ballsNotMoving(balls))
         balls[0]->setInHole(false);
-    balls[0]->draw(15, 15, -1);
+    balls[0]->draw(15, 15);
     for (int i = 1; i < 16; i++) {
-        if (applyTextures)
-            balls[i]->draw(15, 15, textures[i - 1]);
-        else
-            balls[i]->draw(15, 15, -1);
+        balls[i]->draw(15, 15);
     }
-}
-
-void drawTable(std::vector< glm::vec3 > vertices, std::vector< glm::vec2 > uvs, std::vector< glm::vec3 > normals, GLuint texture, bool applyTextures) {
-
-    if (applyTextures) {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, texture);
-    }
-    glPushMatrix();
-
-    glTranslatef(-2.67, 0.53, -0.54);
-    glScalef(0.035, 0.035, 0.035);
-    glRotatef(90, 0, 0, 1);
-    glRotatef(90, 0, 1, 0);
-    glColor3ub(230, 230, 230);
-
-    glBegin(GL_QUADS);
-
-    for (int i = 0; i < vertices.size(); i++) {
-        glNormal3f(normals[i][0], normals[i][1], normals[i][2]);
-        glTexCoord2f(uvs[i][0], uvs[i][1]);
-        glVertex3f(vertices[i][0], vertices[i][1], vertices[i][2]);
-    }
-
-    glEnd();
-    glPopMatrix();
-    if (applyTextures)
-        glDisable(GL_TEXTURE_2D);
 }
 
 
@@ -321,95 +247,59 @@ void camOnTopOfCue(float cueRotAng1, float cueRotAng2, Ball* whiteBall) {
     gluLookAt(camPosX, camPosY, camPosZ, whiteBall->getPosX(), whiteBall->getPosY(), whiteBall->getPosZ(), 0, 1, 0);
 }
 
-void drawRoom(GLuint floorTexture, GLuint wallTexture, bool applyTextures) {
+void drawRoom() {
     int roomLength = 20;
     int roomWidth = 15;
     int roomHeight = 20;
-    int floorRepeat = 7;
-    int wallRepeat = 3;
     float roomFloor = -2.49;
 
-    if (applyTextures) {
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, floorTexture);
-    }
     // Floor
 
     glColor3ub(230, 230, 230);
 
     glBegin(GL_QUADS);
     glNormal3f(0, 1, 0);
-    glTexCoord2f(floorRepeat, floorRepeat);
     glVertex3f(roomLength, roomFloor, roomWidth);
-    glTexCoord2f(floorRepeat, 0);
     glVertex3f(roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(0, floorRepeat);
     glVertex3f(-roomLength, roomFloor, roomWidth);
     glEnd();
-
-    if (applyTextures)
-        glBindTexture(GL_TEXTURE_2D, wallTexture);
 
     // Ceiling
     glBegin(GL_QUADS);
     glNormal3f(0, -1, 0);
-    glTexCoord2f(wallRepeat, wallRepeat);
     glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
-    glTexCoord2f(wallRepeat, 0);
     glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
-    glTexCoord2f(0, wallRepeat);
     glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
     glEnd();
 
     //Walls
     glBegin(GL_QUADS);
     glNormal3f(0, 0, -1);
-    glTexCoord2f(0, wallRepeat);
     glVertex3f(roomLength, roomFloor, roomWidth);
-    glTexCoord2f(wallRepeat, wallRepeat);
     glVertex3f(roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(wallRepeat, 0);
     glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
 
-    glTexCoord2f(wallRepeat, wallRepeat);
     glNormal3f(1, 0, 0);
     glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glTexCoord2f(wallRepeat, 0);
     glVertex3f(roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(0, wallRepeat);
     glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
 
-    glTexCoord2f(0, wallRepeat);
     glNormal3f(0, 0, -1);
     glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
-    glTexCoord2f(wallRepeat, wallRepeat);
     glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
-    glTexCoord2f(wallRepeat, 0);
     glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(-roomLength, roomFloor, roomWidth);
 
-    glTexCoord2f(wallRepeat, wallRepeat);
     glNormal3f(1, 0, 0);
     glVertex3f(roomLength, roomFloor, roomWidth);
-    glTexCoord2f(wallRepeat, 0);
     glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
-    glTexCoord2f(0, 0);
     glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
-    glTexCoord2f(0, wallRepeat);
     glVertex3f(-roomLength, roomFloor, roomWidth);
     glEnd();
-
-    if (applyTextures)
-        glDisable(GL_TEXTURE_2D);
 }
 
 void initializeSDL() {
@@ -443,17 +333,11 @@ bool** getCollisionMatrix() {
     return colliding;
 }
 
-void setLighting(float lightPositionX, float lightPositionZ, int lightColor, bool applyTextures) {
+void setLighting(float lightPositionX, float lightPositionZ, int lightColor) {
 
-    float lightR = 2.0f;
-    float lightG = 2.0f;
-    float lightB = 2.0f;
-
-    if (!applyTextures) {
-        lightR = 1.0f;
-        lightG = 1.0f;
-        lightB = 1.0f;
-    }
+    float lightR = 1.0f;
+    float lightG = 1.0f;
+    float lightB = 1.0f;
 
     if (lightColor == 1)
         lightR = 8.0f;
@@ -485,8 +369,6 @@ void setLighting(float lightPositionX, float lightPositionZ, int lightColor, boo
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materialAmbient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialDiffuse);
-
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     glPopMatrix();
 }
@@ -521,7 +403,6 @@ void drawHUD(int time, int scoreStripped, int scoreSolid, float strength, bool g
     string scoreLabel2 = "Solid: " + to_string(scoreSolid);
     string endGameLabel = "Game finished!";
     string helpLabel = "Press H for Help";
-
 
     glColor3ub(170, 170, 170);
 
@@ -579,50 +460,6 @@ void drawHUD(int time, int scoreStripped, int scoreSolid, float strength, bool g
     glEnable(GL_LIGHTING);
 }
 
-
-void drawMenu(bool showMenu, GLuint helpTexture) {
-    if (showMenu) {
-        // Draw Menu
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, helpTexture);
-
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(0.0, 1.0, 1.0, 0.0);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-
-
-
-        glBegin(GL_QUADS);
-        glColor3f(255, 255, 255);
-        glTexCoord2f(0, 1);
-        glVertex2f(0.03, 0.05);
-        glTexCoord2f(0, 0);
-        glVertex2f(0.03, 0.6);
-        glTexCoord2f(1, 0);
-        glVertex2f(0.3, 0.6);
-        glTexCoord2f(1, 1);
-        glVertex2f(0.3, 0.05);
-        glEnd();
-
-        glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, helpTexture);
-
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-
-        glDisable(GL_TEXTURE_2D);
-    }
-}
-
-
-
 #undef main
 int main(int argc, char* argv[]) {
 
@@ -646,16 +483,6 @@ int main(int argc, char* argv[]) {
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
-    // Load textures and models
-    GLuint* ballTextures = loadBallTextures();
-    GLuint tableTexture = loadTexture("resources/PoolTable.jpg");
-    GLuint floorTexture = loadTexture("resources/floor.jpg");
-    GLuint wallTexture = loadTexture("resources/wall.jpg");
-    GLuint helpTexture = loadTexture("resources/help.jpg");
-    std::vector< glm::vec3 > vertices, normals;
-    std::vector< glm::vec2 > uvs;
-    //loadOBJ("resources/PoolTable.obj", vertices, uvs, normals);
-
     // Size of table, balls and cue
     float tableLength = 7.9;
     float tableWidth = 3.5;
@@ -677,7 +504,6 @@ int main(int argc, char* argv[]) {
     bool quit = false;
     bool pause = false;
     bool wireframe = false;
-    bool applyTextures = true;
     bool slowMotion = false;
     bool flatShading = false;
     auto lastFrameTime = clock();
@@ -705,24 +531,22 @@ int main(int argc, char* argv[]) {
         else
             camOnTopOfCue(cueRotAng1, cueRotAng2, balls[0]);
 
-        setLighting(lightPositionX, lightPositionZ, lightColor, applyTextures);
+        setLighting(lightPositionX, lightPositionZ, lightColor);
 
         // Draw objects and apply physics
-        drawRoom(floorTexture, wallTexture, applyTextures);
-        drawBalls(balls, ballTextures, applyTextures);
-        drawTable(vertices, uvs, normals, tableTexture, applyTextures);
+        drawRoom();
+        drawBalls(balls);
         if (ballsNotMoving(balls))
             drawCue(10, 0.04, cueLength, balls[0], cueRotAng1, cueRotAng2, strength);
         if (!pause && !gameEnded) {
             applyCollisions(balls, ballRad, colliding);
             if (slowMotion)
-                gameEnded = moveBalls(balls, frameTime / 120, tableLength, tableWidth, ballTextures, scoreStripped, scoreSolid);
+                gameEnded = moveBalls(balls, frameTime / 120, tableLength, tableWidth, scoreStripped, scoreSolid);
             else
-                gameEnded = moveBalls(balls, frameTime / 40, tableLength, tableWidth, ballTextures, scoreStripped, scoreSolid);
+                gameEnded = moveBalls(balls, frameTime / 40, tableLength, tableWidth, scoreStripped, scoreSolid);
         }
 
         drawHUD(currentTime / 1000, scoreStripped, scoreSolid, strength, gameEnded);
-        drawMenu(showMenu, helpTexture);
 
         // Process events
         int xm, ym;
@@ -799,9 +623,6 @@ int main(int argc, char* argv[]) {
                     else
                         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                     wireframe = !wireframe;
-                    break;
-                case SDLK_t:
-                    applyTextures = !applyTextures;
                     break;
                 case SDLK_c:
                     if (flatShading)
