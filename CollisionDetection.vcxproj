@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Santiago\Desktop\CollisionDetection;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\lib;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\SDL-1.2.15\lib;.\glut-3.7.6;.\FreeImage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Users\Santiago\Desktop\CollisionDetection;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\lib;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\SDL-1.2.15\lib;.\glut-3.7.6;.\FreeImage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>C:\Users\Santiago\Desktop\CollisionDetection;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\lib;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\SDL-1.2.15\lib;.\glut-3.7.6;.\FreeImage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>C:\Users\Santiago\Desktop\CollisionDetection;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\lib;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;$(IncludePath)</IncludePath>
+    <LibraryPath>.\SDL-1.2.15\lib;.\glut-3.7.6;.\FreeImage;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Santiago\Desktop\CollisionDetection\glm\glm;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\glm;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glm\glm;.\SDL-1.2.15\include;.\SDL-1.2.15;.\glut-3.7.6;.\glm;.\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Santiago\Desktop\CollisionDetection\glm\glm;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\glm;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glm\glm;.\SDL-1.2.15\include;.\SDL-1.2.15;.\glut-3.7.6;.\glm;.\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Santiago\Desktop\CollisionDetection\glm\glm;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\glm;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glm\glm;.\SDL-1.2.15\include;.\SDL-1.2.15;.\glut-3.7.6;.\glm;.\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,7 +144,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Santiago\Desktop\CollisionDetection\glm\glm;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15\include;C:\Users\Santiago\Desktop\CollisionDetection\SDL-1.2.15;C:\Users\Santiago\Desktop\CollisionDetection\glut-3.7.6;C:\Users\Santiago\Desktop\CollisionDetection\glm;C:\Users\Santiago\Desktop\CollisionDetection\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\glm\glm;.\SDL-1.2.15\include;.\SDL-1.2.15;.\glut-3.7.6;.\glm;.\FreeImage;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
