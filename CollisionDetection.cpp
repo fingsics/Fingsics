@@ -8,6 +8,7 @@
 #include "include/Point.h"
 #include "include/Ball.h"
 #include <thread>
+#include <string>
 #include <glm/glm.hpp>
 #include <glut.h>
 
