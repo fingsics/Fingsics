@@ -232,7 +232,7 @@ void drawWorld() {
     int roomLength = 20;
     int roomWidth = 15;
     int roomHeight = 20;
-    float roomFloor = -2.49;
+    float roomFloor = 0;
 
     glColor3ub(230, 230, 230);
 
