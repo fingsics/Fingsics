@@ -26,32 +26,32 @@ void updateCam(float& x, float& y, float& z, float x_angle, float y_angle, float
 
 Ball** initializeBalls(double ballRad, double ballMass, float ballSeparation) {
     Ball** balls = new Ball * [16];
-    Color* whiteColor = new Color(230, 230, 230);
+    Color* ballColor = new Color(200, 20, 20);
     float height = ballRad;
     float whiteBallDistance = 1.5;
 
     // White ball
-    balls[0] = new Ball(-2, height, 0, ballRad, ballMass, whiteColor, true);
+    balls[0] = new Ball(-2, height, 0, ballRad, ballMass, ballColor);
     // First line
-    balls[1] = new Ball(whiteBallDistance, height, 0, ballRad, ballMass, whiteColor, false);
+    balls[1] = new Ball(whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
     // Second line
-    balls[2] = new Ball(whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, whiteColor, false);
-    balls[3] = new Ball(whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, whiteColor, false);
+    balls[2] = new Ball(whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
+    balls[3] = new Ball(whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
     // Third line
-    balls[4] = new Ball(whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, whiteColor, false);
-    balls[5] = new Ball(whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, whiteColor, false);
-    balls[6] = new Ball(whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, whiteColor, false);
+    balls[4] = new Ball(whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
+    balls[5] = new Ball(whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
+    balls[6] = new Ball(whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
     // Forth line
-    balls[7] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, whiteColor, false);
-    balls[8] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, whiteColor, false);
-    balls[9] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, whiteColor, false);
-    balls[10] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, whiteColor, false);
+    balls[7] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
+    balls[8] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
+    balls[9] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
+    balls[10] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
     // Fifth line
-    balls[11] = new Ball(whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, whiteColor, false);
-    balls[12] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, whiteColor, false);
-    balls[13] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, whiteColor, false);
-    balls[14] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, whiteColor, false);
-    balls[15] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, whiteColor, false);
+    balls[11] = new Ball(whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
+    balls[12] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
+    balls[13] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
+    balls[14] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
+    balls[15] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
 
     return balls;
 }
@@ -94,9 +94,7 @@ void drawCue(int numSteps, float radius, float hl, Ball* whiteBall, float cueRot
 }
 
 void moveBalls(Ball** balls, float time, float tableLength, float tableWidth) {
-    for (int i = 0; i < 16; i++) {
-        bool enteredHole = balls[i]->updatePosAndVel(time, tableLength, tableWidth, balls);
-    }
+    for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, tableLength, tableWidth, balls);
 }
 
 void hitBall(Ball* whiteBall, float cueRotAng1, float cueRotAng2, int strength) {
@@ -138,7 +136,7 @@ void applyCollision(Ball** balls, int ball1Idx, int ball2Idx, double ballRad, bo
     Point* normalVector = (*ball1Pos) - ball2Pos;
     double magnitude = normalVector->magnitude();
 
-    if (magnitude < ballRad * 2 && !colliding[ball1Idx][ball2Idx] && !ball1->isInHole() && !ball2->isInHole()) {
+    if (magnitude < ballRad * 2 && !colliding[ball1Idx][ball2Idx]) {
 
         colliding[ball1Idx][ball2Idx] = true;
         colliding[ball2Idx][ball1Idx] = true;
@@ -193,8 +191,6 @@ bool ballsNotMoving(Ball** balls) {
 
 void drawBalls(Ball** balls) {
     int i = 0;
-    if (balls[0]->isInHole() && ballsNotMoving(balls))
-        balls[0]->setInHole(false);
     balls[0]->draw(15, 15);
     for (int i = 1; i < 16; i++) {
         balls[i]->draw(15, 15);
@@ -232,7 +228,7 @@ void camOnTopOfCue(float cueRotAng1, float cueRotAng2, Ball* whiteBall) {
     gluLookAt(camPosX, camPosY, camPosZ, whiteBall->getPosX(), whiteBall->getPosY(), whiteBall->getPosZ(), 0, 1, 0);
 }
 
-void drawRoom() {
+void drawWorld() {
     int roomLength = 20;
     int roomWidth = 15;
     int roomHeight = 20;
@@ -246,42 +242,6 @@ void drawRoom() {
     glVertex3f(roomLength, roomFloor, roomWidth);
     glVertex3f(roomLength, roomFloor, -roomWidth);
     glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, roomWidth);
-    glEnd();
-
-    // Ceiling
-    glBegin(GL_QUADS);
-    glNormal3f(0, -1, 0);
-    glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
-    glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
-    glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
-    glEnd();
-
-    //Walls
-    glBegin(GL_QUADS);
-    glNormal3f(0, 0, -1);
-    glVertex3f(roomLength, roomFloor, roomWidth);
-    glVertex3f(roomLength, roomFloor, -roomWidth);
-    glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
-
-    glNormal3f(1, 0, 0);
-    glVertex3f(roomLength, roomFloor + roomHeight, -roomWidth);
-    glVertex3f(roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
-
-    glNormal3f(0, 0, -1);
-    glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
-    glVertex3f(-roomLength, roomFloor + roomHeight, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, roomWidth);
-
-    glNormal3f(1, 0, 0);
-    glVertex3f(roomLength, roomFloor, roomWidth);
-    glVertex3f(roomLength, roomFloor + roomHeight, roomWidth);
-    glVertex3f(-roomLength, roomFloor + roomHeight, roomWidth);
     glVertex3f(-roomLength, roomFloor, roomWidth);
     glEnd();
 }
@@ -347,48 +307,6 @@ void setLighting() {
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialDiffuse);
 
     glPopMatrix();
-}
-
-void drawHUD(int time) {
-    // Draw HUD
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0.0, 1.0, 1.0, 0.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glDisable(GL_LIGHTING);
-
-    string timeLabel = "Time: " + to_string(time);
-    string helpLabel = "Press H for Help";
-
-    glColor3ub(170, 170, 170);
-
-    glRasterPos2f(0.1, 0.96);
-    for (int i = 0; i < timeLabel.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, timeLabel[i]);
-
-    glRasterPos2f(0.65, 0.96);
-    for (int i = 0; i < helpLabel.size(); i++)
-        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, helpLabel[i]);
-
-    /**/
-    glBegin(GL_QUADS);
-    glColor3ub(30, 30, 30);
-    glVertex2f(0, 0.9);
-    glVertex2f(0, 1);
-    glVertex2f(1, 1);
-    glVertex2f(1, 0.9);
-    glEnd();
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-
-    glEnable(GL_LIGHTING);
 }
 
 #undef main
@@ -458,7 +376,7 @@ int main(int argc, char* argv[]) {
         setLighting();
 
         // Draw objects and apply physics
-        drawRoom();
+        drawWorld();
         drawBalls(balls);
         if (ballsNotMoving(balls))
             drawCue(10, 0.04, cueLength, balls[0], cueRotAng1, cueRotAng2, strength);
@@ -469,8 +387,6 @@ int main(int argc, char* argv[]) {
             else
                 moveBalls(balls, frameTime / 40, tableLength, tableWidth);
         }
-
-        drawHUD(currentTime / 1000);
 
         // Process events
         int xm, ym;

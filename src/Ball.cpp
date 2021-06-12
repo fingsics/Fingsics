@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(double x, double y, double z, double rad, double mass, Color* color, bool isWhite){
+Ball::Ball(double x, double y, double z, double rad, double mass, Color* color){
     this->posX = x;
     this->posY = y;
     this->posZ = z;
@@ -12,12 +12,6 @@ Ball::Ball(double x, double y, double z, double rad, double mass, Color* color, 
     this->velY = 0;
     this->velZ = 0;
     this->color = color;
-    this->inHole = false;
-    this->isWhite = isWhite;
-}
-
-bool Ball::isWhiteBall(){
-    return isWhite;
 }
 
 void Ball::setVelocity(double x, double y, double z){
@@ -33,54 +27,7 @@ void Ball::setVelocity(Point* velVector){
 }
 
 bool Ball::isMoving(){
-    return (!inHole && (velX != 0 || velY != 0 || velZ != 0));
-}
-
-bool Ball::checkEntersHole(float tableLength, float tableWidth){
-    float d = 1.5;
-    if ( (posX > tableLength/2 - rad*d || posX < -tableLength/2 + rad*d || (posX < rad*d/2 && posX > -rad*d/2 )) && (posZ > tableWidth/2 - rad*d || posZ < -tableWidth/2 + rad*d) ){
-        velX = 0;
-        velY = 0;
-        velZ = 0;
-
-        if (isWhite){
-            posX = -2;
-            posZ = 0;
-        }
-
-        inHole = true;
-        return true;
-    }
-
-    return false;
-}
-
-bool Ball::isInHole(){
-    return inHole;
-}
-
-void Ball::setInHole(bool inHole){
-    this->inHole = inHole;
-}
-
-// If ball collides against a border of the table, change its velocity direction
-void Ball::checkTableCollision(float tableLength, float tableWidth){
-
-    if (posX >= tableLength/2 - rad || posX <= -tableLength/2 + rad){
-        velX = -velX;
-        if (posX >= tableLength/2 - rad)
-            posX = tableLength/2 - rad;
-        else
-            posX = -tableLength/2 + rad;
-    }
-
-    if (posZ >= tableWidth/2 - rad || posZ <= -tableWidth/2 + rad){
-        velZ = -velZ;
-        if (posZ >= tableWidth/2 - rad)
-            posZ = tableWidth/2 - rad;
-        else
-            posZ = -tableWidth/2 + rad;
-    }
+    return (velX != 0 || velY != 0 || velZ != 0);
 }
 
 bool Ball::hasSameDirection(float rotX, float rotZ){
@@ -139,14 +86,9 @@ void Ball::decreaseVelocity(double time){
     }
 }
 
-bool Ball::updatePosAndVel(double time, double tableLength, double tableWidth, Ball** balls){
+void Ball::updatePosAndVel(double time, double tableLength, double tableWidth, Ball** balls){
 
     double posFactor = time / 100;
-
-    if (inHole) return false;
-    if (checkEntersHole(tableLength, tableWidth)) return true;
-
-    checkTableCollision(tableLength, tableWidth);
 
     // Update position
     double diffX = velX * posFactor;
@@ -159,8 +101,6 @@ bool Ball::updatePosAndVel(double time, double tableLength, double tableWidth, B
     applyRotation(distanceMoved);
 
     decreaseVelocity(time);
-
-    return false;
 }
 
 double Ball::getPosX(){
@@ -198,8 +138,6 @@ void Ball::setPos(Point* pos){
 }
 
 void Ball::draw(float lats, float longs) {
-
-    if (inHole) return;
 
     glPushMatrix();
 

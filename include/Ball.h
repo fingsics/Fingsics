@@ -23,20 +23,16 @@ class Ball {
         double mass;
         Color* color;
         vector<Rotation*> rotations;
-        bool inHole;
-        bool isWhite;
-        bool checkEntersHole(float, float);
-        void checkTableCollision(float, float);
         void applyRotation(double);
         void decreaseVelocity(double);
         bool hasSameDirection(float, float);
 
     public:
-        Ball(double, double, double, double, double, Color*, bool);
+        Ball(double, double, double, double, double, Color*);
         void setVelocity(double, double, double);
         void setVelocity(Point*);
         void draw(float, float);
-        bool updatePosAndVel(double, double, double, Ball**);
+        void updatePosAndVel(double, double, double, Ball**);
         double getPosX();
         double getPosY();
         double getPosZ();
@@ -46,9 +42,6 @@ class Ball {
         Point* getPos();
         Point* getVel();
         void setPos(Point*);
-        bool isInHole();
-        void setInHole(bool);
-        bool isWhiteBall();
 };
 
 #endif
