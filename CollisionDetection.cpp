@@ -13,25 +13,20 @@
 #include <glut.h>
 
 #define _USE_MATH_DEFINES
-#define FPS 60
+#define FPS 30
 #define M_PI 3.1415926
 
 using namespace std;
 
-void updateCam(float& x, float& y, float& z, float x_angle, float y_angle, float radius) {
-    z = cos(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
-    x = sin(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
-    y = sin(x_angle * M_PI / 180) * radius;
-}
-
 Ball** initializeBalls(double ballRad, double ballMass, float ballSeparation) {
     Ball** balls = new Ball * [16];
     Color* ballColor = new Color(200, 20, 20);
+    Color* ballColor2 = new Color(200, 200, 200);
     float height = ballRad;
     float whiteBallDistance = 1.5;
 
     // White ball
-    balls[0] = new Ball(-2, height, 0, ballRad, ballMass, ballColor);
+    balls[0] = new Ball(-2, height, 0, ballRad, ballMass, ballColor2);
     // First line
     balls[1] = new Ball(whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
     // Second line
@@ -56,74 +51,12 @@ Ball** initializeBalls(double ballRad, double ballMass, float ballSeparation) {
     return balls;
 }
 
-
-void drawCue(int numSteps, float radius, float hl, Ball* whiteBall, float cueRotAng1, float cueRotAng2, float strength) {
-    float a = 0.0f;
-    float step = (2 * M_PI) / (float)numSteps;
-    double ballRad = whiteBall->getRad();
-
-
-    glPushMatrix();
-
-    // Move the cue next to the white ball
-    glTranslatef(whiteBall->getPosX(), whiteBall->getPosY(), whiteBall->getPosZ());
-
-    // Rotate the cue based on the mouse movements
-    glRotatef(cueRotAng1, 0, 1, 0);
-    glRotatef(cueRotAng2, 1, 0, 0);
-
-    // Initial cue position and rotation
-    glTranslatef(0, hl + ballRad + strength / 4 * ballRad, 0);
-    glRotatef(-90, 1, 0, 0);
-
-    // Draw the cylinder
-    glBegin(GL_TRIANGLE_STRIP);
-    glColor3ub(152, 118, 84);
-    for (int i = 0; i <= numSteps; i++)
-    {
-        float x = cos(a) * radius;
-        float y = sin(a) * radius;
-        glNormal3f(x / radius, y / radius, 0);
-        glVertex3f(x, y, -hl);
-        glNormal3f(x / radius, y / radius, 0);
-        glVertex3f(x, y, hl);
-        a += step;
-    }
-    glEnd();
-    glPopMatrix();
+void moveBalls(Ball** balls, float frames, bool slowMotion) {
+    float time = slowMotion ? frames / 3 : frames;
+    for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, balls);
 }
-
-void moveBalls(Ball** balls, float time, float tableLength, float tableWidth) {
-    for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, tableLength, tableWidth, balls);
-}
-
-void hitBall(Ball* whiteBall, float cueRotAng1, float cueRotAng2, int strength) {
-
-    float strengthFactor = 2;
-
-    // Convert to radians
-    cueRotAng1 = cueRotAng1 * M_PI / 180;
-    cueRotAng2 = cueRotAng2 * M_PI / 180;
-
-    // Initial cue position
-    float x = 0;
-    float y = 1;
-    float z = 0;
-
-    // Vertical cue rotation
-    float rotatedY = cos(cueRotAng2) * y - sin(cueRotAng2) * z;
-    float rotatedZ = sin(cueRotAng2) * y + cos(cueRotAng2) * z;
-
-    // Horizontal cue rotation
-    float rotatedX = cos(cueRotAng1) * x - sin(cueRotAng1) * rotatedZ;
-    rotatedZ = sin(cueRotAng1) * x + cos(cueRotAng1) * rotatedZ;
-
-    whiteBall->setVelocity(new Point(rotatedX * strength * strengthFactor, 0, -rotatedZ * strength * strengthFactor));
-}
-
 
 void applyCollision(Ball** balls, int ball1Idx, int ball2Idx, double ballRad, bool** colliding) {
-
     Ball* ball1 = balls[ball1Idx];
     Ball* ball2 = balls[ball2Idx];
     Point* ball1Pos = ball1->getPos();
@@ -197,38 +130,7 @@ void drawBalls(Ball** balls) {
     }
 }
 
-
-void camOnTopOfCue(float cueRotAng1, float cueRotAng2, Ball* whiteBall) {
-    float x = 0;
-    float y = 1;
-    float z = 0;
-
-    // Convert to radians
-    cueRotAng1 = cueRotAng1 * M_PI / 180;
-    cueRotAng2 = cueRotAng2 * M_PI / 180;
-
-    // Create a vector rotatedX, rotatedY, rotatedZ with the direction of the cue
-    // Vertical cue rotation
-    float rotatedY = cos(cueRotAng2) * y - sin(cueRotAng2) * z;
-    float rotatedZ = sin(cueRotAng2) * y + cos(cueRotAng2) * z;
-    // Horizontal cue rotation
-    float rotatedX = cos(cueRotAng1) * x - sin(cueRotAng1) * rotatedZ;
-    rotatedZ = sin(cueRotAng1) * x + cos(cueRotAng1) * rotatedZ;
-
-    // Make camera distance constant by dividing by the magnitude of the vector and multiplying by a factor
-    float magnitude = sqrt(pow(rotatedX, 2) + pow(rotatedY, 2) + pow(rotatedZ, 2));
-    rotatedX *= 7 / magnitude;
-    rotatedY *= 7 / magnitude;
-    rotatedZ *= 7 / magnitude;
-
-    float camPosX = whiteBall->getPosX() - rotatedX;
-    float camPosY = whiteBall->getPosY() + rotatedY + 2; // Add a constant so the camera is a bit above the cue
-    float camPosZ = whiteBall->getPosZ() + rotatedZ;
-
-    gluLookAt(camPosX, camPosY, camPosZ, whiteBall->getPosX(), whiteBall->getPosY(), whiteBall->getPosZ(), 0, 1, 0);
-}
-
-void drawWorld() {
+void drawFloor() {
     int roomLength = 20;
     int roomWidth = 15;
     int roomHeight = 20;
@@ -268,6 +170,7 @@ void initializeSDL() {
 
 // Returns a 16*16 boolean matrix with false in every entry
 bool** getCollisionMatrix() {
+    // if balls i and j are colliding => colliding[i][j] = true and colliding[j][i] = true
     bool** colliding = new bool* [16];
     for (int i = 0; i < 16; i++)
         colliding[i] = new bool[16];
@@ -309,20 +212,15 @@ void setLighting() {
     glPopMatrix();
 }
 
+void hitBall(Ball* whiteBall) {
+    float strengthFactor = 15;
+    float x = 1;
+    float y = 0;
+    whiteBall->setVelocity(new Point(x * strengthFactor, 0, y * strengthFactor));
+}
+
 #undef main
 int main(int argc, char* argv[]) {
-
-    // Initialize viewMode 0 camera
-    float camX = 0;
-    float camY = 6;
-    float camZ = -6;
-    float camAngA = 0;
-    float camAngB = -45;
-    float camRad = -8.4852; // sqrt(y^2 + z^2)
-
-    bool moveCam = false;
-    bool moveCue = false;
-
     initializeSDL();
 
     glMatrixMode(GL_PROJECTION);
@@ -333,29 +231,19 @@ int main(int argc, char* argv[]) {
     glMatrixMode(GL_MODELVIEW);
 
     // Size of table, balls and cue
-    float tableLength = 7.9;
-    float tableWidth = 3.5;
-    double ballRad = tableLength / 50;
+    double ballRad = 0.2;
     double ballMass = 1;
     float ballSeparation = ballRad * 1.75;
-    int cueLength = 2.3;
 
-    // Initial cue rotation
-    float cueRotAng1 = 90;
-    float cueRotAng2 = -80;
-
-    bool** colliding = getCollisionMatrix(); // if balls i and j are colliding => colliding[i][j] = true and colliding[j][i] = true
+    bool** colliding = getCollisionMatrix();
     Ball** balls = initializeBalls(ballRad, ballMass, ballSeparation);
 
     SDL_Event event;
-    float strength = 4;
-    int viewMode = 0;
     bool quit = false;
     bool pause = false;
     bool slowMotion = false;
     auto lastFrameTime = clock();
     bool showMenu = false;
-    bool gameEnded = false;
 
     do {
         auto currentTime = clock();
@@ -366,26 +254,16 @@ int main(int argc, char* argv[]) {
         glLoadIdentity();
 
         // Set camera position
-        if (viewMode == 0)
-            gluLookAt(camX, camY, -camZ, 0, 0, 0, 0, 1, 0);
-        else if (viewMode == 1)
-            gluLookAt(0, 7, 0, 0, 0, 0, 0, 0, -1);
-        else
-            camOnTopOfCue(cueRotAng1, cueRotAng2, balls[0]);
+        gluLookAt(0, 7, 0, 0, 0, 0, 0, 0, -1);
 
         setLighting();
 
         // Draw objects and apply physics
-        drawWorld();
+        drawFloor();
         drawBalls(balls);
-        if (ballsNotMoving(balls))
-            drawCue(10, 0.04, cueLength, balls[0], cueRotAng1, cueRotAng2, strength);
         if (!pause) {
             applyCollisions(balls, ballRad, colliding);
-            if (slowMotion)
-                moveBalls(balls, frameTime / 120, tableLength, tableWidth);
-            else
-                moveBalls(balls, frameTime / 40, tableLength, tableWidth);
+            moveBalls(balls, frameTime / 40, slowMotion);
         }
 
         // Process events
@@ -393,51 +271,12 @@ int main(int argc, char* argv[]) {
         SDL_GetMouseState(&xm, &ym);
         while (SDL_PollEvent(&event)) {
             switch (event.type) {
-
-            case SDL_MOUSEBUTTONDOWN:
-                if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3))
-                    moveCam = true;
-                if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1))
-                    moveCue = true;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                moveCam = false;
-                if (moveCue) {
-                    moveCue = false;
-                    if (ballsNotMoving(balls) && !pause && strength > 4)
-                        hitBall(balls[0], cueRotAng1, cueRotAng2, strength);
-                    strength = 4;
-                }
-                break;
-
-            case SDL_MOUSEMOTION:
-                // Move cam
-                if (moveCam && viewMode == 0) {
-                    if (event.motion.yrel < 0 && camAngB < 80)
-                        camAngB -= event.motion.yrel * 0.4;
-                    else if (event.motion.yrel >= 0 && camAngB > -80)
-                        camAngB -= event.motion.yrel * 0.4;
-
-                    camAngA += event.motion.xrel * 0.4;
-                    updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
-                }
-
-                // Move cue
-                if (moveCue && !pause && ballsNotMoving(balls)) {
-                    cueRotAng1 += event.motion.xrel * 0.4;
-                    strength += event.motion.yrel * 0.4;
-
-                    if (strength > 20) strength = 20;
-                    if (strength < 4) strength = 4;
-                    while (cueRotAng1 >= 360) cueRotAng1 -= 360;
-                    while (cueRotAng1 < 0) cueRotAng1 += 360;
-                }
-
-                break;
             case SDL_QUIT:
                 quit = true;
                 break;
-
+            case SDL_MOUSEBUTTONUP:
+                hitBall(balls[0]);
+                break;
             case SDL_KEYUP: {
                 switch (event.key.keysym.sym) {
                 case SDLK_ESCAPE:
@@ -463,11 +302,12 @@ int main(int argc, char* argv[]) {
         }
         SDL_GL_SwapBuffers();
 
-        // Force 30fps cap
+        // Force FPS cap
+        float minFrameTime = 1000 / FPS;
         currentTime = clock();
         frameTime = (float)(currentTime - lastFrameTime);
-        if (frameTime < 33.3)
-            std::this_thread::sleep_for(std::chrono::milliseconds((int)(33.3 - frameTime)));
+        if (frameTime < minFrameTime)
+            std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - frameTime)));
 
 
     } while (!quit);

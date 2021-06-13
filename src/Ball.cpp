@@ -86,7 +86,7 @@ void Ball::decreaseVelocity(double time){
     }
 }
 
-void Ball::updatePosAndVel(double time, double tableLength, double tableWidth, Ball** balls){
+void Ball::updatePosAndVel(double time, Ball** balls){
 
     double posFactor = time / 100;
 
