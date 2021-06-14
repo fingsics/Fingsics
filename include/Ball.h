@@ -5,6 +5,7 @@
 #include "Point.h"
 #include <vector>
 #include <math.h>
+#include <string>
 
 #define M_PI 3.1415926
 #define LATS 15
@@ -14,6 +15,7 @@ using namespace std;
 
 class Ball {
     private:
+        string id;
         double posX;
         double posY;
         double posZ;
@@ -26,7 +28,7 @@ class Ball {
         void decreaseVelocity(double);
 
     public:
-        Ball(double, double, double, double, double, Color*);
+        Ball(string, double, double, double, double, double, Color*);
         void setVelocity(Point*);
         void draw();
         void updatePosAndVel(double, Ball**);
@@ -36,6 +38,7 @@ class Ball {
         double getRad();
         double getMass();
         bool isMoving();
+        string getId();
         Point* getPos();
         Point* getVel();
         void setPos(Point*);

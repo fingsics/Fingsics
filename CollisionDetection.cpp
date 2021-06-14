@@ -9,6 +9,7 @@
 #include "include/Ball.h"
 #include <thread>
 #include <string>
+#include <map>
 #include <glm/glm.hpp>
 #include <glut.h>
 
@@ -18,35 +19,39 @@
 using namespace std;
 
 // TODO: load from XML
-Ball** initializeScene(double ballRad, double ballMass, float ballSeparation) {
+Ball** initializeScene(double ballRad, double ballMass) {
     Ball** balls = new Ball * [16];
     Color* ballColor = new Color(200, 20, 20);
     Color* ballColor2 = new Color(200, 200, 200);
     float height = ballRad;
     float whiteBallDistance = 1.5;
+    float ballSeparation = ballRad * 1.75;
 
     // White ball
-    balls[0] = new Ball(-2, height, 0, ballRad, ballMass, ballColor2);
+    balls[0] = new Ball("0", -2, height, 0, ballRad, ballMass, ballColor2);
     // First line
-    balls[1] = new Ball(whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
+    balls[1] = new Ball("1", whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
     // Second line
-    balls[2] = new Ball(whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
-    balls[3] = new Ball(whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
+    balls[2] = new Ball("2", whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
+    balls[3] = new Ball("3", whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
     // Third line
-    balls[4] = new Ball(whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
-    balls[5] = new Ball(whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
-    balls[6] = new Ball(whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
+    balls[4] = new Ball("4", whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
+    balls[5] = new Ball("5", whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
+    balls[6] = new Ball("6", whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
     // Forth line
-    balls[7] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
-    balls[8] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
-    balls[9] = new Ball(whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
-    balls[10] = new Ball(whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
+    balls[7] = new Ball("7", whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
+    balls[8] = new Ball("8", whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
+    balls[9] = new Ball("9", whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
+    balls[10] = new Ball("10", whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
     // Fifth line
-    balls[11] = new Ball(whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
-    balls[12] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
-    balls[13] = new Ball(whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
-    balls[14] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
-    balls[15] = new Ball(whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
+    balls[11] = new Ball("11", whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
+    balls[12] = new Ball("12", whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
+    balls[13] = new Ball("13", whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
+    balls[14] = new Ball("14", whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
+    balls[15] = new Ball("15", whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
+
+    // Set white ball initial velocity
+    balls[0]->setVelocity(new Point(25, 0, 0));
 
     return balls;
 }
@@ -56,25 +61,22 @@ void moveObjects(Ball** balls, float frames, bool slowMotion) {
     for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, balls);
 }
 
-void applyCollision(Ball** balls, int ball1Idx, int ball2Idx, double ballRad, bool** colliding) {
-    Ball* ball1 = balls[ball1Idx];
-    Ball* ball2 = balls[ball2Idx];
-    Point* ball1Pos = ball1->getPos();
-    Point* ball2Pos = ball2->getPos();
-    Point* ball1Vel = ball1->getVel();
-    Point* ball2Vel = ball2->getVel();
-    double ball1Mass = ball1->getMass();
-    double ball2Mass = ball2->getMass();
+void applyCollisions(map<string, pair<Ball*, Ball*>> collisionMap) {
+    for (auto const& mapEntry : collisionMap) {
+        pair<Ball*, Ball*> collisionPair = mapEntry.second;
+        Ball* ball1 = collisionPair.first;
+        Ball* ball2 = collisionPair.second;
+        double ball1Mass = ball1->getMass();
+        double ball2Mass = ball2->getMass();
+        Point* ball1Vel = ball1->getVel();
+        Point* ball2Vel = ball2->getVel();
+        Point* ball1Pos = ball1->getPos();
+        Point* ball2Pos = ball2->getPos();
 
-    Point* normalVector = (*ball1Pos) - ball2Pos;
-    double magnitude = normalVector->magnitude();
+        Point* normalVector = (*ball1Pos) - ball2Pos;
+        double distance = normalVector->magnitude();
 
-    if (magnitude < ballRad * 2 && !colliding[ball1Idx][ball2Idx]) {
-
-        colliding[ball1Idx][ball2Idx] = true;
-        colliding[ball2Idx][ball1Idx] = true;
-
-        Point* unitVector = (*normalVector) / magnitude;
+        Point* unitVector = (*normalVector) / distance;
         Point* tangentVector = new Point(-unitVector->getZ(), -unitVector->getY(), unitVector->getX());
 
         double vector1NormalMagnitude = unitVector->dotProduct(ball1Vel);
@@ -101,20 +103,36 @@ void applyCollision(Ball** balls, int ball1Idx, int ball2Idx, double ballRad, bo
         ball1->setVelocity(newVector1Velocity);
         ball2->setVelocity(newVector2Velocity);
     }
-
-    // If the balls are no longer touching, set colliding to false
-    else if (magnitude > ballRad * 2) {
-        colliding[ball1Idx][ball2Idx] = false;
-        colliding[ball2Idx][ball1Idx] = false;
-    }
 }
 
-// TODO: implement in two diferent methods: getCollisions() y applyCollisions()
+string getObjectPairId(pair<Ball*, Ball*> objectPair) {
+    string firstKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.first->getId() : objectPair.second->getId();
+    string secondKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.second->getId() : objectPair.first->getId();
+    return firstKey + "-" + secondKey;
+}
+
 // TODO: implement BPCD algorithm as a class that inherits from an interface
-void applyCollisions(Ball** balls, double ballRad, bool** colliding) {
+map<string, pair<Ball*, Ball*>> getCollisions(Ball** balls) {
+    map<string, pair<Ball*, Ball*>> collisionMap;
     for (int i = 0; i < 16; i++)
-        for (int j = i + 1; j < 16; j++)
-            applyCollision(balls, i, j, ballRad, colliding);
+        for (int j = i + 1; j < 16; j++) {
+            Ball* ball1 = balls[i];
+            Ball* ball2 = balls[j];
+            Point* ball1Pos = ball1->getPos();
+            Point* ball2Pos = ball2->getPos();
+
+            Point* normalVector = (*ball1Pos) - ball2Pos;
+            double distance = normalVector->magnitude();
+
+            if (distance < ball1->getRad() + ball2->getRad()) {
+                pair<Ball*, Ball*> objectPair = make_pair(ball1, ball2);
+                string objectPairId = getObjectPairId(objectPair);
+                if (collisionMap.find(objectPairId) == collisionMap.end()) {
+                    collisionMap.insert(pair<string, pair<Ball*, Ball*>>(objectPairId, objectPair));
+                }
+            }
+        }
+    return collisionMap;
 }
 
 bool ballsNotMoving(Ball** balls) {
@@ -170,19 +188,6 @@ void initializeSDL() {
     }
 }
 
-// TODO: delete when we use the pair list
-// Returns a 16*16 boolean matrix with false in every entry
-bool** getCollisionMatrix() {
-    // if balls i and j are colliding => colliding[i][j] = true and colliding[j][i] = true
-    bool** colliding = new bool* [16];
-    for (int i = 0; i < 16; i++)
-        colliding[i] = new bool[16];
-    for (int i = 0; i < 16; i++)
-        for (int j = 0; j < 16; j++)
-            colliding[i][j] = false;
-    return colliding;
-}
-
 void setLighting() {
     float lightR = 1.0f;
     float lightG = 1.0f;
@@ -215,12 +220,48 @@ void setLighting() {
     glPopMatrix();
 }
 
-// TODO: delete
-void hitBall(Ball* whiteBall) {
-    float strengthFactor = 15;
-    float x = 1;
-    float y = 0;
-    whiteBall->setVelocity(new Point(x * strengthFactor, 0, y * strengthFactor));
+void checkForInput(bool &slowMotion, bool &pause, bool &quit) {
+    SDL_Event event;
+    int xm, ym;
+    SDL_GetMouseState(&xm, &ym);
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        case SDL_QUIT:
+            quit = true;
+            break;
+        case SDL_KEYUP: {
+            switch (event.key.keysym.sym) {
+            case SDLK_ESCAPE:
+                quit = true;
+                break;
+            case SDLK_q:
+                quit = true;
+                break;
+            case SDLK_p:
+                pause = !pause;
+                break;
+            case SDLK_m:
+                slowMotion = !slowMotion;
+                break;
+            default:
+                break;
+            }
+        }
+        default:
+            break;
+        }
+    }
+}
+
+void manageFrameTime(clock_t &lastFrameTime, float &timeSinceLastFrame) {
+    float minFrameTime = 1000 / FPS;
+    timeSinceLastFrame = (float)(clock() - lastFrameTime);
+    if (timeSinceLastFrame < minFrameTime) {
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - timeSinceLastFrame)));
+        timeSinceLastFrame = minFrameTime;
+    }
+    
+    lastFrameTime = clock();
 }
 
 #undef main
@@ -228,32 +269,25 @@ int main(int argc, char* argv[]) {
     initializeSDL();
 
     glMatrixMode(GL_PROJECTION);
-    float color = 0;
-    glClearColor(color, color, color, 1);
+    glClearColor(0, 0, 0, 1);
     gluPerspective(45, 1280 / 720.f, 0.1, 100);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
-    // Size of table, balls and cue
     double ballRad = 0.2;
     double ballMass = 1;
-    float ballSeparation = ballRad * 1.75;
 
-    bool** colliding = getCollisionMatrix();
-    Ball** balls = initializeScene(ballRad, ballMass, ballSeparation);
+    Ball** balls = initializeScene(ballRad, ballMass);
 
-    SDL_Event event;
     bool quit = false;
     bool pause = false;
     bool slowMotion = false;
-    auto lastFrameTime = clock();
     bool showMenu = false;
 
-    do {
-        auto currentTime = clock();
-        float frameTime = (float)(currentTime - lastFrameTime);
-        lastFrameTime = clock();
+    clock_t lastFrameTime = clock();
+    float timeSinceLastFrame = 0;
 
+    while (!quit) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
 
@@ -269,56 +303,18 @@ int main(int argc, char* argv[]) {
 
         // Apply physics and movement
         if (!pause) {
-            applyCollisions(balls, ballRad, colliding);
-            moveObjects(balls, frameTime / 40, slowMotion);
+            map<string, pair<Ball*, Ball*>> collisions = getCollisions(balls);
+            applyCollisions(collisions);
+            moveObjects(balls, timeSinceLastFrame / 40, slowMotion);
         }
 
-        // TODO: move to another function
         // Process events
-        int xm, ym;
-        SDL_GetMouseState(&xm, &ym);
-        while (SDL_PollEvent(&event)) {
-            switch (event.type) {
-            case SDL_QUIT:
-                quit = true;
-                break;
-            case SDL_MOUSEBUTTONUP:
-                hitBall(balls[0]);
-                break;
-            case SDL_KEYUP: {
-                switch (event.key.keysym.sym) {
-                case SDLK_ESCAPE:
-                    quit = true;
-                    break;
-                case SDLK_q:
-                    quit = true;
-                    break;
-                case SDLK_p:
-                    pause = !pause;
-                    break;
-                case SDLK_m:
-                    slowMotion = !slowMotion;
-                    break;
-                default:
-                    break;
-                }
-            }
-           break;
-            default:
-                break;
-            }
-        }
-        SDL_GL_SwapBuffers();
+        checkForInput(slowMotion, pause, quit);
 
-        // TODO: move to another function
         // Force FPS cap
-        float minFrameTime = 1000 / FPS;
-        currentTime = clock();
-        frameTime = (float)(currentTime - lastFrameTime);
-        if (frameTime < minFrameTime)
-            std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - frameTime)));
+        manageFrameTime(lastFrameTime, timeSinceLastFrame);
 
-
-    } while (!quit);
+        SDL_GL_SwapBuffers();
+    }
     return 0;
 }

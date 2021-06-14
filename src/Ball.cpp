@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(double x, double y, double z, double rad, double mass, Color* color){
+Ball::Ball(string id, double x, double y, double z, double rad, double mass, Color* color){
     this->posX = x;
     this->posY = y;
     this->posZ = z;
@@ -12,6 +12,7 @@ Ball::Ball(double x, double y, double z, double rad, double mass, Color* color){
     this->velY = 0;
     this->velZ = 0;
     this->color = color;
+    this->id = id;
 }
 
 void Ball::setVelocity(Point* velVector){
@@ -73,6 +74,10 @@ double Ball::getPosZ(){
 
 double Ball::getMass(){
     return mass;
+}
+
+string Ball::getId() {
+    return id;
 }
 
 Point* Ball::getPos(){
