@@ -17,7 +17,8 @@
 
 using namespace std;
 
-Ball** initializeBalls(double ballRad, double ballMass, float ballSeparation) {
+// TODO: load from XML
+Ball** initializeScene(double ballRad, double ballMass, float ballSeparation) {
     Ball** balls = new Ball * [16];
     Color* ballColor = new Color(200, 20, 20);
     Color* ballColor2 = new Color(200, 200, 200);
@@ -50,7 +51,7 @@ Ball** initializeBalls(double ballRad, double ballMass, float ballSeparation) {
     return balls;
 }
 
-void moveBalls(Ball** balls, float frames, bool slowMotion) {
+void moveObjects(Ball** balls, float frames, bool slowMotion) {
     float time = slowMotion ? frames / 3 : frames;
     for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, balls);
 }
@@ -108,6 +109,8 @@ void applyCollision(Ball** balls, int ball1Idx, int ball2Idx, double ballRad, bo
     }
 }
 
+// TODO: implement in two diferent methods: getCollisions() y applyCollisions()
+// TODO: implement BPCD algorithm as a class that inherits from an interface
 void applyCollisions(Ball** balls, double ballRad, bool** colliding) {
     for (int i = 0; i < 16; i++)
         for (int j = i + 1; j < 16; j++)
@@ -167,6 +170,7 @@ void initializeSDL() {
     }
 }
 
+// TODO: delete when we use the pair list
 // Returns a 16*16 boolean matrix with false in every entry
 bool** getCollisionMatrix() {
     // if balls i and j are colliding => colliding[i][j] = true and colliding[j][i] = true
@@ -211,6 +215,7 @@ void setLighting() {
     glPopMatrix();
 }
 
+// TODO: delete
 void hitBall(Ball* whiteBall) {
     float strengthFactor = 15;
     float x = 1;
@@ -235,7 +240,7 @@ int main(int argc, char* argv[]) {
     float ballSeparation = ballRad * 1.75;
 
     bool** colliding = getCollisionMatrix();
-    Ball** balls = initializeBalls(ballRad, ballMass, ballSeparation);
+    Ball** balls = initializeScene(ballRad, ballMass, ballSeparation);
 
     SDL_Event event;
     bool quit = false;
@@ -255,16 +260,20 @@ int main(int argc, char* argv[]) {
         // Set camera position
         gluLookAt(0, 7, 0, 0, 0, 0, 0, 0, -1);
 
+        // Set light
         setLighting();
 
-        // Draw objects and apply physics
+        // Draw objects
         drawFloor();
         drawBalls(balls);
+
+        // Apply physics and movement
         if (!pause) {
             applyCollisions(balls, ballRad, colliding);
-            moveBalls(balls, frameTime / 40, slowMotion);
+            moveObjects(balls, frameTime / 40, slowMotion);
         }
 
+        // TODO: move to another function
         // Process events
         int xm, ym;
         SDL_GetMouseState(&xm, &ym);
@@ -301,6 +310,7 @@ int main(int argc, char* argv[]) {
         }
         SDL_GL_SwapBuffers();
 
+        // TODO: move to another function
         // Force FPS cap
         float minFrameTime = 1000 / FPS;
         currentTime = clock();
