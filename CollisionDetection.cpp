@@ -14,7 +14,6 @@
 
 #define _USE_MATH_DEFINES
 #define FPS 30
-#define M_PI 3.1415926
 
 using namespace std;
 
@@ -124,9 +123,9 @@ bool ballsNotMoving(Ball** balls) {
 
 void drawBalls(Ball** balls) {
     int i = 0;
-    balls[0]->draw(15, 15);
+    balls[0]->draw();
     for (int i = 1; i < 16; i++) {
-        balls[i]->draw(15, 15);
+        balls[i]->draw();
     }
 }
 

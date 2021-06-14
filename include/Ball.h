@@ -3,11 +3,12 @@
 #include "SDL/SDL_opengl.h"
 #include "Color.h"
 #include "Point.h"
-#include "Rotation.h"
 #include <vector>
 #include <math.h>
 
 #define M_PI 3.1415926
+#define LATS 15
+#define LONGS 15
 
 using namespace std;
 
@@ -22,16 +23,12 @@ class Ball {
         double rad;
         double mass;
         Color* color;
-        vector<Rotation*> rotations;
-        void applyRotation(double);
         void decreaseVelocity(double);
-        bool hasSameDirection(float, float);
 
     public:
         Ball(double, double, double, double, double, Color*);
-        void setVelocity(double, double, double);
         void setVelocity(Point*);
-        void draw(float, float);
+        void draw();
         void updatePosAndVel(double, Ball**);
         double getPosX();
         double getPosY();

@@ -159,13 +159,11 @@
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Point.cpp" />
-    <ClCompile Include="src\Rotation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Point.h" />
-    <ClInclude Include="include\Rotation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
