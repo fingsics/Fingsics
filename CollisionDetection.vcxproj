@@ -157,12 +157,16 @@
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="src\Ball.cpp" />
+    <ClCompile Include="src\BroadPhaseAlgorithm.cpp" />
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
+    <ClInclude Include="include\BroadPhaseAlgorithm.h" />
     <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

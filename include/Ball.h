@@ -3,6 +3,7 @@
 #include "SDL/SDL_opengl.h"
 #include "Color.h"
 #include "Point.h"
+#include "Object.h"
 #include <vector>
 #include <math.h>
 #include <string>
@@ -13,35 +14,14 @@
 
 using namespace std;
 
-class Ball {
+class Ball : public Object {
     private:
-        string id;
-        double posX;
-        double posY;
-        double posZ;
-        double velX;
-        double velY;
-        double velZ;
         double rad;
-        double mass;
-        Color* color;
-        void decreaseVelocity(double);
 
     public:
         Ball(string, double, double, double, double, double, Color*);
-        void setVelocity(Point*);
         void draw();
-        void updatePosAndVel(double, Ball**);
-        double getPosX();
-        double getPosY();
-        double getPosZ();
         double getRad();
-        double getMass();
-        bool isMoving();
-        string getId();
-        Point* getPos();
-        Point* getVel();
-        void setPos(Point*);
 };
 
 #endif

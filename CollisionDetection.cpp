@@ -7,6 +7,7 @@
 #include "include/Color.h"
 #include "include/Point.h"
 #include "include/Ball.h"
+#include "include/Object.h"
 #include <thread>
 #include <string>
 #include <map>
@@ -19,8 +20,8 @@
 using namespace std;
 
 // TODO: load from XML
-Ball** initializeScene(double ballRad, double ballMass) {
-    Ball** balls = new Ball * [16];
+Object** initializeScene(double ballRad, double ballMass) {
+    Object** objects = new Object * [16];
     Color* ballColor = new Color(200, 20, 20);
     Color* ballColor2 = new Color(200, 200, 200);
     float height = ballRad;
@@ -28,66 +29,66 @@ Ball** initializeScene(double ballRad, double ballMass) {
     float ballSeparation = ballRad * 1.75;
 
     // White ball
-    balls[0] = new Ball("0", -2, height, 0, ballRad, ballMass, ballColor2);
+    objects[0] = new Ball("0", -2, height, 0, ballRad, ballMass, ballColor2);
     // First line
-    balls[1] = new Ball("1", whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
+    objects[1] = new Ball("1", whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
     // Second line
-    balls[2] = new Ball("2", whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
-    balls[3] = new Ball("3", whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
+    objects[2] = new Ball("2", whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
+    objects[3] = new Ball("3", whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
     // Third line
-    balls[4] = new Ball("4", whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
-    balls[5] = new Ball("5", whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
-    balls[6] = new Ball("6", whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
+    objects[4] = new Ball("4", whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
+    objects[5] = new Ball("5", whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
+    objects[6] = new Ball("6", whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
     // Forth line
-    balls[7] = new Ball("7", whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
-    balls[8] = new Ball("8", whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
-    balls[9] = new Ball("9", whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
-    balls[10] = new Ball("10", whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
+    objects[7] = new Ball("7", whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
+    objects[8] = new Ball("8", whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
+    objects[9] = new Ball("9", whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
+    objects[10] = new Ball("10", whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
     // Fifth line
-    balls[11] = new Ball("11", whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
-    balls[12] = new Ball("12", whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
-    balls[13] = new Ball("13", whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
-    balls[14] = new Ball("14", whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
-    balls[15] = new Ball("15", whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
+    objects[11] = new Ball("11", whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
+    objects[12] = new Ball("12", whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
+    objects[13] = new Ball("13", whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
+    objects[14] = new Ball("14", whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
+    objects[15] = new Ball("15", whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
 
     // Set white ball initial velocity
-    balls[0]->setVelocity(new Point(25, 0, 0));
+    objects[0]->setVelocity(new Point(25, 0, 0));
 
-    return balls;
+    return objects;
 }
 
-void moveObjects(Ball** balls, float frames, bool slowMotion) {
+void moveObjects(Object** objects, float frames, bool slowMotion) {
     float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, balls);
+    for (int i = 0; i < 16; i++) objects[i]->updatePosAndVel(time);
 }
 
-void applyCollisions(map<string, pair<Ball*, Ball*>> oldCollisions, map<string, pair<Ball*, Ball*>> collisionMap) {
+void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
-        pair<Ball*, Ball*> collisionPair = mapEntry.second;
-        Ball* ball1 = collisionPair.first;
-        Ball* ball2 = collisionPair.second;
-        double ball1Mass = ball1->getMass();
-        double ball2Mass = ball2->getMass();
-        Point* ball1Vel = ball1->getVel();
-        Point* ball2Vel = ball2->getVel();
-        Point* ball1Pos = ball1->getPos();
-        Point* ball2Pos = ball2->getPos();
+        pair<Object*, Object*> collisionPair = mapEntry.second;
+        Object* object1 = collisionPair.first;
+        Object* object2 = collisionPair.second;
+        double object1Mass = object1->getMass();
+        double object2Mass = object2->getMass();
+        Point* object1Vel = object1->getVel();
+        Point* object2Vel = object2->getVel();
+        Point* object1Pos = object1->getPos();
+        Point* object2Pos = object2->getPos();
 
-        Point* normalVector = (*ball1Pos) - ball2Pos;
+        Point* normalVector = (*object1Pos) - object2Pos;
         double distance = normalVector->magnitude();
 
         Point* unitVector = (*normalVector) / distance;
         Point* tangentVector = new Point(-unitVector->getZ(), -unitVector->getY(), unitVector->getX());
 
-        double vector1NormalMagnitude = unitVector->dotProduct(ball1Vel);
-        double vector1TangentMagnitude = tangentVector->dotProduct(ball1Vel);
-        double vector2NormalMagnitude = unitVector->dotProduct(ball2Vel);
-        double vector2TangentMagnitude = tangentVector->dotProduct(ball2Vel);
+        double vector1NormalMagnitude = unitVector->dotProduct(object1Vel);
+        double vector1TangentMagnitude = tangentVector->dotProduct(object1Vel);
+        double vector2NormalMagnitude = unitVector->dotProduct(object2Vel);
+        double vector2TangentMagnitude = tangentVector->dotProduct(object2Vel);
 
         // Because of conservation of kinetic energy
-        double newVector1NormalMagnitude = (vector1NormalMagnitude * (ball1Mass - ball2Mass) + 2 * ball2Mass * vector2NormalMagnitude) / (ball1Mass + ball2Mass);
-        double newVector2NormalMagnitude = (vector2NormalMagnitude * (ball2Mass - ball1Mass) + 2 * ball1Mass * vector1NormalMagnitude) / (ball1Mass + ball2Mass);
+        double newVector1NormalMagnitude = (vector1NormalMagnitude * (object1Mass - object2Mass) + 2 * object2Mass * vector2NormalMagnitude) / (object1Mass + object2Mass);
+        double newVector2NormalMagnitude = (vector2NormalMagnitude * (object2Mass - object1Mass) + 2 * object1Mass * vector1NormalMagnitude) / (object1Mass + object2Mass);
 
         // These are the same
         double newVector1TangentMagnitude = vector1TangentMagnitude;
@@ -101,53 +102,58 @@ void applyCollisions(map<string, pair<Ball*, Ball*>> oldCollisions, map<string, 
         Point* newVector1Velocity = (*newVector1Normal) + newVector1Tangent;
         Point* newVector2Velocity = (*newVector2Normal) + newVector2Tangent;
 
-        ball1->setVelocity(newVector1Velocity);
-        ball2->setVelocity(newVector2Velocity);
+        object1->setVelocity(newVector1Velocity);
+        object2->setVelocity(newVector2Velocity);
     }
 }
 
-string getObjectPairId(pair<Ball*, Ball*> objectPair) {
+string getObjectPairId(pair<Object*, Object*> objectPair) {
     string firstKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.first->getId() : objectPair.second->getId();
     string secondKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.second->getId() : objectPair.first->getId();
     return firstKey + "-" + secondKey;
 }
 
 // TODO: implement BPCD algorithm as a class that inherits from an interface
-map<string, pair<Ball*, Ball*>> getCollisions(Ball** balls) {
-    map<string, pair<Ball*, Ball*>> collisionMap;
+map<string, pair<Object*, Object*>> getCollisions(Object** objects) {
+    map<string, pair<Object*, Object*>> collisionMap;
     for (int i = 0; i < 16; i++)
         for (int j = i + 1; j < 16; j++) {
-            Ball* ball1 = balls[i];
-            Ball* ball2 = balls[j];
-            Point* ball1Pos = ball1->getPos();
-            Point* ball2Pos = ball2->getPos();
+            Object* object1 = objects[i];
+            Object* object2 = objects[j];
+            Point* object1Pos = object1->getPos();
+            Point* object2Pos = object2->getPos();
 
-            Point* normalVector = (*ball1Pos) - ball2Pos;
+            Point* normalVector = (*object1Pos) - object2Pos;
             double distance = normalVector->magnitude();
 
-            if (distance < ball1->getRad() + ball2->getRad()) {
-                pair<Ball*, Ball*> objectPair = make_pair(ball1, ball2);
-                string objectPairId = getObjectPairId(objectPair);
-                if (collisionMap.find(objectPairId) == collisionMap.end()) {
-                    collisionMap.insert(pair<string, pair<Ball*, Ball*>>(objectPairId, objectPair));
+            Ball* ball1 = (Ball*)object1;
+            Ball* ball2 = (Ball*)object2;
+
+            if (ball1 && ball2) {
+                // Ball Collision detection
+                if (distance < ball1->getRad() + ball2->getRad()) {
+                    pair<Object*, Object*> objectPair = make_pair(ball1, ball2);
+                    string objectPairId = getObjectPairId(objectPair);
+                    if (collisionMap.find(objectPairId) == collisionMap.end()) {
+                        collisionMap.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
+                    }
                 }
             }
         }
     return collisionMap;
 }
 
-bool ballsNotMoving(Ball** balls) {
+bool objectsNotMoving(Object** objects) {
     for (int i = 0; i < 16; i++)
-        if (balls[i]->isMoving())
+        if (objects[i]->isMoving())
             return false;
     return true;
 }
 
-void drawBalls(Ball** balls) {
+void drawObjects(Object** objects) {
     int i = 0;
-    balls[0]->draw();
-    for (int i = 1; i < 16; i++) {
-        balls[i]->draw();
+    for (int i = 0; i < 16; i++) {
+        objects[i]->draw();
     }
 }
 
@@ -278,13 +284,13 @@ int main(int argc, char* argv[]) {
     double ballRad = 0.2;
     double ballMass = 1;
 
-    Ball** balls = initializeScene(ballRad, ballMass);
+    Object** objects = initializeScene(ballRad, ballMass);
     bool quit = false;
     bool pause = false;
     bool slowMotion = false;
     bool showMenu = false;
 
-    map<string, pair<Ball*, Ball*>> oldCollisions;
+    map<string, pair<Object*, Object*>> oldCollisions;
 
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
@@ -301,14 +307,14 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         drawFloor();
-        drawBalls(balls);
+        drawObjects(objects);
 
         // Apply physics and movement
         if (!pause) {
-            map<string, pair<Ball*, Ball*>> collisions = getCollisions(balls);
+            map<string, pair<Object*, Object*>> collisions = getCollisions(objects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(balls, timeSinceLastFrame / 40, slowMotion);
+            moveObjects(objects, timeSinceLastFrame / 40, slowMotion);
         }
 
         // Process events
