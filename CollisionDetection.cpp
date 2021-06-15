@@ -8,6 +8,8 @@
 #include "include/Point.h"
 #include "include/Ball.h"
 #include "include/Object.h"
+#include "include/BroadPhaseAlgorithm.h"
+#include "include/BruteForceBPA.h"
 #include <thread>
 #include <string>
 #include <map>
@@ -105,42 +107,6 @@ void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<stri
         object1->setVelocity(newVector1Velocity);
         object2->setVelocity(newVector2Velocity);
     }
-}
-
-string getObjectPairId(pair<Object*, Object*> objectPair) {
-    string firstKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.first->getId() : objectPair.second->getId();
-    string secondKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.second->getId() : objectPair.first->getId();
-    return firstKey + "-" + secondKey;
-}
-
-// TODO: implement BPCD algorithm as a class that inherits from an interface
-map<string, pair<Object*, Object*>> getCollisions(Object** objects) {
-    map<string, pair<Object*, Object*>> collisionMap;
-    for (int i = 0; i < 16; i++)
-        for (int j = i + 1; j < 16; j++) {
-            Object* object1 = objects[i];
-            Object* object2 = objects[j];
-            Point* object1Pos = object1->getPos();
-            Point* object2Pos = object2->getPos();
-
-            Point* normalVector = (*object1Pos) - object2Pos;
-            double distance = normalVector->magnitude();
-
-            Ball* ball1 = (Ball*)object1;
-            Ball* ball2 = (Ball*)object2;
-
-            if (ball1 && ball2) {
-                // Ball Collision detection
-                if (distance < ball1->getRad() + ball2->getRad()) {
-                    pair<Object*, Object*> objectPair = make_pair(ball1, ball2);
-                    string objectPairId = getObjectPairId(objectPair);
-                    if (collisionMap.find(objectPairId) == collisionMap.end()) {
-                        collisionMap.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
-                    }
-                }
-            }
-        }
-    return collisionMap;
 }
 
 bool objectsNotMoving(Object** objects) {
@@ -290,6 +256,7 @@ int main(int argc, char* argv[]) {
     bool slowMotion = false;
     bool showMenu = false;
 
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
     map<string, pair<Object*, Object*>> oldCollisions;
 
     clock_t lastFrameTime = clock();
@@ -311,7 +278,7 @@ int main(int argc, char* argv[]) {
 
         // Apply physics and movement
         if (!pause) {
-            map<string, pair<Object*, Object*>> collisions = getCollisions(objects);
+            map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, timeSinceLastFrame / 40, slowMotion);
