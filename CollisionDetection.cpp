@@ -61,8 +61,9 @@ void moveObjects(Ball** balls, float frames, bool slowMotion) {
     for (int i = 0; i < 16; i++) balls[i]->updatePosAndVel(time, balls);
 }
 
-void applyCollisions(map<string, pair<Ball*, Ball*>> collisionMap) {
+void applyCollisions(map<string, pair<Ball*, Ball*>> oldCollisions, map<string, pair<Ball*, Ball*>> collisionMap) {
     for (auto const& mapEntry : collisionMap) {
+        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
         pair<Ball*, Ball*> collisionPair = mapEntry.second;
         Ball* ball1 = collisionPair.first;
         Ball* ball2 = collisionPair.second;
@@ -278,11 +279,12 @@ int main(int argc, char* argv[]) {
     double ballMass = 1;
 
     Ball** balls = initializeScene(ballRad, ballMass);
-
     bool quit = false;
     bool pause = false;
     bool slowMotion = false;
     bool showMenu = false;
+
+    map<string, pair<Ball*, Ball*>> oldCollisions;
 
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
@@ -304,7 +306,8 @@ int main(int argc, char* argv[]) {
         // Apply physics and movement
         if (!pause) {
             map<string, pair<Ball*, Ball*>> collisions = getCollisions(balls);
-            applyCollisions(collisions);
+            applyCollisions(oldCollisions, collisions);
+            oldCollisions = collisions;
             moveObjects(balls, timeSinceLastFrame / 40, slowMotion);
         }
 
