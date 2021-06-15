@@ -1,8 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
-#include <string>
 #include "Color.h"
 #include "Point.h"
+#include <string>
 
 using namespace std;
 

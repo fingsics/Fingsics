@@ -1,6 +1,6 @@
 #ifndef BALL_H
 #define BALL_H
-#include "SDL/SDL_opengl.h"
+#include "SDL_opengl.h"
 #include "Color.h"
 #include "Point.h"
 #include "Object.h"

@@ -1,23 +1,22 @@
 // CollisionDetection.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
-#include "SDL/SDL.h"
-#include "SDL/SDL_opengl.h"
+#include "SDL.h"
+#include "SDL_opengl.h"
 #include "include/Color.h"
 #include "include/Point.h"
 #include "include/Ball.h"
 #include "include/Object.h"
 #include "include/BroadPhaseAlgorithm.h"
 #include "include/BruteForceBPA.h"
+#include "freeglut.h"
+#include <iostream>
 #include <thread>
 #include <string>
 #include <map>
-#include <glm/glm.hpp>
-#include <glut.h>
 
 #define _USE_MATH_DEFINES
-#define FPS 30
+#define FPS 60
 
 using namespace std;
 
@@ -141,24 +140,29 @@ void drawFloor() {
     glEnd();
 }
 
-void initializeSDL() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+SDL_Window* initializeSDL() {
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
         exit(1);
     }
 
     atexit(SDL_Quit);
-    Uint32 flags = SDL_DOUBLEBUF | SDL_HWSURFACE | SDL_OPENGL;
 
-    if (SDL_SetVideoMode(1280, 720, 32, flags) == NULL) {
+    SDL_Window* window = SDL_CreateWindow("My Game Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+    if (window == NULL) {
         cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
         exit(1);
     }
 
-    if (SDL_EnableKeyRepeat(30, 10) < 0) {
-        cerr << "Failed to initialize key-repeat mode: " << SDL_GetError() << endl;
-        exit(1);
-    }
+    SDL_GLContext glcontext = SDL_GL_CreateContext(window);
+
+    //if (SDL_EnableKeyRepeat(30, 10) < 0) {
+    //    cerr << "Failed to initialize key-repeat mode: " << SDL_GetError() << endl;
+    //    exit(1);
+    //}
+
+
+    return window;
 }
 
 void setLighting() {
@@ -237,9 +241,8 @@ void manageFrameTime(clock_t &lastFrameTime, float &timeSinceLastFrame) {
     lastFrameTime = clock();
 }
 
-#undef main
 int main(int argc, char* argv[]) {
-    initializeSDL();
+    SDL_Window* window = initializeSDL();
 
     glMatrixMode(GL_PROJECTION);
     glClearColor(0, 0, 0, 1);
@@ -290,7 +293,7 @@ int main(int argc, char* argv[]) {
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame);
 
-        SDL_GL_SwapBuffers();
+        SDL_GL_SwapWindow(window);
     }
     return 0;
 }
