@@ -20,16 +20,12 @@
 
 using namespace std;
 
-vector<Object*> initializeScene(double ballRad, double ballMass) {
+vector<Object*> initializeScene() {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLError eResult = xml_doc.LoadFile("settings.xml");
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
 
     Color* ballColor = new Color(200, 200, 200);
-    Color* ballColor2 = new Color(200, 20, 20);
-    float height = ballRad;
-    float whiteBallDistance = 1.5;
-    float ballSeparation = ballRad * 1.75;
     vector<Object*> balls = vector<Object*>();
 
     // Parse objects
@@ -46,7 +42,7 @@ vector<Object*> initializeScene(double ballRad, double ballMass) {
             object->QueryDoubleAttribute("vx", &vx);
             object->QueryDoubleAttribute("vy", &vy);
             object->QueryDoubleAttribute("vz", &vz);
-            balls.push_back(new Ball(to_string(balls.size()), x, y, z, radius, mass, balls.size() == 0 ? ballColor : ballColor2));
+            balls.push_back(new Ball(to_string(balls.size()), x, y, z, radius, mass, ballColor));
         }
     }
 
@@ -285,12 +281,10 @@ int main(int argc, char* argv[]) {
 
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
-    double ballRad = 0.2;
-    double ballMass = 1;
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
     map<string, pair<Object*, Object*>> oldCollisions;
 
-    vector<Object*> objectsVector = initializeScene(ballRad, ballMass);
+    vector<Object*> objectsVector = initializeScene();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
