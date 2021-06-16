@@ -27,7 +27,7 @@ vector<Object*> initializeScene() {
     vector<Object*> balls = vector<Object*>();
 
     // Parse objects
-    double x, y, z, radius, mass, vx, vy, vz;
+    double x, y, z, radius, mass, elasticityCoef, vx, vy, vz;
     int colorR, colorG, colorB;
     tinyxml2::XMLElement* objects = config->FirstChildElement("objects");
     for (const tinyxml2::XMLElement* object = objects->FirstChildElement(); object; object = object->NextSiblingElement()) {
@@ -38,22 +38,23 @@ vector<Object*> initializeScene() {
             object->QueryDoubleAttribute("z", &z);
             object->QueryDoubleAttribute("radius", &radius);
             object->QueryDoubleAttribute("mass", &mass);
+            object->QueryDoubleAttribute("elasticityCoef", &elasticityCoef);
             object->QueryDoubleAttribute("vx", &vx);
             object->QueryDoubleAttribute("vy", &vy);
             object->QueryDoubleAttribute("vz", &vz);
             object->QueryIntAttribute("colorR", &colorR);
             object->QueryIntAttribute("colorG", &colorG);
             object->QueryIntAttribute("colorB", &colorB);
-            balls.push_back(new Ball(to_string(balls.size()), Point(x, y, z), Point(vx, vy, vz), Point(0,-9.8 * mass,0), radius, mass, Color(colorR, colorG, colorB)));
+            balls.push_back(new Ball(to_string(balls.size()), Point(x, y, z), Point(vx, vy, vz), Point(0,-9.8 * mass,0), radius, mass, elasticityCoef, Color(colorR, colorG, colorB)));
         }
     }
 
     return balls;
 }
 
-void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
+void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion, float roomFloor) {
     float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
+    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time, roomFloor);
 }
 
 void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
@@ -108,11 +109,9 @@ void drawObjects(Object** objects, int numObjects) {
     }
 }
 
-void drawFloor() {
-    int roomLength = 20;
-    int roomWidth = 15;
-    int roomHeight = 20;
-    float roomFloor = -50;
+void drawFloor(float roomFloor) {
+    int roomLength = 100;
+    int roomWidth = 100;
 
     glColor3ub(230, 230, 230);
 
@@ -265,11 +264,11 @@ int main(int argc, char* argv[]) {
     // Camera configuration
     bool moveCam = false;
     float camX = 0;
-    float camY = 6;
-    float camZ = -6;
+    float camY = 12;
+    float camZ = -12;
     float camAngA = 0;
     float camAngB = -45;
-    float camRad = -8.4852; // sqrt(y^2 + z^2)
+    float camRad = -16.9705627485; // sqrt(y^2 + z^2)
 
     // Program options
     bool quit = false;
@@ -278,6 +277,7 @@ int main(int argc, char* argv[]) {
     bool slowMotion = false;
     bool showMenu = false;
 
+    float roomFloor = 0;
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
@@ -305,7 +305,7 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         if (draw) {
-            drawFloor();
+            drawFloor(roomFloor);
             drawObjects(objects, numObjects);
         }
 
@@ -314,7 +314,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
+            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, roomFloor);
         }
 
         // Process events

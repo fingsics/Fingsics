@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(string id, Point pos, Point vel, Point force, double rad, double mass, Color color) :  Object(id, pos, vel, force, mass, color) {
+Ball::Ball(string id, Point pos, Point vel, Point force, double rad, double mass, double elasticityCoef, Color color) :  Object(id, pos, vel, force, mass, elasticityCoef, color) {
     this->rad = rad;
 }
 
@@ -50,3 +50,18 @@ void Ball::draw() {
     }
     glPopMatrix();
  }
+
+void Ball::updatePosAndVel(double secondsElapsed, float roomFloor) {
+    // Check collision with floor
+    if (pos.getY() - rad <= roomFloor && vel.getY() < 0) {
+        vel = Point(vel.getX(), -vel.getY() * elasticityCoef, vel.getZ());
+    }
+
+    // Update velocity
+    Point acceleration = force / mass;
+    vel = vel + acceleration * secondsElapsed;
+
+    // Update position
+    float epsilon = 0.001;
+    pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(rad - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
+}

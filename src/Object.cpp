@@ -2,9 +2,10 @@
 
 using namespace std;
 
-Object::Object(string id, Point pos, Point vel, Point force, double mass, Color color) {
+Object::Object(string id, Point pos, Point vel, Point force, double mass, double elasticityCoef, Color color) {
     this->pos = pos;
     this->mass = mass;
+    this->elasticityCoef = elasticityCoef;
     this->vel = vel;
     this->force = force;
     this->color = color;
@@ -13,15 +14,6 @@ Object::Object(string id, Point pos, Point vel, Point force, double mass, Color 
 
 bool Object::isMoving(){
     return vel.isZero();
-}
-
-void Object::updatePosAndVel(double secondsElapsed){
-    // Update velocity
-    Point acceleration = force / mass;
-    vel = vel + acceleration * secondsElapsed;
-
-    // Update position
-    pos = pos + vel * secondsElapsed;
 }
 
 double Object::getMass(){

@@ -14,8 +14,9 @@ class Object {
         Point force;
         double mass;
         Color color;
+        double elasticityCoef;
     public:
-        Object(string, Point, Point, Point, double, Color);
+        Object(string, Point, Point, Point, double, double, Color);
         double getMass();
         bool isMoving();
         string getId();
@@ -25,7 +26,7 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void setForce(Point);
-        void updatePosAndVel(double);
+        virtual void updatePosAndVel(double, float) = 0;
 
         // Virtual methods
         virtual void draw() = 0;
