@@ -2,10 +2,10 @@
 
 using namespace std;
 
-map<string, pair<Object*, Object*>> BruteForceBPA::getCollisions(Object** objects) {
+map<string, pair<Object*, Object*>> BruteForceBPA::getCollisions(Object** objects, int numObjects) {
     map<string, pair<Object*, Object*>> collisionMap;
-    for (int i = 0; i < 16; i++)
-        for (int j = i + 1; j < 16; j++) {
+    for (int i = 0; i < numObjects; i++)
+        for (int j = i + 1; j < numObjects; j++) {
             Object* object1 = objects[i];
             Object* object2 = objects[j];
             Point* object1Pos = object1->getPos();

@@ -162,6 +162,7 @@
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
+    <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
+    <ClInclude Include="tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

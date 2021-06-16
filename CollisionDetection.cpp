@@ -1,6 +1,5 @@
 // CollisionDetection.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "include/Color.h"
@@ -10,6 +9,7 @@
 #include "include/BroadPhaseAlgorithm.h"
 #include "include/BruteForceBPA.h"
 #include "freeglut.h"
+#include "tinyxml2/tinyxml2.h"
 #include <iostream>
 #include <thread>
 #include <string>
@@ -20,47 +20,45 @@
 
 using namespace std;
 
-// TODO: load from XML
-Object** initializeScene(double ballRad, double ballMass) {
-    Object** objects = new Object * [16];
-    Color* ballColor = new Color(200, 20, 20);
-    Color* ballColor2 = new Color(200, 200, 200);
+vector<Object*> initializeScene(double ballRad, double ballMass) {
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLError eResult = xml_doc.LoadFile("settings.xml");
+    tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
+
+    Color* ballColor = new Color(200, 200, 200);
+    Color* ballColor2 = new Color(200, 20, 20);
     float height = ballRad;
     float whiteBallDistance = 1.5;
     float ballSeparation = ballRad * 1.75;
+    vector<Object*> balls = vector<Object*>();
 
-    // White ball
-    objects[0] = new Ball("0", -2, height, 0, ballRad, ballMass, ballColor2);
-    // First line
-    objects[1] = new Ball("1", whiteBallDistance, height, 0, ballRad, ballMass, ballColor);
-    // Second line
-    objects[2] = new Ball("2", whiteBallDistance + ballSeparation, height, ballRad, ballRad, ballMass, ballColor);
-    objects[3] = new Ball("3", whiteBallDistance + ballSeparation, height, -ballRad, ballRad, ballMass, ballColor);
-    // Third line
-    objects[4] = new Ball("4", whiteBallDistance + ballSeparation * 2, height, 0, ballRad, ballMass, ballColor);
-    objects[5] = new Ball("5", whiteBallDistance + ballSeparation * 2, height, ballRad * 2, ballRad, ballMass, ballColor);
-    objects[6] = new Ball("6", whiteBallDistance + ballSeparation * 2, height, -ballRad * 2, ballRad, ballMass, ballColor);
-    // Forth line
-    objects[7] = new Ball("7", whiteBallDistance + ballSeparation * 3, height, ballRad, ballRad, ballMass, ballColor);
-    objects[8] = new Ball("8", whiteBallDistance + ballSeparation * 3, height, -ballRad, ballRad, ballMass, ballColor);
-    objects[9] = new Ball("9", whiteBallDistance + ballSeparation * 3, height, ballRad + ballRad * 2, ballRad, ballMass, ballColor);
-    objects[10] = new Ball("10", whiteBallDistance + ballSeparation * 3, height, -ballRad - ballRad * 2, ballRad, ballMass, ballColor);
-    // Fifth line
-    objects[11] = new Ball("11", whiteBallDistance + ballSeparation * 4, height, 0, ballRad, ballMass, ballColor);
-    objects[12] = new Ball("12", whiteBallDistance + ballSeparation * 4, height, ballRad * 2, ballRad, ballMass, ballColor);
-    objects[13] = new Ball("13", whiteBallDistance + ballSeparation * 4, height, ballRad * 4, ballRad, ballMass, ballColor);
-    objects[14] = new Ball("14", whiteBallDistance + ballSeparation * 4, height, -ballRad * 2, ballRad, ballMass, ballColor);
-    objects[15] = new Ball("15", whiteBallDistance + ballSeparation * 4, height, -ballRad * 4, ballRad, ballMass, ballColor);
+    // Parse objects
+    double x, y, z, radius, mass, vx, vy, vz;
+    tinyxml2::XMLElement* objects = config->FirstChildElement("objects");
+    for (const tinyxml2::XMLElement* object = objects->FirstChildElement(); object; object = object->NextSiblingElement()) {
+        string objectType = string(object->Name());
+        if (objectType == "sphere") {
+            object->QueryDoubleAttribute("x", &x);
+            object->QueryDoubleAttribute("y", &y);
+            object->QueryDoubleAttribute("z", &z);
+            object->QueryDoubleAttribute("radius", &radius);
+            object->QueryDoubleAttribute("mass", &mass);
+            object->QueryDoubleAttribute("vx", &vx);
+            object->QueryDoubleAttribute("vy", &vy);
+            object->QueryDoubleAttribute("vz", &vz);
+            balls.push_back(new Ball(to_string(balls.size()), x, y, z, radius, mass, balls.size() == 0 ? ballColor : ballColor2));
+        }
+    }
 
     // Set white ball initial velocity
-    objects[0]->setVelocity(new Point(25, 0, 0));
+    balls[0]->setVelocity(new Point(20, 0, 0));
 
-    return objects;
+    return balls;
 }
 
-void moveObjects(Object** objects, float frames, bool slowMotion) {
+void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
     float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < 16; i++) objects[i]->updatePosAndVel(time);
+    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
 void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
@@ -108,16 +106,16 @@ void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<stri
     }
 }
 
-bool objectsNotMoving(Object** objects) {
-    for (int i = 0; i < 16; i++)
+bool objectsNotMoving(Object** objects, int numObjects) {
+    for (int i = 0; i < numObjects; i++)
         if (objects[i]->isMoving())
             return false;
     return true;
 }
 
-void drawObjects(Object** objects) {
+void drawObjects(Object** objects, int numObjects) {
     int i = 0;
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < numObjects; i++) {
         objects[i]->draw();
     }
 }
@@ -253,7 +251,9 @@ int main(int argc, char* argv[]) {
     double ballRad = 0.2;
     double ballMass = 1;
 
-    Object** objects = initializeScene(ballRad, ballMass);
+    vector<Object*> objectsVector = initializeScene(ballRad, ballMass);
+    Object** objects = &objectsVector[0];
+    int numObjects = objectsVector.size();
     bool quit = false;
     bool pause = false;
     bool slowMotion = false;
@@ -277,14 +277,14 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         drawFloor();
-        drawObjects(objects);
+        drawObjects(objects, numObjects);
 
         // Apply physics and movement
         if (!pause) {
-            map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects);
+            map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(objects, timeSinceLastFrame / 40, slowMotion);
+            moveObjects(objects, numObjects, timeSinceLastFrame / 40, slowMotion);
         }
 
         // Process events
