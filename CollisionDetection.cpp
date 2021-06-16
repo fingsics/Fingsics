@@ -16,7 +16,7 @@
 #include <map>
 
 #define _USE_MATH_DEFINES
-#define FPS 60
+#define FPS 30
 
 using namespace std;
 
@@ -141,26 +141,19 @@ void drawFloor() {
 }
 
 SDL_Window* initializeSDL() {
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
         exit(1);
     }
 
     atexit(SDL_Quit);
 
-    SDL_Window* window = SDL_CreateWindow("My Game Window", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("Fingsycs", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
     if (window == NULL) {
         cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
         exit(1);
     }
-
-    SDL_GLContext glcontext = SDL_GL_CreateContext(window);
-
-    //if (SDL_EnableKeyRepeat(30, 10) < 0) {
-    //    cerr << "Failed to initialize key-repeat mode: " << SDL_GetError() << endl;
-    //    exit(1);
-    //}
-
+    SDL_GL_CreateContext(window);
 
     return window;
 }
@@ -197,7 +190,13 @@ void setLighting() {
     glPopMatrix();
 }
 
-void checkForInput(bool &slowMotion, bool &pause, bool &quit) {
+void updateCam(float& x, float& y, float& z, float x_angle, float y_angle, float radius) {
+    z = cos(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
+    x = sin(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
+    y = sin(x_angle * M_PI / 180) * radius;
+}
+
+void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, bool& moveCam, float &camRad, float& camX, float& camY, float& camZ, float& camAngA, float& camAngB) {
     SDL_Event event;
     int xm, ym;
     SDL_GetMouseState(&xm, &ym);
@@ -205,6 +204,22 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit) {
         switch (event.type) {
         case SDL_QUIT:
             quit = true;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3))
+                moveCam = true;
+            break;
+        case SDL_MOUSEBUTTONUP:
+            moveCam = false;
+            break;
+        case SDL_MOUSEMOTION:
+            if (moveCam) {
+                camAngA += event.motion.xrel * 0.4;
+                camAngB -= event.motion.yrel * 0.4;
+                if (camAngB> -0.5) camAngB = -0.5; // Avoid camera going under the floor
+                else if (camAngB < -80) camAngB = -80; // Avoid camera flipping when rotating to the top of the scene
+                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
+            }
             break;
         case SDL_KEYUP: {
             switch (event.key.keysym.sym) {
@@ -219,6 +234,23 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit) {
                 break;
             case SDLK_m:
                 slowMotion = !slowMotion;
+                break;
+            case SDLK_d:
+                draw = !draw;
+                break;
+            default:
+                break;
+            }
+        }
+        case SDL_KEYDOWN: {
+            switch (event.key.keysym.sym) {
+            case SDLK_s:
+                camRad -= .1;
+                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
+                break;
+            case SDLK_w:
+                if (camRad < 0) camRad += .1;
+                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
                 break;
             default:
                 break;
@@ -244,40 +276,52 @@ void manageFrameTime(clock_t &lastFrameTime, float &timeSinceLastFrame) {
 int main(int argc, char* argv[]) {
     SDL_Window* window = initializeSDL();
 
+    // Camera configuration
+    bool moveCam = false;
+    float camX = 0;
+    float camY = 6;
+    float camZ = -6;
+    float camAngA = 0;
+    float camAngB = -45;
+    float camRad = -8.4852; // sqrt(y^2 + z^2)
+
+    // Program options
+    bool quit = false;
+    bool pause = false;
+    bool draw = true;
+    bool slowMotion = false;
+    bool showMenu = false;
+
+    clock_t lastFrameTime = clock();
+    float timeSinceLastFrame = 0;
+    double ballRad = 0.2;
+    double ballMass = 1;
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
+    map<string, pair<Object*, Object*>> oldCollisions;
+
+    Object** objects = initializeScene(ballRad, ballMass);
+
     glMatrixMode(GL_PROJECTION);
     glClearColor(0, 0, 0, 1);
     gluPerspective(45, 1280 / 720.f, 0.1, 100);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 
-    double ballRad = 0.2;
-    double ballMass = 1;
-
-    Object** objects = initializeScene(ballRad, ballMass);
-    bool quit = false;
-    bool pause = false;
-    bool slowMotion = false;
-    bool showMenu = false;
-
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
-    map<string, pair<Object*, Object*>> oldCollisions;
-
-    clock_t lastFrameTime = clock();
-    float timeSinceLastFrame = 0;
-
     while (!quit) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
 
         // Set camera position
-        gluLookAt(0, 7, 0, 0, 0, 0, 0, 0, -1);
+        gluLookAt(camX, camY, -camZ, 0, 0, 0, 0, 1, 0);
 
         // Set light
         setLighting();
 
         // Draw objects
-        drawFloor();
-        drawObjects(objects);
+        if (draw) {
+            drawFloor();
+            drawObjects(objects);
+        }
 
         // Apply physics and movement
         if (!pause) {
@@ -288,7 +332,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit);
+        checkForInput(slowMotion, pause, quit, draw, moveCam, camRad, camX, camY, camZ, camAngA, camAngB);
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame);
