@@ -11,7 +11,7 @@ class BroadPhaseAlgorithm {
         string getObjectPairId(pair<Object*, Object*> objectPair);
     public:
         // Virtual methods
-        virtual map<string, pair<Object*, Object*>> getCollisions(Object** objects) = 0;
+        virtual map<string, pair<Object*, Object*>> getCollisions(Object** objects, int numObjects) = 0;
 };
 
 #endif

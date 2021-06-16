@@ -82,7 +82,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>.\freeglut\lib\x64;.\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\freeglut\lib;.\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,6 +162,7 @@
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
+    <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
+    <ClInclude Include="tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

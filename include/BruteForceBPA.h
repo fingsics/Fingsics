@@ -10,7 +10,7 @@ using namespace std;
 
 class BruteForceBPA : public BroadPhaseAlgorithm {
     public:
-        map<string, pair<Object*, Object*>> getCollisions(Object** objects);
+        map<string, pair<Object*, Object*>> getCollisions(Object** objects, int numObjects);
 };
 
 #endif

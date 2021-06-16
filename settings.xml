@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<floor x="0" />
+	<objects>
+		<sphere x="-2" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+		<sphere x="0" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+		<sphere x="1" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+		<sphere x="2" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+		<sphere x="3" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+		<sphere x="4" y="0.2" z="0" radius="0.2" mass="1" vx="1" vy="0" vz="0" />
+	</objects>
+</config>
