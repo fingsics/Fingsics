@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(string id, double x, double y, double z, double rad, double mass, Color* color) :  Object(id, x, y, z, mass, color) {
+Ball::Ball(string id, Point pos, Point vel, double rad, double mass, Color color) :  Object(id, pos, vel, mass, color) {
     this->rad = rad;
 }
 
@@ -14,7 +14,7 @@ void Ball::draw() {
     glPushMatrix();
 
     // Ball movement
-    glTranslatef(posX, posY, posZ);
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
 
     // Draw sphere
     for(int i = 0; i <= LATS; i++)
@@ -28,7 +28,7 @@ void Ball::draw() {
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        glColor3ub( color->getR(), color->getG(), color->getB());
+        glColor3ub( color.getR(), color.getG(), color.getB());
         for(int j = 0; j <= LONGS; j++)
         {
             double lng = 2 * M_PI * (double) (j - 1) / LONGS;

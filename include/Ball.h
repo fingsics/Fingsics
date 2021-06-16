@@ -19,7 +19,7 @@ class Ball : public Object {
         double rad;
 
     public:
-        Ball(string, double, double, double, double, double, Color*);
+        Ball(string, Point, Point, double, double, Color);
         void draw();
         double getRad();
 };

@@ -12,15 +12,17 @@ class Point{
         float z;
     public:
         Point(float, float, float);
+        Point();
         float getX();
         float getY();
         float getZ();
-        float dotProduct(Point*);
+        float dotProduct(Point);
         double magnitude();
-        Point* operator-(Point*);
-        Point* operator+(Point*);
-        Point* operator/(double);
-        Point* operator*(double);
+        bool isZero();
+        Point operator-(Point);
+        Point operator+(Point);
+        Point operator/(double);
+        Point operator*(double);
 };
 
 #endif

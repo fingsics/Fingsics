@@ -2,7 +2,14 @@
 
 using namespace std;
 
+Color::Color() {
+    this->r = 255;
+    this->g = 255;
+    this->b = 255;
+}
+
 Color::Color(int r, int g, int b){
+    if (r < 0 || g < 0 || b < 0 || r > 255 || g > 255 || b > 255) throw "Invalid color values.";
     this->r = r;
     this->g = g;
     this->b = b;

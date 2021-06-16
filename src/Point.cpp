@@ -2,10 +2,16 @@
 
 using namespace std;
 
-Point::Point(float x, float y, float z){
+Point::Point(float x, float y, float z) {
     this->x = x;
     this->y = y;
     this->z = z;
+}
+
+Point::Point() {
+    this->x = 0;
+    this->y = 0;
+    this->z = 0;
 }
 
 float Point::getX() {
@@ -20,30 +26,32 @@ float Point::getZ() {
   return z;
 }
 
+
+
 double Point::magnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
-float Point::dotProduct(Point* vector2){
-    return (x * vector2->getX()) + (y * vector2->getY()) + (z * vector2->getZ());
+bool Point::isZero() {
+    return x == 0 && y == 0 && z == 0;
 }
 
-Point* Point::operator-(Point* vector2){
-    Point* res = new Point(x - vector2->getX(), y - vector2->getY(), z - vector2->getZ());
-    return res;
+float Point::dotProduct(Point vector2){
+    return (x * vector2.getX()) + (y * vector2.getY()) + (z * vector2.getZ());
 }
 
-Point* Point::operator+(Point* vector2){
-    Point* res = new Point(x + vector2->getX(), y + vector2->getY(), z + vector2->getZ());
-    return res;
+Point Point::operator-(Point vector2){
+    return Point(x - vector2.getX(), y - vector2.getY(), z - vector2.getZ());
 }
 
-Point* Point::operator/(double divisor){
-    Point* res = new Point(x / divisor, y / divisor, z / divisor);
-    return res;
+Point Point::operator+(Point vector2){
+    return Point(x + vector2.getX(), y + vector2.getY(), z + vector2.getZ());
 }
 
-Point* Point::operator*(double divisor){
-    Point* res = new Point(x * divisor, y * divisor, z * divisor);
-    return res;
+Point Point::operator/(double divisor){
+    return Point(x / divisor, y / divisor, z / divisor);
+}
+
+Point Point::operator*(double divisor){
+    return Point(x * divisor, y * divisor, z * divisor);
 }

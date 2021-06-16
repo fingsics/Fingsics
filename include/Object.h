@@ -9,28 +9,21 @@ using namespace std;
 class Object {
     protected:
         string id;
-        double posX;
-        double posY;
-        double posZ;
-        double velX;
-        double velY;
-        double velZ;
+        Point pos;
+        Point vel;
         double mass;
-        Color* color;
+        Color color;
         void decreaseVelocity(double);
     public:
-        Object(string, double, double, double, double, Color*);
-        double getPosX();
-        double getPosY();
-        double getPosZ();
+        Object(string, Point, Point, double, Color);
         double getMass();
         bool isMoving();
         string getId();
-        Point* getPos();
-        Point* getVel();
-        void setPos(Point*);
+        Point getPos();
+        Point getVel();
+        void setPos(Point);
+        void setVel(Point);
         void updatePosAndVel(double);
-        void setVelocity(Point*);
 
         // Virtual methods
         virtual void draw() = 0;

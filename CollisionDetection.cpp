@@ -24,12 +24,11 @@ vector<Object*> initializeScene() {
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLError eResult = xml_doc.LoadFile("settings.xml");
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
-
-    Color* ballColor = new Color(200, 200, 200);
     vector<Object*> balls = vector<Object*>();
 
     // Parse objects
     double x, y, z, radius, mass, vx, vy, vz;
+    int colorR, colorG, colorB;
     tinyxml2::XMLElement* objects = config->FirstChildElement("objects");
     for (const tinyxml2::XMLElement* object = objects->FirstChildElement(); object; object = object->NextSiblingElement()) {
         string objectType = string(object->Name());
@@ -42,12 +41,12 @@ vector<Object*> initializeScene() {
             object->QueryDoubleAttribute("vx", &vx);
             object->QueryDoubleAttribute("vy", &vy);
             object->QueryDoubleAttribute("vz", &vz);
-            balls.push_back(new Ball(to_string(balls.size()), x, y, z, radius, mass, ballColor));
+            object->QueryIntAttribute("colorR", &colorR);
+            object->QueryIntAttribute("colorG", &colorG);
+            object->QueryIntAttribute("colorB", &colorB);
+            balls.push_back(new Ball(to_string(balls.size()), Point(x,y,z), Point(vx,vy,vz), radius, mass, Color(colorR,colorG,colorB)));
         }
     }
-
-    // Set white ball initial velocity
-    balls[0]->setVelocity(new Point(20, 0, 0));
 
     return balls;
 }
@@ -65,21 +64,21 @@ void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<stri
         Object* object2 = collisionPair.second;
         double object1Mass = object1->getMass();
         double object2Mass = object2->getMass();
-        Point* object1Vel = object1->getVel();
-        Point* object2Vel = object2->getVel();
-        Point* object1Pos = object1->getPos();
-        Point* object2Pos = object2->getPos();
+        Point object1Vel = object1->getVel();
+        Point object2Vel = object2->getVel();
+        Point object1Pos = object1->getPos();
+        Point object2Pos = object2->getPos();
 
-        Point* normalVector = (*object1Pos) - object2Pos;
-        double distance = normalVector->magnitude();
+        Point normalVector = object1Pos - object2Pos;
+        double distance = normalVector.magnitude();
 
-        Point* unitVector = (*normalVector) / distance;
-        Point* tangentVector = new Point(-unitVector->getZ(), -unitVector->getY(), unitVector->getX());
+        Point unitVector = normalVector / distance;
+        Point tangentVector = Point(-unitVector.getZ(), -unitVector.getY(), unitVector.getX());
 
-        double vector1NormalMagnitude = unitVector->dotProduct(object1Vel);
-        double vector1TangentMagnitude = tangentVector->dotProduct(object1Vel);
-        double vector2NormalMagnitude = unitVector->dotProduct(object2Vel);
-        double vector2TangentMagnitude = tangentVector->dotProduct(object2Vel);
+        double vector1NormalMagnitude = unitVector.dotProduct(object1Vel);
+        double vector1TangentMagnitude = tangentVector.dotProduct(object1Vel);
+        double vector2NormalMagnitude = unitVector.dotProduct(object2Vel);
+        double vector2TangentMagnitude = tangentVector.dotProduct(object2Vel);
 
         // Because of conservation of kinetic energy
         double newVector1NormalMagnitude = (vector1NormalMagnitude * (object1Mass - object2Mass) + 2 * object2Mass * vector2NormalMagnitude) / (object1Mass + object2Mass);
@@ -89,16 +88,16 @@ void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<stri
         double newVector1TangentMagnitude = vector1TangentMagnitude;
         double newVector2TangentMagnitude = vector2TangentMagnitude;
 
-        Point* newVector1Normal = (*unitVector) * newVector1NormalMagnitude;
-        Point* newVector1Tangent = (*tangentVector) * newVector1TangentMagnitude;
-        Point* newVector2Normal = (*unitVector) * newVector2NormalMagnitude;
-        Point* newVector2Tangent = (*tangentVector) * newVector2TangentMagnitude;
+        Point newVector1Normal = unitVector * newVector1NormalMagnitude;
+        Point newVector1Tangent = tangentVector * newVector1TangentMagnitude;
+        Point newVector2Normal = unitVector * newVector2NormalMagnitude;
+        Point newVector2Tangent = tangentVector * newVector2TangentMagnitude;
 
-        Point* newVector1Velocity = (*newVector1Normal) + newVector1Tangent;
-        Point* newVector2Velocity = (*newVector2Normal) + newVector2Tangent;
+        Point newVector1Velocity = newVector1Normal + newVector1Tangent;
+        Point newVector2Velocity = newVector2Normal + newVector2Tangent;
 
-        object1->setVelocity(newVector1Velocity);
-        object2->setVelocity(newVector2Velocity);
+        object1->setVel(newVector1Velocity);
+        object2->setVel(newVector2Velocity);
     }
 }
 

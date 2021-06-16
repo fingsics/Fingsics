@@ -8,11 +8,11 @@ map<string, pair<Object*, Object*>> BruteForceBPA::getCollisions(Object** object
         for (int j = i + 1; j < numObjects; j++) {
             Object* object1 = objects[i];
             Object* object2 = objects[j];
-            Point* object1Pos = object1->getPos();
-            Point* object2Pos = object2->getPos();
+            Point object1Pos = object1->getPos();
+            Point object2Pos = object2->getPos();
 
-            Point* normalVector = (*object1Pos) - object2Pos;
-            double distance = normalVector->magnitude();
+            Point normalVector = object1Pos - object2Pos;
+            double distance = normalVector.magnitude();
 
             Ball* ball1 = (Ball*)object1;
             Ball* ball2 = (Ball*)object2;

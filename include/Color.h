@@ -9,6 +9,7 @@ class Color{
         int g;
         int b;
     public:
+        Color();
         Color(int, int, int);
         int getR();
         int getG();
