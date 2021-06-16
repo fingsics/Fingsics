@@ -44,7 +44,7 @@ vector<Object*> initializeScene() {
             object->QueryIntAttribute("colorR", &colorR);
             object->QueryIntAttribute("colorG", &colorG);
             object->QueryIntAttribute("colorB", &colorB);
-            balls.push_back(new Ball(to_string(balls.size()), Point(x,y,z), Point(vx,vy,vz), radius, mass, Color(colorR,colorG,colorB)));
+            balls.push_back(new Ball(to_string(balls.size()), Point(x, y, z), Point(vx, vy, vz), Point(0,-9.8 * mass,0), radius, mass, Color(colorR, colorG, colorB)));
         }
     }
 
@@ -112,7 +112,7 @@ void drawFloor() {
     int roomLength = 20;
     int roomWidth = 15;
     int roomHeight = 20;
-    float roomFloor = 0;
+    float roomFloor = -50;
 
     glColor3ub(230, 230, 230);
 
@@ -248,12 +248,12 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, bool& 
     }
 }
 
-void manageFrameTime(clock_t &lastFrameTime, float &timeSinceLastFrame) {
-    float minFrameTime = 1000 / FPS;
-    timeSinceLastFrame = (float)(clock() - lastFrameTime);
-    if (timeSinceLastFrame < minFrameTime) {
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - timeSinceLastFrame)));
-        timeSinceLastFrame = minFrameTime;
+void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
+    float minFrameTime = 1 / FPS;
+    secondsSinceLastFrame = (float)(clock() - lastFrameTime) / 1000;
+    if (secondsSinceLastFrame < minFrameTime) {
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - secondsSinceLastFrame)));
+        secondsSinceLastFrame = minFrameTime / 1000;
     }
     
     lastFrameTime = clock();
@@ -314,7 +314,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(objects, numObjects, timeSinceLastFrame / 40, slowMotion);
+            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }
 
         // Process events

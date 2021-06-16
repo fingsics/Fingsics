@@ -11,18 +11,20 @@ class Object {
         string id;
         Point pos;
         Point vel;
+        Point force;
         double mass;
         Color color;
-        void decreaseVelocity(double);
     public:
-        Object(string, Point, Point, double, Color);
+        Object(string, Point, Point, Point, double, Color);
         double getMass();
         bool isMoving();
         string getId();
         Point getPos();
         Point getVel();
+        Point getForce();
         void setPos(Point);
         void setVel(Point);
+        void setForce(Point);
         void updatePosAndVel(double);
 
         // Virtual methods

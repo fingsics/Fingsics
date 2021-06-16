@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(string id, Point pos, Point vel, double rad, double mass, Color color) :  Object(id, pos, vel, mass, color) {
+Ball::Ball(string id, Point pos, Point vel, Point force, double rad, double mass, Color color) :  Object(id, pos, vel, force, mass, color) {
     this->rad = rad;
 }
 
@@ -17,8 +17,7 @@ void Ball::draw() {
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
 
     // Draw sphere
-    for(int i = 0; i <= LATS; i++)
-    {
+    for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
         double z0 = sin(lat0);
         double zr0 = cos(lat0);
