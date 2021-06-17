@@ -22,7 +22,7 @@ using namespace std;
 
 vector<Object*> initializeScene() {
     tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLError eResult = xml_doc.LoadFile("settings.xml");
+    tinyxml2::XMLError eResult = xml_doc.LoadFile("scenes/scene.xml");
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
     vector<Object*> balls = vector<Object*>();
 
@@ -52,9 +52,9 @@ vector<Object*> initializeScene() {
     return balls;
 }
 
-void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion, float roomFloor) {
+void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion, float roomFloor, float leftWall, float rightWall, float backWall, float frontWall) {
     float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time, roomFloor);
+    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time, roomFloor, leftWall, rightWall, backWall, frontWall);
 }
 
 void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
@@ -109,19 +109,52 @@ void drawObjects(Object** objects, int numObjects) {
     }
 }
 
-void drawFloor(float roomFloor) {
-    int roomLength = 100;
-    int roomWidth = 100;
-
-    glColor3ub(230, 230, 230);
-
+void drawRoom(float roomFloor, float leftWall, float rightWall, float backWall, float frontWall, float roomHeight, bool drawFrontWall) {
     // Floor
+    glColor3ub(70, 70, 70);
     glBegin(GL_QUADS);
     glNormal3f(0, 1, 0);
-    glVertex3f(roomLength, roomFloor, roomWidth);
-    glVertex3f(roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, -roomWidth);
-    glVertex3f(-roomLength, roomFloor, roomWidth);
+    glVertex3f(backWall, roomFloor, leftWall);
+    glVertex3f(frontWall, roomFloor, leftWall);
+    glVertex3f(frontWall, roomFloor, rightWall);
+    glVertex3f(backWall, roomFloor, rightWall);
+    glEnd();
+    
+    // Back wall
+    glColor3ub(0, 0, 220);
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, -1);
+    glVertex3f(backWall, roomFloor, leftWall);
+    glVertex3f(backWall, roomFloor, rightWall);
+    glVertex3f(backWall, roomFloor + roomHeight, rightWall);
+    glVertex3f(backWall, roomFloor + roomHeight, leftWall);
+
+    // Front wall
+    if (drawFrontWall) {
+        glColor3ub(220, 220, 0);
+        glBegin(GL_QUADS);
+        glNormal3f(0, 0, -1);
+        glVertex3f(frontWall, roomFloor, leftWall);
+        glVertex3f(frontWall, roomFloor, rightWall);
+        glVertex3f(frontWall, roomFloor + roomHeight, rightWall);
+        glVertex3f(frontWall, roomFloor + roomHeight, leftWall);
+    }
+
+    // Left wall
+    glColor3ub(0, 220, 0);
+    glNormal3f(1, 0, 0);
+    glVertex3f(backWall, roomFloor + roomHeight, leftWall);
+    glVertex3f(backWall, roomFloor, leftWall);
+    glVertex3f(frontWall, roomFloor, leftWall);
+    glVertex3f(frontWall, roomFloor + roomHeight, leftWall);
+
+    // Right wall
+    glColor3ub(220, 0, 0);
+    glNormal3f(1, 0, 0);
+    glVertex3f(backWall, roomFloor, rightWall);
+    glVertex3f(backWall, roomFloor + roomHeight, rightWall);
+    glVertex3f(frontWall, roomFloor + roomHeight, rightWall);
+    glVertex3f(frontWall, roomFloor, rightWall);
     glEnd();
 }
 
@@ -263,12 +296,13 @@ int main(int argc, char* argv[]) {
 
     // Camera configuration
     bool moveCam = false;
-    float camX = 0;
-    float camY = 12;
-    float camZ = -12;
-    float camAngA = 0;
-    float camAngB = -45;
-    float camRad = -16.9705627485; // sqrt(y^2 + z^2)
+    float camX = -33;
+    float camY = 17;
+    float camZ = 12;
+    float camAngA = 90;
+    float camAngB = -27;
+    float camRad = -20.8; // sqrt(y^2 + z^2)
+    updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
 
     // Program options
     bool quit = false;
@@ -277,7 +311,15 @@ int main(int argc, char* argv[]) {
     bool slowMotion = false;
     bool showMenu = false;
 
+    // Room settings
     float roomFloor = 0;
+    float leftWall = -3;
+    float rightWall = 3;
+    float backWall = 3;
+    float frontWall = -3;
+    float roomHeight = 3;
+    bool drawFrontWall = false;
+
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
@@ -305,7 +347,7 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         if (draw) {
-            drawFloor(roomFloor);
+            drawRoom(roomFloor, leftWall, rightWall, backWall, frontWall, roomHeight, drawFrontWall);
             drawObjects(objects, numObjects);
         }
 
@@ -314,7 +356,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, roomFloor);
+            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, roomFloor, leftWall, rightWall, backWall, frontWall);
         }
 
         // Process events

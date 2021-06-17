@@ -27,7 +27,7 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void setForce(Point);
-        virtual void updatePosAndVel(double, float) = 0;
+        virtual void updatePosAndVel(double, float, float, float, float, float) = 0;
 
         // Virtual methods
         virtual void draw() = 0;
