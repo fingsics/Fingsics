@@ -36,6 +36,10 @@ Point Object::getForce() {
     return force;
 }
 
+double Object::getElasticity() {
+    return elasticityCoef;
+}
+
 void Object::setPos(Point pos){
     this->pos = pos;
 }

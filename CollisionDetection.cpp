@@ -94,8 +94,8 @@ void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<stri
         Point newVector2Normal = unitVector * newVector2NormalMagnitude;
         Point newVector2Tangent = tangentVector * newVector2TangentMagnitude;
 
-        Point newVector1Velocity = newVector1Normal + newVector1Tangent;
-        Point newVector2Velocity = newVector2Normal + newVector2Tangent;
+        Point newVector1Velocity = (newVector1Normal + newVector1Tangent) * object1->getElasticity();
+        Point newVector2Velocity = (newVector2Normal + newVector2Tangent) * object2->getElasticity();
 
         object1->setVel(newVector1Velocity);
         object2->setVel(newVector2Velocity);

@@ -23,6 +23,7 @@ class Object {
         Point getPos();
         Point getVel();
         Point getForce();
+        double getElasticity();
         void setPos(Point);
         void setVel(Point);
         void setForce(Point);
