@@ -165,6 +165,7 @@
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
+    <ClCompile Include="src\Room.cpp" />
     <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
+    <ClInclude Include="include\Room.h" />
     <ClInclude Include="tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

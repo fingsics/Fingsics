@@ -51,23 +51,23 @@ void Ball::draw() {
     glPopMatrix();
  }
 
-void Ball::updatePosAndVel(double secondsElapsed, float roomFloor, float leftWall, float rightWall, float backWall, float frontWall) {
+void Ball::updatePosAndVel(double secondsElapsed, Room room) {
     // Check collision with floor
-    if (pos.getY() - rad <= roomFloor && vel.getY() < 0) {
+    if (pos.getY() - rad <= room.getFloor() && vel.getY() < 0) {
         vel = Point(vel.getX(), -vel.getY() * elasticityCoef, vel.getZ());
     }
 
     // Check collision with walls
-    if (pos.getX() - rad <= frontWall && vel.getX() < 0) {
+    if (pos.getX() - rad <= room.getFrontWall() && vel.getX() < 0) {
         vel = Point(-vel.getX() * elasticityCoef, vel.getY(), vel.getZ());
     }
-    if (pos.getX() + rad >= backWall && vel.getX() > 0) {
+    if (pos.getX() + rad >= room.getBackWall() && vel.getX() > 0) {
         vel = Point(-vel.getX() * elasticityCoef, vel.getY(), vel.getZ());
     }
-    if (pos.getZ() + rad >= rightWall && vel.getZ() > 0) {
+    if (pos.getZ() + rad >= room.getRightWall() && vel.getZ() > 0) {
         vel = Point(vel.getX(), vel.getY(), -vel.getZ() * elasticityCoef);
     }
-    if (pos.getZ() - rad <= leftWall && vel.getZ() < 0) {
+    if (pos.getZ() - rad <= room.getLeftWall() && vel.getZ() < 0) {
         vel = Point(vel.getX(), vel.getY(), -vel.getZ() * elasticityCoef);
     }
 
