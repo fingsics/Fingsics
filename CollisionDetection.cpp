@@ -23,9 +23,28 @@
 
 using namespace std;
 
-vector<Object*> initializeScene() {
+Room initializeRoom(string sceneName) {
+    string filename = "scenes/" + sceneName;
     tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLError eResult = xml_doc.LoadFile("scenes/many-balls.xml");
+    tinyxml2::XMLError eResult = xml_doc.LoadFile(filename.c_str());
+    tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
+    tinyxml2::XMLElement* roomElement = config->FirstChildElement("room");
+
+    float height, floor, leftWall, rightWall, backWall, frontWall;
+    roomElement->QueryFloatAttribute("height", &height);
+    roomElement->QueryFloatAttribute("floor", &floor);
+    roomElement->QueryFloatAttribute("leftWall", &leftWall);
+    roomElement->QueryFloatAttribute("rightWall", &rightWall);
+    roomElement->QueryFloatAttribute("backWall", &backWall);
+    roomElement->QueryFloatAttribute("frontWall", &frontWall);
+    
+    return Room(height, floor, leftWall, rightWall, backWall, frontWall);
+}
+
+vector<Object*> initializeScene(string sceneName) {
+    string filename = "scenes/" + sceneName;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLError eResult = xml_doc.LoadFile(filename.c_str());
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
     vector<Object*> balls = vector<Object*>();
 
@@ -228,13 +247,18 @@ int main(int argc, char* argv[]) {
     bool slowMotion = false;
     bool showMenu = false;
 
+    // FPS management
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
+
+    // Collision detection algorithm
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
     map<string, pair<Object*, Object*>> oldCollisions;
 
-    Room room = Room();
-    vector<Object*> objectsVector = initializeScene();
+    // Scene
+    string sceneName = "many-balls.xml";
+    Room room = initializeRoom(sceneName);
+    vector<Object*> objectsVector = initializeScene(sceneName);
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 

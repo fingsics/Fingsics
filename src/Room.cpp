@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Room::Room(float floor, float leftWall, float rightWall, float backWall, float frontWall, float height) {
+Room::Room(float height, float floor, float leftWall, float rightWall, float backWall, float frontWall) {
     this->floor = floor;
     this->leftWall = leftWall;
     this->rightWall = rightWall;

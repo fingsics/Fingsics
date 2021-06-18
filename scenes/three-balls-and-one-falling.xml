@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-	<floor x="0" />
+	<room height="3" floor="0" leftWall="-3" rightWall="3" frontWall="-3" backWall="3"/>
 	<objects>
 		<sphere x="0.25" y="5" z="-0.25" radius="0.2" mass="1" elasticityCoef="0.8" vx="0" vy="0" vz="0" colorR="200" colorG="200" colorB="200" />
 		<sphere x="-0.25" y="5" z="-0.25" radius="0.2" mass="1" elasticityCoef= "0.8" vx="0" vy="0" vz="0" colorR="200" colorG="200" colorB="200" />
