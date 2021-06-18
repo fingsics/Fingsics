@@ -10,7 +10,6 @@ private:
     double radius;
     double pitch;
     double yaw;
-    double move;
 
 public:
     CenteredCamera(double, double, double);

@@ -10,6 +10,8 @@
 using namespace std;
 
 class Camera {
+protected:
+    double move;
 public:
     Camera();
     virtual void lookAt() = 0;

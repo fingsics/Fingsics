@@ -1,17 +1,15 @@
 #include "../include/CenteredCamera.h"
 
-CenteredCamera::CenteredCamera(double radius, double pitch, double yaw): Camera() {
+CenteredCamera::CenteredCamera(double radius, double pitch, double yaw) : Camera() {
     this->radius = radius;
     this->pitch = pitch;
     this->yaw = yaw;
-    this->move = false;
 }
 
-CenteredCamera::CenteredCamera(): Camera() {
+CenteredCamera::CenteredCamera() : Camera() {
     this->radius = -20.8; // sqrt(y^2 + z^2)
     this->pitch = -27;
     this->yaw = 90;
-    this->move = false;
 }
 
 void CenteredCamera::lookAt() {
@@ -28,14 +26,8 @@ void CenteredCamera::lookAt() {
 }
 
 void CenteredCamera::eventUpdate(SDL_Event event) {
+    Camera::eventUpdate(event);
     switch (event.type) {
-    case SDL_MOUSEBUTTONDOWN:
-        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3))
-            move= true;
-        break;
-    case SDL_MOUSEBUTTONUP:
-        move= false;
-        break;
     case SDL_MOUSEMOTION:
         if (move) {
             yaw -= event.motion.xrel * 0.4;

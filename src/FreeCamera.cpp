@@ -7,9 +7,9 @@ FreeCamera::FreeCamera(Point eye, double pitch, double yaw): Camera() {
 }
 
 FreeCamera::FreeCamera(): Camera() {
-    this->eye = Point(-2,1,0);
-    this->pitch = 0;
-    this->yaw = -90;
+    this->eye = Point(-13,6,0);
+    this->pitch = -24;
+    this->yaw = 0;
 }
 
 Point FreeCamera::getCenter() {
@@ -30,15 +30,18 @@ void FreeCamera::lookAt() {
 }
 
 void FreeCamera::eventUpdate(SDL_Event event) {
+    Camera::eventUpdate(event);
     Point lookingDirection = getCenter() - eye;
     Point perpendicularLookingDirection = lookingDirection.crossProduct(Point(0,1,0));
     Point perpendicularLookingDirectionNormalized = perpendicularLookingDirection / perpendicularLookingDirection.magnitude();
     switch (event.type) {
     case SDL_MOUSEMOTION:
-        yaw += event.motion.xrel * 0.4;
-        pitch -= event.motion.yrel * 0.4;
-        if (pitch > 85) pitch = 85;
-        else if (pitch < -85) pitch = -85;
+        if (move) {
+            yaw += event.motion.xrel * 0.4;
+            pitch -= event.motion.yrel * 0.4;
+            if (pitch > 85) pitch = 85;
+            else if (pitch < -85) pitch = -85;
+        }
         break;
     case SDL_KEYDOWN: {
         switch (event.key.keysym.sym) {
