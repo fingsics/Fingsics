@@ -159,6 +159,8 @@
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\BroadPhaseAlgorithm.cpp" />
     <ClCompile Include="src\BruteForceBPA.cpp" />
+    <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\CenteredCamera.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
@@ -168,6 +170,8 @@
     <ClInclude Include="include\Ball.h" />
     <ClInclude Include="include\BroadPhaseAlgorithm.h" />
     <ClInclude Include="include\BruteForceBPA.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\CenteredCamera.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />

@@ -6,6 +6,7 @@
 #include "include/Point.h"
 #include "include/Ball.h"
 #include "include/Object.h"
+#include "include/CenteredCamera.h"
 #include "include/BroadPhaseAlgorithm.h"
 #include "include/BruteForceBPA.h"
 #include "freeglut.h"
@@ -16,13 +17,13 @@
 #include <map>
 
 #define _USE_MATH_DEFINES
-#define FPS 30
+#define FPS 60
 
 using namespace std;
 
 vector<Object*> initializeScene() {
     tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLError eResult = xml_doc.LoadFile("scenes/scene.xml");
+    tinyxml2::XMLError eResult = xml_doc.LoadFile("scenes/many-balls.xml");
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
     vector<Object*> balls = vector<Object*>();
 
@@ -48,7 +49,6 @@ vector<Object*> initializeScene() {
             balls.push_back(new Ball(to_string(balls.size()), Point(x, y, z), Point(vx, vy, vz), Point(0,-9.8 * mass,0), radius, mass, elasticityCoef, Color(colorR, colorG, colorB)));
         }
     }
-
     return balls;
 }
 
@@ -208,36 +208,15 @@ void setLighting() {
     glPopMatrix();
 }
 
-void updateCam(float& x, float& y, float& z, float x_angle, float y_angle, float radius) {
-    z = cos(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
-    x = sin(y_angle * M_PI / 180) * cos(x_angle * M_PI / 180) * radius;
-    y = sin(x_angle * M_PI / 180) * radius;
-}
-
-void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, bool& moveCam, float &camRad, float& camX, float& camY, float& camZ, float& camAngA, float& camAngB) {
+void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera* camera) {
     SDL_Event event;
     int xm, ym;
     SDL_GetMouseState(&xm, &ym);
     while (SDL_PollEvent(&event)) {
+        camera->eventUpdate(event);
         switch (event.type) {
         case SDL_QUIT:
             quit = true;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3))
-                moveCam = true;
-            break;
-        case SDL_MOUSEBUTTONUP:
-            moveCam = false;
-            break;
-        case SDL_MOUSEMOTION:
-            if (moveCam) {
-                camAngA += event.motion.xrel * 0.4;
-                camAngB -= event.motion.yrel * 0.4;
-                if (camAngB> -0.5) camAngB = -0.5; // Avoid camera going under the floor
-                else if (camAngB < -80) camAngB = -80; // Avoid camera flipping when rotating to the top of the scene
-                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
-            }
             break;
         case SDL_KEYUP: {
             switch (event.key.keysym.sym) {
@@ -255,20 +234,6 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, bool& 
                 break;
             case SDLK_d:
                 draw = !draw;
-                break;
-            default:
-                break;
-            }
-        }
-        case SDL_KEYDOWN: {
-            switch (event.key.keysym.sym) {
-            case SDLK_s:
-                camRad -= .1;
-                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
-                break;
-            case SDLK_w:
-                if (camRad < 0) camRad += .1;
-                updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
                 break;
             default:
                 break;
@@ -294,15 +259,8 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
 int main(int argc, char* argv[]) {
     SDL_Window* window = initializeSDL();
 
-    // Camera configuration
-    bool moveCam = false;
-    float camX = -33;
-    float camY = 17;
-    float camZ = 12;
-    float camAngA = 90;
-    float camAngB = -27;
-    float camRad = -20.8; // sqrt(y^2 + z^2)
-    updateCam(camX, camY, camZ, camAngB, camAngA, camRad);
+    // Camera
+    Camera* camera = new CenteredCamera();
 
     // Program options
     bool quit = false;
@@ -340,7 +298,7 @@ int main(int argc, char* argv[]) {
         glLoadIdentity();
 
         // Set camera position
-        gluLookAt(camX, camY, -camZ, 0, 0, 0, 0, 1, 0);
+        camera->lookAt();
 
         // Set light
         setLighting();
@@ -360,7 +318,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, moveCam, camRad, camX, camY, camZ, camAngA, camAngB);
+        checkForInput(slowMotion, pause, quit, draw, camera);
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame);
