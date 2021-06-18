@@ -17,6 +17,7 @@ class Point{
         float getY();
         float getZ();
         float dotProduct(Point);
+        Point crossProduct(Point);
         double magnitude();
         bool isZero();
         Point operator-(Point);

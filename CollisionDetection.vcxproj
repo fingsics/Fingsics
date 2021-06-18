@@ -162,6 +162,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
     <ClCompile Include="src\Color.cpp" />
+    <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="tinyxml2\tinyxml2.cpp" />
@@ -173,6 +174,7 @@
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\CenteredCamera.h" />
     <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="tinyxml2\tinyxml2.h" />

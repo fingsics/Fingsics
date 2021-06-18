@@ -40,6 +40,14 @@ float Point::dotProduct(Point vector2){
     return (x * vector2.getX()) + (y * vector2.getY()) + (z * vector2.getZ());
 }
 
+Point Point::crossProduct(Point vector2){
+    return Point(
+        y * vector2.getZ() - z * vector2.getY(),
+        z * vector2.getX() - x * vector2.getZ(),
+        x * vector2.getY() - y * vector2.getX()
+    );
+}
+
 Point Point::operator-(Point vector2){
     return Point(x - vector2.getX(), y - vector2.getY(), z - vector2.getZ());
 }

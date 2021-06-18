@@ -1,5 +1,4 @@
 #include "../include/CenteredCamera.h"
-#include "../include/Camera.h"
 
 CenteredCamera::CenteredCamera(double radius, double pitch, double yaw): Camera() {
     this->radius = radius;
@@ -53,11 +52,7 @@ void CenteredCamera::eventUpdate(SDL_Event event) {
         case SDLK_w:
             if (radius < 0) radius += .1;
             break;
-        default:
-            break;
         }
     }
-    default:
-        break;
     }
 }

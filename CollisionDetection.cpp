@@ -7,6 +7,7 @@
 #include "include/Ball.h"
 #include "include/Object.h"
 #include "include/CenteredCamera.h"
+#include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithm.h"
 #include "include/BruteForceBPA.h"
 #include "freeglut.h"
@@ -208,7 +209,7 @@ void setLighting() {
     glPopMatrix();
 }
 
-void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera* camera) {
+void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera* &camera, Camera* freeCamera, Camera* centeredCamera) {
     SDL_Event event;
     int xm, ym;
     SDL_GetMouseState(&xm, &ym);
@@ -232,8 +233,12 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera
             case SDLK_m:
                 slowMotion = !slowMotion;
                 break;
-            case SDLK_d:
+            case SDLK_f:
                 draw = !draw;
+                break;
+            case SDLK_c:
+                if (camera == centeredCamera) camera = freeCamera;
+                else camera = centeredCamera;
                 break;
             default:
                 break;
@@ -260,7 +265,10 @@ int main(int argc, char* argv[]) {
     SDL_Window* window = initializeSDL();
 
     // Camera
-    Camera* camera = new CenteredCamera();
+    Camera* centeredCamera = new CenteredCamera();
+    Camera* freeCamera = new FreeCamera();
+
+    Camera* camera = freeCamera;
 
     // Program options
     bool quit = false;
@@ -318,7 +326,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, camera);
+        checkForInput(slowMotion, pause, quit, draw, camera, freeCamera, centeredCamera);
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame);
