@@ -2,17 +2,12 @@
 //
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "include/Color.h"
-#include "include/Point.h"
-#include "include/Ball.h"
-#include "include/Object.h"
-#include "include/Room.h"
+#include "include/Scene.h"
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithm.h"
 #include "include/BruteForceBPA.h"
 #include "freeglut.h"
-#include "tinyxml2/tinyxml2.h"
 #include <iostream>
 #include <thread>
 #include <string>
@@ -22,56 +17,6 @@
 #define FPS 60
 
 using namespace std;
-
-Room initializeRoom(string sceneName) {
-    string filename = "scenes/" + sceneName;
-    tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLError eResult = xml_doc.LoadFile(filename.c_str());
-    tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
-    tinyxml2::XMLElement* roomElement = config->FirstChildElement("room");
-
-    float height, floor, leftWall, rightWall, backWall, frontWall;
-    roomElement->QueryFloatAttribute("height", &height);
-    roomElement->QueryFloatAttribute("floor", &floor);
-    roomElement->QueryFloatAttribute("leftWall", &leftWall);
-    roomElement->QueryFloatAttribute("rightWall", &rightWall);
-    roomElement->QueryFloatAttribute("backWall", &backWall);
-    roomElement->QueryFloatAttribute("frontWall", &frontWall);
-    
-    return Room(height, floor, leftWall, rightWall, backWall, frontWall);
-}
-
-vector<Object*> initializeScene(string sceneName) {
-    string filename = "scenes/" + sceneName;
-    tinyxml2::XMLDocument xml_doc;
-    tinyxml2::XMLError eResult = xml_doc.LoadFile(filename.c_str());
-    tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
-    vector<Object*> balls = vector<Object*>();
-
-    // Parse objects
-    double x, y, z, radius, mass, elasticityCoef, vx, vy, vz;
-    int colorR, colorG, colorB;
-    tinyxml2::XMLElement* objects = config->FirstChildElement("objects");
-    for (const tinyxml2::XMLElement* object = objects->FirstChildElement(); object; object = object->NextSiblingElement()) {
-        string objectType = string(object->Name());
-        if (objectType == "sphere") {
-            object->QueryDoubleAttribute("x", &x);
-            object->QueryDoubleAttribute("y", &y);
-            object->QueryDoubleAttribute("z", &z);
-            object->QueryDoubleAttribute("radius", &radius);
-            object->QueryDoubleAttribute("mass", &mass);
-            object->QueryDoubleAttribute("elasticityCoef", &elasticityCoef);
-            object->QueryDoubleAttribute("vx", &vx);
-            object->QueryDoubleAttribute("vy", &vy);
-            object->QueryDoubleAttribute("vz", &vz);
-            object->QueryIntAttribute("colorR", &colorR);
-            object->QueryIntAttribute("colorG", &colorG);
-            object->QueryIntAttribute("colorB", &colorB);
-            balls.push_back(new Ball(to_string(balls.size()), Point(x, y, z), Point(vx, vy, vz), Point(0,-9.8 * mass,0), radius, mass, elasticityCoef, Color(colorR, colorG, colorB)));
-        }
-    }
-    return balls;
-}
 
 void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion, Room room) {
     float time = slowMotion ? frames / 3 : frames;
@@ -257,8 +202,9 @@ int main(int argc, char* argv[]) {
 
     // Scene
     string sceneName = "many-balls.xml";
-    Room room = initializeRoom(sceneName);
-    vector<Object*> objectsVector = initializeScene(sceneName);
+    Scene scene = Scene(sceneName);
+    Room room = scene.getRoom();
+    vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
