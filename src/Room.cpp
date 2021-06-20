@@ -68,6 +68,7 @@ void Room::draw() {
         glVertex3f(backWall, floor, rightWall);
         glVertex3f(backWall, floor + height, rightWall);
         glVertex3f(backWall, floor + height, leftWall);
+        glEnd();
     }
 
     // Front wall
@@ -79,21 +80,25 @@ void Room::draw() {
         glVertex3f(frontWall, floor, rightWall);
         glVertex3f(frontWall, floor + height, rightWall);
         glVertex3f(frontWall, floor + height, leftWall);
+        glEnd();
     }
 
     // Left wall
     if (drawLeftWall) {
         glColor3ub(0, 220, 0);
+        glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
         glVertex3f(backWall, floor + height, leftWall);
         glVertex3f(backWall, floor, leftWall);
         glVertex3f(frontWall, floor, leftWall);
         glVertex3f(frontWall, floor + height, leftWall);
+        glEnd();
     }
 
     // Right wall
     if (drawRightWall) {
         glColor3ub(220, 0, 0);
+        glBegin(GL_QUADS);
         glNormal3f(1, 0, 0);
         glVertex3f(backWall, floor, rightWall);
         glVertex3f(backWall, floor + height, rightWall);

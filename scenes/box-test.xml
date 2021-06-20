@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<room height="3" floor="0" leftWall="-3" rightWall="3" frontWall="-3" backWall="3"/>
+	<objects>
+		<box x="0" y="2" z="0" dim1="2" dim2="1" dim3="1" mass="0.5" elasticityCoef="0.8" vx="0" vy="0" vz="0"  ang1="0" ang2="0" ang3="0" angv1="0" angv2="0" angv3="0" colorR="200" colorG="200" colorB="200" />
+	</objects>
+</config>

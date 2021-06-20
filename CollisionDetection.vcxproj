@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="src\Ball.cpp" />
+    <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\BroadPhaseAlgorithm.cpp" />
     <ClCompile Include="src\BruteForceBPA.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -171,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
+    <ClInclude Include="include\Box.h" />
     <ClInclude Include="include\BroadPhaseAlgorithm.h" />
     <ClInclude Include="include\BruteForceBPA.h" />
     <ClInclude Include="include\Camera.h" />

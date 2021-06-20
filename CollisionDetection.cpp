@@ -167,13 +167,12 @@ void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera
 }
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
-    float minFrameTime = 1.0 / FPS;
-    secondsSinceLastFrame = (float)(clock() - lastFrameTime) / 1000;
+    double minFrameTime = 1.0 / FPS;
+    secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     if (secondsSinceLastFrame < minFrameTime) {
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(minFrameTime - secondsSinceLastFrame)));
-        secondsSinceLastFrame = minFrameTime / 1000;
+        std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
+        secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     }
-    
     lastFrameTime = clock();
 }
 
@@ -201,7 +200,7 @@ int main(int argc, char* argv[]) {
     map<string, pair<Object*, Object*>> oldCollisions;
 
     // Scene
-    string sceneName = "many-balls.xml";
+    string sceneName = "box-test.xml";
     Scene scene = Scene(sceneName);
     Room room = scene.getRoom();
     vector<Object*> objectsVector = scene.getObjects();
