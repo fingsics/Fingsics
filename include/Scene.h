@@ -5,6 +5,7 @@
 #include "Point.h"
 #include "Ball.h"
 #include "Box.h"
+#include "Capsule.h"
 #include "Object.h"
 #include "Room.h"
 #include <string>
@@ -19,6 +20,7 @@ private:
 	void loadObjects(tinyxml2::XMLElement*);
 	Ball* loadBall(tinyxml2::XMLElement*, string);
 	Box* loadBox(tinyxml2::XMLElement*, string);
+	Capsule* loadCapsule(tinyxml2::XMLElement*, string);
 public:
 	Scene(string);
 	Scene();

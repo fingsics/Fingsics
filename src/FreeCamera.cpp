@@ -57,6 +57,12 @@ void FreeCamera::eventUpdate(SDL_Event event) {
         case SDLK_d:
             eye = eye + perpendicularLookingDirectionNormalized * 0.1;
             break;
+        case SDLK_SPACE:
+            eye = eye + Point(0, 1, 0) * 0.1;
+            break;
+        case SDLK_LSHIFT:
+            eye = eye - Point(0, 1, 0) * 0.1;
+            break;
         }
     }
     }

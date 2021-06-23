@@ -161,6 +161,7 @@
     <ClCompile Include="src\BroadPhaseAlgorithm.cpp" />
     <ClCompile Include="src\BruteForceBPA.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\Capsule.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
@@ -176,6 +177,7 @@
     <ClInclude Include="include\BroadPhaseAlgorithm.h" />
     <ClInclude Include="include\BruteForceBPA.h" />
     <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\Capsule.h" />
     <ClInclude Include="include\CenteredCamera.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\FreeCamera.h" />

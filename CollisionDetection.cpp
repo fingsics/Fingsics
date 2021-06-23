@@ -200,7 +200,7 @@ int main(int argc, char* argv[]) {
     map<string, pair<Object*, Object*>> oldCollisions;
 
     // Scene
-    string sceneName = "box-test.xml";
+    string sceneName = "scene.xml";
     Scene scene = Scene(sceneName);
     Room room = scene.getRoom();
     vector<Object*> objectsVector = scene.getObjects();

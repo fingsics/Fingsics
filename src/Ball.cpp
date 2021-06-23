@@ -12,11 +12,8 @@ double Ball::getRad(){
 
 void Ball::draw() {
     glPushMatrix();
-
-    // Ball movement
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
 
-    // Draw sphere
     for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
         double z0 = sin(lat0);
