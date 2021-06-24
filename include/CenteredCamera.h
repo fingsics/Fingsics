@@ -1,7 +1,11 @@
 #ifndef CENTERED_CAMERA_H
 #define CENTERED_CAMERA_H
+#define _USE_MATH_DEFINES
 #include <string>
+#include <math.h>
 #include "Camera.h"
+#include "Point.h"
+
 
 using namespace std;
 

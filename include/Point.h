@@ -1,6 +1,7 @@
 #ifndef POINT_H
 #define POINT_H
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 using namespace std;
@@ -20,6 +21,7 @@ class Point{
         Point crossProduct(Point);
         double magnitude();
         bool isZero();
+        Point rotate(Point);
         Point operator-(Point);
         Point operator+(Point);
         Point operator/(double);

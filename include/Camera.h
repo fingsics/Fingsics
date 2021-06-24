@@ -5,8 +5,6 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 
-#define M_PI 3.1415926
-
 using namespace std;
 
 class Camera {

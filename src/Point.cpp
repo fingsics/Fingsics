@@ -26,14 +26,25 @@ float Point::getZ() {
   return z;
 }
 
-
-
 double Point::magnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
 bool Point::isZero() {
     return x == 0 && y == 0 && z == 0;
+}
+
+Point Point::rotate(Point angle) {
+    // https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
+    double radX = angle.getX() * M_PI / 180;
+    double radY = angle.getY() * M_PI / 180;
+    double radZ = angle.getZ() * M_PI / 180;
+    // Rotate around X axis
+    Point temp = Point(x, y * cos(radX) - z * sin(radX), y * sin(radX) + z * cos(radX));
+    // Rotate around Y axis
+    Point temp2 = Point(temp.getX() * cos(radY) + temp.getZ() * sin(radY), temp.getY(), -temp.getX() * sin(radY) + temp.getZ() * cos(radY));
+    // Rotate around Z axis
+    return Point(temp2.getX() * cos(radZ) - temp2.getY() * sin(radZ), temp2.getX() * sin(radZ) + temp2.getY() * cos(radZ), temp2.getZ());
 }
 
 float Point::dotProduct(Point vector2){

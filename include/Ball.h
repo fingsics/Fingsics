@@ -1,5 +1,6 @@
 #ifndef BALL_H
 #define BALL_H
+#define _USE_MATH_DEFINES
 #include "SDL_opengl.h"
 #include "Color.h"
 #include "Point.h"
@@ -8,7 +9,6 @@
 #include <math.h>
 #include <string>
 
-#define M_PI 3.1415926
 #define LATS 8
 #define LONGS 8
 

@@ -7,22 +7,20 @@ CenteredCamera::CenteredCamera(double radius, double pitch, double yaw) : Camera
 }
 
 CenteredCamera::CenteredCamera() : Camera() {
-    this->radius = -20.8; // sqrt(y^2 + z^2)
-    this->pitch = -27;
-    this->yaw = 90;
+    this->radius = -25; // sqrt(y^2 + z^2)
+    this->pitch = -25;
+    this->yaw = 0;
 }
 
 void CenteredCamera::lookAt() {
-    double eyeX = sin(yaw * M_PI / 180) * cos(pitch * M_PI / 180) * radius;
-    double eyeY = sin(pitch * M_PI / 180) * radius;
-    double eyeZ = cos(yaw * M_PI / 180) * cos(pitch * M_PI / 180) * radius;
+    Point eye = Point(1, 0, 0).rotate(Point(0,yaw,pitch)) * radius;
     double centerX = 0;
     double centerY = 0;
     double centerZ = 0;
     double upX = 0;
     double upY = 1;
     double upZ = 0;
-    gluLookAt(eyeX,eyeY,eyeZ,centerX,centerY,centerZ,upX,upY,upZ);
+    gluLookAt(eye.getX(),eye.getY(),eye.getZ(),centerX,centerY,centerZ,upX,upY,upZ);
 }
 
 void CenteredCamera::eventUpdate(SDL_Event event) {
@@ -39,10 +37,10 @@ void CenteredCamera::eventUpdate(SDL_Event event) {
     case SDL_KEYDOWN: {
         switch (event.key.keysym.sym) {
         case SDLK_s:
-            radius -= .1;
+            radius -= .3;
             break;
         case SDLK_w:
-            if (radius < 0) radius += .1;
+            if (radius < 0) radius += .3;
             break;
         }
     }

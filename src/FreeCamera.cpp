@@ -8,14 +8,12 @@ FreeCamera::FreeCamera(Point eye, double pitch, double yaw): Camera() {
 
 FreeCamera::FreeCamera(): Camera() {
     this->eye = Point(-13,6,0);
-    this->pitch = -24;
+    this->pitch = -25;
     this->yaw = 0;
 }
 
 Point FreeCamera::getCenter() {
-    return eye + Point(cos(yaw * M_PI / 180) * cos(pitch * M_PI / 180),
-                       sin(pitch * M_PI / 180),
-                       sin(yaw * M_PI / 180) * cos(pitch * M_PI / 180));
+    return eye + Point(1,0,0).rotate(Point(0,yaw,pitch));
 }
 
 void FreeCamera::lookAt() {
@@ -37,7 +35,7 @@ void FreeCamera::eventUpdate(SDL_Event event) {
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {
-            yaw += event.motion.xrel * 0.4;
+            yaw -= event.motion.xrel * 0.4;
             pitch -= event.motion.yrel * 0.4;
             if (pitch > 85) pitch = 85;
             else if (pitch < -85) pitch = -85;
