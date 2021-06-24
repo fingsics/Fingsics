@@ -158,13 +158,14 @@
     <ClCompile Include="CollisionDetection.cpp" />
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Box.cpp" />
-    <ClCompile Include="src\BroadPhaseAlgorithm.cpp" />
-    <ClCompile Include="src\BruteForceBPA.cpp" />
+    <ClCompile Include="src\BruteForceAlgorithms.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Capsule.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
+    <ClCompile Include="src\Helpers.cpp" />
+    <ClCompile Include="src\NarrowPhaseAlgorithms.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\Room.cpp" />
@@ -174,13 +175,14 @@
   <ItemGroup>
     <ClInclude Include="include\Ball.h" />
     <ClInclude Include="include\Box.h" />
-    <ClInclude Include="include\BroadPhaseAlgorithm.h" />
-    <ClInclude Include="include\BruteForceBPA.h" />
+    <ClInclude Include="include\BroadPhaseAlgorithms.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Capsule.h" />
     <ClInclude Include="include\CenteredCamera.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\FreeCamera.h" />
+    <ClInclude Include="include\Helpers.h" />
+    <ClInclude Include="include\NarrowPhaseAlgorithms.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="include\Room.h" />

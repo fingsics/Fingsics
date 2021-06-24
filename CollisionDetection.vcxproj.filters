@@ -30,10 +30,7 @@
     <ClCompile Include="src\Object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BruteForceBPA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BroadPhaseAlgorithm.cpp">
+    <ClCompile Include="src\BruteForceAlgorithms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tinyxml2\tinyxml2.cpp">
@@ -60,6 +57,12 @@
     <ClCompile Include="src\Capsule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\NarrowPhaseAlgorithms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Helpers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h">
@@ -71,13 +74,10 @@
     <ClInclude Include="include\Point.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\BroadPhaseAlgorithm.h">
+    <ClInclude Include="include\BroadPhaseAlgorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\BruteForceBPA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tinyxml2\tinyxml2.h">
@@ -102,6 +102,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Capsule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NarrowPhaseAlgorithms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

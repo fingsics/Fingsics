@@ -5,8 +5,8 @@
 #include "include/Scene.h"
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
-#include "include/BroadPhaseAlgorithm.h"
-#include "include/BruteForceBPA.h"
+#include "include/BroadPhaseAlgorithms.h"
+#include "include/NarrowPhaseAlgorithms.h"
 #include "freeglut.h"
 #include <iostream>
 #include <thread>
@@ -196,11 +196,11 @@ int main(int argc, char* argv[]) {
     float timeSinceLastFrame = 0;
 
     // Collision detection algorithm
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBPA();
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     map<string, pair<Object*, Object*>> oldCollisions;
 
     // Scene
-    string sceneName = "scene.xml";
+    string sceneName = "many-balls.xml";
     Scene scene = Scene(sceneName);
     Room room = scene.getRoom();
     vector<Object*> objectsVector = scene.getObjects();
@@ -231,7 +231,8 @@ int main(int argc, char* argv[]) {
 
         // Apply physics and movement
         if (!pause) {
-            map<string, pair<Object*, Object*>> collisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
+            map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
+            map<string, pair<Object*, Object*>> collisions = NarrowPhaseAlgorithms::getCollisions(broadPhaseCollisions, numObjects);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, room);
