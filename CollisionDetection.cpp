@@ -6,6 +6,7 @@
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
+#include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithms.h"
 #include "freeglut.h"
 #include <iostream>
@@ -197,6 +198,7 @@ int main(int argc, char* argv[]) {
 
     // Collision detection algorithm
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
+    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     map<string, pair<Object*, Object*>> oldCollisions;
 
     // Scene
@@ -232,7 +234,8 @@ int main(int argc, char* argv[]) {
         // Apply physics and movement
         if (!pause) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-            map<string, pair<Object*, Object*>> collisions = NarrowPhaseAlgorithms::getCollisions(broadPhaseCollisions, numObjects);
+            map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+            map<string, pair<Object*, Object*>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, room);

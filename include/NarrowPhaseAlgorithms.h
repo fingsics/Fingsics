@@ -11,7 +11,7 @@ using namespace std;
 
 class NarrowPhaseAlgorithms {
 public:
-    static map<string, pair<Object*, Object*>> getCollisions(map<string, pair<Object*, Object*>>, int);
+    static map<string, pair<Object*, Object*>> getCollisions(map<string, pair<Object*, Object*>>);
 private:
     static bool ballBall(Ball*, Ball*);
     static bool ballCapsule(Ball*, Capsule*);

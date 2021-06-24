@@ -20,7 +20,7 @@ bool NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Capsule* capsule2)
     return false;
 }
 
-map<string, pair<Object*, Object*>> NarrowPhaseAlgorithms::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions, int numObjects) {
+map<string, pair<Object*, Object*>> NarrowPhaseAlgorithms::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
     map<string, pair<Object*, Object*>> collisionMap;
     for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
         Object* object1 = it->second.first;
