@@ -9,9 +9,42 @@ Capsule::Capsule(string id, Point pos, Point vel, Point force, double length, do
     this->angularVelocity = angularVelocity;
 }
 
+Point Capsule::getAxisDirection() {
+    return Point(0,0,1).rotate(Point(angle));
+}
+
+double Capsule::getRadius() {
+    return radius;
+}
+
+double Capsule::getLength() {
+    return length;
+}
+
+Point Capsule::getAngle() {
+    return angle;
+}
+
+Point Capsule::getAngularVelocity() {
+    return angularVelocity;
+}
+
+Point Capsule::getCylinderEnd1() {
+    return pos + getAxisDirection() * length / 2;
+}
+
+Point Capsule::getCylinderEnd2() {
+    return pos - getAxisDirection() * length / 2;
+}
+
 void Capsule::draw() {
     glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ() - length / 2.0);
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    // TODO: ROTATE PROPERLY
+    glRotatef(angle.getX(),1,0,0);
+    glRotatef(angle.getY(),0,1,0);
+    glRotatef(angle.getZ(),0,0,1);
+    glTranslatef(0, 0,-length / 2.0);
     glColor3ub(color.getR(), color.getG(), color.getB());
     double lats = LATS * 2;
     double longs = LONGS * 2;

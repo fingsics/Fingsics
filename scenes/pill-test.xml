@@ -2,6 +2,7 @@
 <config>
 	<room height="3" floor="0" leftWall="-3" rightWall="3" frontWall="-3" backWall="3"/>
 	<objects>
+		<capsule x="0" y="2" z="0" radius="0.3" length="2" mass="0.5" elasticityCoef="0.8" vx="0" vy="0" vz="0"  ang1="30" ang2="30" ang3="30" angv1="0" angv2="0" angv3="0" colorR="200" colorG="200" colorB="200" />
 		<sphere x="0" y="0.3" z="0" radius="0.3" mass="0.1" elasticityCoef="1" vx="0" vy="0" vz="0" colorR="200" colorG="0" colorB="100" />
 	</objects>
 </config>

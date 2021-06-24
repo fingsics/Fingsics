@@ -13,6 +13,21 @@ bool NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
 }
 
 bool NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* capsule) {
+    // https://gamedev.stackexchange.com/questions/72528/how-can-i-project-a-3d-point-onto-a-3d-line
+    Point AB = capsule->getAxisDirection();
+    Point AP = ball->getPos() - capsule->getPos();
+    Point displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
+    if (displacementFromA.magnitude() < capsule->getLength() / 2) {
+        // Projection of the ball's center is inside the capsule's cylinder
+        Point projection = capsule->getPos() + displacementFromA;
+        Point dist = ball->getPos() - projection;
+        double distttt = dist.magnitude();
+        return distttt < ball->getRad() + capsule->getRadius();
+    } else {
+        // Projection of the ball's center is outside of the capsule's cylinder
+        return (ball->getPos() - capsule->getCylinderEnd1()).magnitude() < ball->getRad() + capsule->getRadius()
+            || (ball->getPos() - capsule->getCylinderEnd2()).magnitude() < ball->getRad() + capsule->getRadius();
+    }
     return false;
 }
 
@@ -28,10 +43,10 @@ map<string, pair<Object*, Object*>> NarrowPhaseAlgorithms::getCollisions(map<str
 
         bool collision = false;
 
-        Ball* ball1 = (Ball*)object1;
-        Ball* ball2 = (Ball*)object2;
-        Capsule* capsule1 = (Capsule*)object1;
-        Capsule* capsule2 = (Capsule*)object2;
+        Ball* ball1 = dynamic_cast<Ball*>(object1);
+        Ball* ball2 = dynamic_cast<Ball*>(object2);
+        Capsule* capsule1 = dynamic_cast<Capsule*>(object1);
+        Capsule* capsule2 = dynamic_cast<Capsule*>(object2);
 
         if (ball1 && ball2) {
             collision = ballBall(ball1, ball2);
@@ -47,7 +62,7 @@ map<string, pair<Object*, Object*>> NarrowPhaseAlgorithms::getCollisions(map<str
         }
 
         if (collision) {
-            pair<Object*, Object*> objectPair = make_pair(ball1, ball2);
+            pair<Object*, Object*> objectPair = make_pair(object1, object2);
             string objectPairId = getObjectPairId(objectPair);
             if (collisionMap.find(objectPairId) == collisionMap.end()) {
                 collisionMap.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
