@@ -48,7 +48,7 @@ void Box::draw() {
     glPopMatrix();
  }
 
-void Box::updatePosAndVel(double secondsElapsed, Room room) {
+void Box::updatePosAndVel(double secondsElapsed) {
     // Check collision with floor
 
     // Check collision with walls

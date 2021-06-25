@@ -101,7 +101,7 @@ void Capsule::draw() {
     glPopMatrix();
 }
 
-void Capsule::updatePosAndVel(double secondsElapsed, Room room) {
+void Capsule::updatePosAndVel(double secondsElapsed) {
     // Check collision with floor
 
     // Check collision with walls

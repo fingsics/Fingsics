@@ -32,7 +32,7 @@ public:
     Point getCylinderEnd2();
     Capsule(string, Point, Point, Point, double, double, Point, Point, double, double, Color);
     void draw();
-    void updatePosAndVel(double, Room);
+    void updatePosAndVel(double);
 };
 
 #endif

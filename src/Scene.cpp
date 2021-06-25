@@ -9,7 +9,6 @@ Scene::Scene(string filename) {
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
 
     this->loadObjects(config);
-    this->loadRoom(config);
 }
 
 void Scene::loadObjects(tinyxml2::XMLElement* config) {
@@ -23,20 +22,6 @@ void Scene::loadObjects(tinyxml2::XMLElement* config) {
         else if (objectType == "box") objects.push_back((Object*)loadBox(xmlObject, to_string(objects.size())));
         else if (objectType == "capsule") objects.push_back((Object*)loadCapsule(xmlObject, to_string(objects.size())));
     }
-}
-
-void Scene::loadRoom(tinyxml2::XMLElement* config) {
-    tinyxml2::XMLElement* roomElement = config->FirstChildElement("room");
-
-    float height, floor, leftWall, rightWall, backWall, frontWall;
-    roomElement->QueryFloatAttribute("height", &height);
-    roomElement->QueryFloatAttribute("floor", &floor);
-    roomElement->QueryFloatAttribute("leftWall", &leftWall);
-    roomElement->QueryFloatAttribute("rightWall", &rightWall);
-    roomElement->QueryFloatAttribute("backWall", &backWall);
-    roomElement->QueryFloatAttribute("frontWall", &frontWall);
-
-    room = Room(height, floor, leftWall, rightWall, backWall, frontWall);
 }
 
 Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
@@ -57,7 +42,7 @@ Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
     return new Ball(id,
                     Point(x, y, z),
                     Point(vx, vy, vz),
-                    Point(0, -9.8 * mass, 0),
+                    Point(0, 0, 0),
                     radius,
                     mass,
                     elasticityCoef,
@@ -89,7 +74,7 @@ Capsule* Scene::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     return new Capsule(id,
         Point(x, y, z),
         Point(vx, vy, vz),
-        Point(0, -9.8 * mass, 0),
+        Point(0, 0, 0),
         length,
         radius,
         Point(ang1, ang2, ang3),
@@ -127,7 +112,7 @@ Box* Scene::loadBox(tinyxml2::XMLElement* xmlObject, string id) {
     return new Box(id,
                    Point(x, y, z),
                    Point(vx, vy, vz),
-                   Point(0, -9.8 * mass, 0),
+                   Point(0, 0, 0),
                    Point(dimensions.at(0), dimensions.at(1), dimensions.at(2)),
                    Point(ang1, ang2, ang3),
                    Point(angv1, angv2, angv3),
@@ -138,8 +123,4 @@ Box* Scene::loadBox(tinyxml2::XMLElement* xmlObject, string id) {
 
 vector<Object*> Scene::getObjects() {
     return objects;
-}
-
-Room Scene::getRoom() {
-    return room;
 }

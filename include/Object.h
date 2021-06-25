@@ -2,7 +2,6 @@
 #define OBJECT_H
 #include "Color.h"
 #include "Point.h"
-#include "Room.h"
 #include <string>
 
 using namespace std;
@@ -28,7 +27,7 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void setForce(Point);
-        virtual void updatePosAndVel(double, Room) = 0;
+        virtual void updatePosAndVel(double) = 0;
 
         // Virtual methods
         virtual void draw() = 0;

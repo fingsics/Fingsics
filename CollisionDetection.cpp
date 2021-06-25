@@ -19,9 +19,9 @@
 
 using namespace std;
 
-void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion, Room room) {
+void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
     float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time, room);
+    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
 void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
@@ -202,9 +202,8 @@ int main(int argc, char* argv[]) {
     map<string, pair<Object*, Object*>> oldCollisions;
 
     // Scene
-    string sceneName = "pill-test.xml";
+    string sceneName = "2d-scene.xml";
     Scene scene = Scene(sceneName);
-    Room room = scene.getRoom();
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
@@ -227,7 +226,6 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         if (draw) {
-            room.draw();
             drawObjects(objects, numObjects);
         }
 
@@ -238,7 +236,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
             applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
-            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion, room);
+            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }
 
         // Process events

@@ -22,7 +22,7 @@ class Box : public Object {
         Box(string, Point, Point, Point, Point, Point, Point, double, double, Color);
         void draw();
         Point getDimensions();
-        void updatePosAndVel(double, Room);
+        void updatePosAndVel(double);
 };
 
 #endif
