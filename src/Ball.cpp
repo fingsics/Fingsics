@@ -55,8 +55,7 @@ void Ball::updatePosAndVel(double secondsElapsed) {
     vel = vel + acceleration * secondsElapsed;
 
     // Update position
-    float epsilon = 0.001;
-    pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(rad - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
+    pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
 }
 
 Matrix Ball::getInertiaTensor() {
