@@ -60,7 +60,7 @@ void Ball::updatePosAndVel(double secondsElapsed) {
 Matrix Ball::getInertiaTensor() {
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double v = 2.0 / 5.0 * mass * radius * radius;
-    return Matrix(Point(v, 0, 0),
-                  Point(0, v, 0),
-                  Point(0, 0, v));
+    return Matrix(v, 0, 0,
+                  0, v, 0,
+                  0, 0, v);
 }

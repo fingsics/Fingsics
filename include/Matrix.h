@@ -9,14 +9,16 @@ using namespace std;
 
 class Matrix {
     private:
-        Point row1;
-        Point row2;
-        Point row3;
+        double values[3][3];
     public:
-        Matrix(Point, Point, Point);
+        Matrix(double, double, double, double, double, double, double, double, double);
+        Matrix(double[], double[], double[]);
         Matrix();
         double det();
         Matrix inverse();
+        Point row0();
+        Point row1();
+        Point row2();
         Point operator*(Point);
 };
 
