@@ -12,20 +12,25 @@ class Object {
         Point pos;
         Point vel;
         Point force;
+        Point angle;
+        Point angularVelocity;
         double mass;
         Color color;
         double elasticityCoef;
     public:
-        Object(string, Point, Point, Point, double, double, Color);
+        Object(string, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
         bool isMoving();
         string getId();
         Point getPos();
         Point getVel();
         Point getForce();
+        Point getAngle();
+        Point getAngularVelocity();
         double getElasticity();
         void setPos(Point);
         void setVel(Point);
+        void setAngularVelocity(Point);
         void setForce(Point);
         virtual void updatePosAndVel(double) = 0;
 

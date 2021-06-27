@@ -2,11 +2,9 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, Point pos, Point vel, Point force, double length, double radius, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) : Object(id, pos, vel, force, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, Point pos, Point vel, Point force, double length, double radius, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) : Object(id, pos, vel, force, angle, angularVelocity, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
-    this->angle = angle;
-    this->angularVelocity = angularVelocity;
 }
 
 Point Capsule::getAxisDirection() {
@@ -19,14 +17,6 @@ double Capsule::getRadius() {
 
 double Capsule::getLength() {
     return length;
-}
-
-Point Capsule::getAngle() {
-    return angle;
-}
-
-Point Capsule::getAngularVelocity() {
-    return angularVelocity;
 }
 
 Point Capsule::getCylinderEnd1() {
@@ -113,6 +103,10 @@ void Capsule::updatePosAndVel(double secondsElapsed) {
     // Update position
     double epsilon = 0.001;
     pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(radius - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
+
+    secondsElapsed *= 57.2958;
+    angle = Point(angle.getX() + angularVelocity.getX() * secondsElapsed, angle.getY() + angularVelocity.getY() * secondsElapsed, angle.getZ() + angularVelocity.getZ() * secondsElapsed);
+
 
     // Update angular velocity
 

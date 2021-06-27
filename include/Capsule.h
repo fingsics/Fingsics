@@ -19,15 +19,11 @@ class Capsule : public Object {
 private:
     double radius;
     double length;
-    Point angle;
-    Point angularVelocity;
     //Point torque;????
 public:
     Point getAxisDirection();
     double getRadius();
     double getLength();
-    Point getAngle();
-    Point getAngularVelocity();
     Point getCylinderEnd1();
     Point getCylinderEnd2();
     Capsule(string, Point, Point, Point, double, double, Point, Point, double, double, Color);

@@ -2,10 +2,8 @@
 
 using namespace std;
 
-Box::Box(string id, Point pos, Point vel, Point force, Point dimensions, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) :  Object(id, pos, vel, force, mass, elasticityCoef, color) {
+Box::Box(string id, Point pos, Point vel, Point force, Point dimensions, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) :  Object(id, pos, vel, force, angle, angularVelocity, mass, elasticityCoef, color) {
     this->dimensions = dimensions;
-    this->angle = angle;
-    this->angularVelocity = angularVelocity;
 }
 
 Point Box::getDimensions(){

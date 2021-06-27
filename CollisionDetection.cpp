@@ -24,6 +24,57 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
+// Inertia values: https://www.thoughtco.com/moment-of-inertia-formulas-2698806
+void applyCollisions2(map<string, tuple<Object*, Object*, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point>> collisionMap) {
+    for (auto const& mapEntry : collisionMap) {
+        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
+        Object* object1 = get<0>(mapEntry.second);
+        Object* object2 = get<1>(mapEntry.second);
+        Point collisionPoint = get<2>(mapEntry.second);
+
+        double e = 1; // e coefficient of restitution which depends on the nature of the two colliding materials  ------>   (object1->getElasticity() + object2->getElasticity()) / 2
+        double ma = object1->getMass(); // ma total mass of body a
+        double mb = object2->getMass(); // mb total mass of body b
+        double Ia = 1; // Ia inertia for body a.
+        double Ib = 1; // Ib inertia for body b.
+        Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
+        Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
+        //Point n = Point(0, 0, -1); // n normal to collision point, the line along which the impulse acts.
+        Point vai = object1->getVel(); // vai initial velocity of centre of mass on object a
+        Point vbi = object2->getVel(); // vbi initial velocity of centre of mass on object b
+        Point wai = object1->getAngularVelocity(); // wai initial angular velocity of object a
+        Point wbi = object2->getAngularVelocity(); // wbi initial angular velocity of object b
+
+        Point vaf; // vaf final velocity of centre of mass on object a
+        Point vbf; // vbf final velocity of centre of mass on object a
+        Point waf; // waf final angular velocity of object a
+        Point wbf; // wbf final angular velocity of object b
+
+        double k = 1 / (ma * ma) + 2 / (ma * mb) + 1 / (mb * mb) - ra.getX() * ra.getX() / (ma * Ia) - rb.getX() * rb.getX() / (ma * Ib) - ra.getZ() * ra.getZ() / (ma * Ia)
+            - ra.getZ() * ra.getZ() / (mb * Ia) - ra.getX() * ra.getX() / (mb * Ia) - rb.getX() * rb.getX() / (mb * Ib) - rb.getZ() * rb.getZ() / (ma * Ib)
+            - rb.getZ() * rb.getZ() / (mb * Ib) + ra.getZ() * ra.getZ() * rb.getX() * rb.getX() / (Ia * Ib) + ra.getX() * ra.getX() * rb.getZ() * rb.getZ() / (Ia * Ib) - 2 * ra.getX() * ra.getZ() * rb.getX() * rb.getZ() / (Ia * Ib);
+
+        double Jx = (e + 1) / k * (vai.getX() - vbi.getX()) * (1 / ma - ra.getX() * ra.getX() / Ia + 1 / mb - rb.getX() * rb.getX() / Ib)
+            - (e + 1) / k * (vai.getZ() - vbi.getZ()) * (ra.getX() * ra.getZ() / Ia + rb.getX() * rb.getZ() / Ib);
+        double Jy = -(e + 1) / k * (vai.getX() - vbi.getX()) * (ra.getX() * ra.getZ() / Ia + rb.getX() * rb.getZ() / Ib)
+            + (e + 1) / k * (vai.getZ() - vbi.getZ()) * (1 / ma - ra.getZ() * ra.getZ() / Ia + 1 / mb - rb.getZ() * rb.getZ() / Ib);
+
+
+        // Creo que estas están mal
+        vaf = Point(vai.getX() - Jx / ma, 0, vai.getZ() - Jy / ma);
+        vbf = Point(vbi.getX() +/*cambiado*/ Jx / mb, 0, vbi.getZ() +/*cambiado*/ Jy / mb);
+
+        waf = Point(0, wai.getY() + (Jx * ra.getZ() - Jy * ra.getX()) / Ia, 0);
+        wbf = Point(0, wbi.getY() + (Jx * rb.getZ() - Jy * rb.getX()) / Ib, 0);
+
+        object1->setVel(vaf);
+        object2->setVel(vbf);
+        object1->setAngularVelocity(waf);
+        object2->setAngularVelocity(wbf);
+    }
+}
+
+
 void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
@@ -199,10 +250,10 @@ int main(int argc, char* argv[]) {
     // Collision detection algorithm
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
-    map<string, pair<Object*, Object*>> oldCollisions;
+    map<string, tuple<Object*, Object*, Point>> oldCollisions;
 
     // Scene
-    string sceneName = "2d-scene.xml";
+    string sceneName = "2d-scene2.xml";
     Scene scene = Scene(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
@@ -233,8 +284,8 @@ int main(int argc, char* argv[]) {
         if (!pause) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            map<string, pair<Object*, Object*>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
-            applyCollisions(oldCollisions, collisions);
+            map<string, tuple<Object*, Object*, Point>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
+            applyCollisions2(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }

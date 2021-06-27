@@ -15,8 +15,6 @@ class Box : public Object {
         // From longest to shortest
         Point dimensions;
         // Pitch, yaw, roll
-        Point angle;
-        Point angularVelocity;
         //Point torque;????
     public:
         Box(string, Point, Point, Point, Point, Point, Point, double, double, Color);

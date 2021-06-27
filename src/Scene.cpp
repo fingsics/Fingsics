@@ -43,6 +43,8 @@ Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
                     Point(x, y, z),
                     Point(vx, vy, vz),
                     Point(0, 0, 0),
+                    Point(0, 0, 0),
+                    Point(0, 0, 0),
                     radius,
                     mass,
                     elasticityCoef,

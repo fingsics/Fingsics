@@ -2,11 +2,13 @@
 
 using namespace std;
 
-Object::Object(string id, Point pos, Point vel, Point force, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, Point pos, Point vel, Point force, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) {
     this->pos = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
     this->vel = vel;
+    this->angle = angle;
+    this->angularVelocity = angularVelocity;
     this->force = force;
     this->color = color;
     this->id = id;
@@ -22,6 +24,14 @@ double Object::getMass(){
 
 string Object::getId() {
     return id;
+}
+
+Point Object::getAngle() {
+    return angle;
+}
+
+Point Object::getAngularVelocity() {
+    return angularVelocity;
 }
 
 Point Object::getPos(){
@@ -46,6 +56,10 @@ void Object::setPos(Point pos){
 
 void Object::setVel(Point vel) {
     this->vel = vel;
+}
+
+void Object::setAngularVelocity(Point angularVelocity) {
+    this->angularVelocity = angularVelocity;
 }
 
 void Object::setForce(Point force) {
