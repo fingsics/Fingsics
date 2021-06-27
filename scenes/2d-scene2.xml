@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<config>
-	<objects>
-		<sphere x="0" y="0" z="-2" radius="0.4" mass="0.4" elasticityCoef="0.8" vx="0" vy="0" vz="2" colorR="200" colorG="200" colorB="200" />
-		<capsule x="0.5" y="0" z="2" radius="0.4" length="2" mass="0.4" elasticityCoef="0.8" vx="0" vy="0" vz="-2"  ang1="0" ang2="90" ang3="0" angv1="0" angv2="0" angv3="0" colorR="200" colorG="200" colorB="200" />
-		<sphere x="-8" y="0" z="-2" radius="0.4" mass="0.4" elasticityCoef="0.8" vx="4" vy="0" vz="2" colorR="200" colorG="200" colorB="200" />
-		<sphere x="16" y="0" z="4" radius="0.4" mass="0.4" elasticityCoef="0.8" vx="-4" vy="0" vz="0" colorR="200" colorG="200" colorB="200" />
-	</objects>
-</config>

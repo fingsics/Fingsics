@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, Point pos, Point vel, Point force, double length, double radius, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) : Object(id, pos, vel, force, angle, angularVelocity, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length) : Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
 }

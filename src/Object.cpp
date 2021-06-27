@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Object::Object(string id, Point pos, Point vel, Point force, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color) {
     this->pos = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;

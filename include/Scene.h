@@ -6,8 +6,9 @@
 #include "Ball.h"
 #include "Capsule.h"
 #include "Object.h"
-#include <string>
 #include <iostream>
+#include <sstream>
+#include <string>
 #include <algorithm>
 #include "../tinyxml2/tinyxml2.h"
 
@@ -18,6 +19,8 @@ private:
 	void loadObjects(tinyxml2::XMLElement*);
 	Ball* loadBall(tinyxml2::XMLElement*, string);
 	Capsule* loadCapsule(tinyxml2::XMLElement*, string);
+	Point parsePoint(const char*);
+	Color parseColor(const char*);
 public:
 	Scene(string);
 	Scene();

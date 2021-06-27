@@ -24,7 +24,7 @@ public:
     double getLength();
     Point getCylinderEnd1();
     Point getCylinderEnd2();
-    Capsule(string, Point, Point, Point, double, double, Point, Point, double, double, Color);
+    Capsule(string, Point, Point, Point, Point, Point, double, double, Color, double, double);
     void draw();
     Matrix getInertiaTensor();
 };

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Ball::Ball(string id, Point pos, Point vel, Point force, Point angle, Point angularVelocity, double radius, double mass, double elasticityCoef, Color color) :  Object(id, pos, vel, force, angle, angularVelocity, mass, elasticityCoef, color) {
+Ball::Ball(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius) :  Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->radius = radius;
 }
 

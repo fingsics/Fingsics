@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<config>
-	<objects>
-		<sphere x="0" y="0" z="-2" radius="0.4" mass="2" elasticityCoef="1" vx="2" vy="0" vz="0" colorR="200" colorG="200" colorB="200" />
-		<sphere x="0" y="2" z="2" radius="0.4" mass="2" elasticityCoef="1" vx="2" vy="0" vz="0" colorR="200" colorG="200" colorB="200" />
-	</objects>
-</config>
