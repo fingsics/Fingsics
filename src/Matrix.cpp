@@ -15,20 +15,27 @@ Matrix::Matrix() {
 }
 
 double Matrix::det() {
-    // TODO
-    return 0;
+    return row1.getX() * (row2.getY() * row3.getZ() - row3.getY() * row2.getZ()) -
+        row1.getY() * (row2.getX() * row3.getZ() - row2.getZ() * row3.getX()) +
+        row1.getZ() * (row2.getX() * row3.getY() - row2.getY() * row3.getX());
 }
 
 Matrix Matrix::inverse() {
-    // TODO
-    Point invRow1 = Point(0, 0, 0);
-    Point invRow2 = Point(0, 0, 0);
-    Point invRow3 = Point(0, 0, 0);
+    double invdet = 1 / det();
 
-    return Matrix(invRow1, invRow2, invRow3);
+    return Matrix(Point((row2.getY() * row3.getZ() - row3.getY() * row2.getZ()) * invdet,
+                        (row1.getZ() * row3.getY() - row1.getY() * row3.getZ()) * invdet,
+                        (row1.getY() * row2.getZ() - row1.getZ() * row2.getY()) * invdet),
+                  Point((row2.getZ() * row3.getX() - row2.getX() * row3.getZ()) * invdet,
+                        (row1.getX() * row3.getZ() - row1.getZ() * row3.getX()) * invdet,
+                        (row2.getX() * row1.getZ() - row1.getX() * row2.getZ()) * invdet),
+                  Point((row2.getX() * row3.getY() - row3.getX() * row2.getY()) * invdet,
+                        (row3.getX() * row1.getY() - row1.getX() * row3.getY()) * invdet,
+                        (row1.getX() * row2.getY() - row2.getX() * row1.getY()) * invdet));
 }
 
 Point Matrix::operator*(Point vector) {
-    // TODO: multiplicacion matriz x vector
-    return Point();
+    return Point(vector.dotProduct(row1),
+                 vector.dotProduct(row2), 
+                 vector.dotProduct(row3));
 }

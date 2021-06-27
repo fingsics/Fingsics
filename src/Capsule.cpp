@@ -104,6 +104,7 @@ void Capsule::updatePosAndVel(double secondsElapsed) {
     double epsilon = 0.001;
     pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(radius - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
 
+    // TODO: Convert to radians properly
     secondsElapsed *= 57.2958;
     angle = Point(angle.getX() + angularVelocity.getX() * secondsElapsed, angle.getY() + angularVelocity.getY() * secondsElapsed, angle.getZ() + angularVelocity.getZ() * secondsElapsed);
 
