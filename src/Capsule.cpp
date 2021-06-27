@@ -2,11 +2,9 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, Point pos, Point vel, Point force, double length, double radius, Point angle, Point angularVelocity, double mass, double elasticityCoef, Color color) : Object(id, pos, vel, force, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length) : Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
-    this->angle = angle;
-    this->angularVelocity = angularVelocity;
 }
 
 Point Capsule::getAxisDirection() {
@@ -19,14 +17,6 @@ double Capsule::getRadius() {
 
 double Capsule::getLength() {
     return length;
-}
-
-Point Capsule::getAngle() {
-    return angle;
-}
-
-Point Capsule::getAngularVelocity() {
-    return angularVelocity;
 }
 
 Point Capsule::getCylinderEnd1() {
@@ -101,20 +91,12 @@ void Capsule::draw() {
     glPopMatrix();
 }
 
-void Capsule::updatePosAndVel(double secondsElapsed, Room room) {
-    // Check collision with floor
-
-    // Check collision with walls
-
-    // Update velocity
-    Point acceleration = force / mass;
-    vel = vel + acceleration * secondsElapsed;
-
-    // Update position
-    double epsilon = 0.001;
-    pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(radius - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
-
-    // Update angular velocity
-
-    // Update angle
+Matrix Capsule::getInertiaTensor() {
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
+    double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
+    double y = x;
+    double z = 1.0 / 2.0 * mass * radius * radius;
+    return Matrix(x, 0, 0,
+                  0, y, 0,
+                  0, 0, z);
 }

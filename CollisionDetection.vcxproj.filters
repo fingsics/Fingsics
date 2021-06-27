@@ -51,9 +51,6 @@
     <ClCompile Include="src\Ball.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="src\Box.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="src\Capsule.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -87,14 +84,14 @@
     <ClCompile Include="src\FreeCamera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Room.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="src\Scene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\MidPhaseAlgorithms.cpp">
       <Filter>Source Files\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Matrix.cpp">
+      <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,9 +102,6 @@
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
     <ClInclude Include="include\Ball.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Box.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="include\Capsule.h">
@@ -137,14 +131,14 @@
     <ClInclude Include="include\FreeCamera.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\Room.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="include\Scene.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="include\MidPhaseAlgorithms.h">
       <Filter>Header Files\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Matrix.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

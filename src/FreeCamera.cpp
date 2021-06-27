@@ -30,8 +30,7 @@ void FreeCamera::lookAt() {
 void FreeCamera::eventUpdate(SDL_Event event) {
     Camera::eventUpdate(event);
     Point lookingDirection = getCenter() - eye;
-    Point perpendicularLookingDirection = lookingDirection.crossProduct(Point(0,1,0));
-    Point perpendicularLookingDirectionNormalized = perpendicularLookingDirection / perpendicularLookingDirection.magnitude();
+    Point perpendicularLookingDirection = lookingDirection.crossProduct(Point(0,1,0)).normalize();
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {
@@ -47,13 +46,13 @@ void FreeCamera::eventUpdate(SDL_Event event) {
             eye = eye + lookingDirection * 0.1;
             break;
         case SDLK_a:
-            eye = eye - perpendicularLookingDirectionNormalized * 0.1;
+            eye = eye - perpendicularLookingDirection * 0.1;
             break;
         case SDLK_s:
             eye = eye - lookingDirection * 0.1;
             break;
         case SDLK_d:
-            eye = eye + perpendicularLookingDirectionNormalized * 0.1;
+            eye = eye + perpendicularLookingDirection * 0.1;
             break;
         case SDLK_SPACE:
             eye = eye + Point(0, 1, 0) * 0.1;

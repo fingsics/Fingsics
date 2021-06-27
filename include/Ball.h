@@ -16,13 +16,13 @@ using namespace std;
 
 class Ball : public Object {
     private:
-        double rad;
+        double radius;
 
     public:
-        Ball(string, Point, Point, Point, double, double, double, Color);
+        Ball(string, Point, Point, Point, Point, Point, double, double, Color, double);
         void draw();
-        double getRad();
-        void updatePosAndVel(double, Room);
+        double getRadius();
+        Matrix getInertiaTensor();
 };
 
 #endif

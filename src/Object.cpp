@@ -2,11 +2,13 @@
 
 using namespace std;
 
-Object::Object(string id, Point pos, Point vel, Point force, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color) {
     this->pos = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
     this->vel = vel;
+    this->angle = angle;
+    this->angularVelocity = angularVelocity;
     this->force = force;
     this->color = color;
     this->id = id;
@@ -22,6 +24,14 @@ double Object::getMass(){
 
 string Object::getId() {
     return id;
+}
+
+Point Object::getAngle() {
+    return angle;
+}
+
+Point Object::getAngularVelocity() {
+    return angularVelocity;
 }
 
 Point Object::getPos(){
@@ -48,6 +58,23 @@ void Object::setVel(Point vel) {
     this->vel = vel;
 }
 
+void Object::setAngularVelocity(Point angularVelocity) {
+    this->angularVelocity = angularVelocity;
+}
+
 void Object::setForce(Point force) {
     this->force = force;
+}
+
+void Object::updatePosAndVel(double secondsElapsed) {
+    // Update velocity
+    Point acceleration = force / mass;
+    vel = vel + acceleration * secondsElapsed;
+
+    // Update position
+    pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
+
+    // Update angular position
+    double multiplier = secondsElapsed * 180 / M_PI;
+    angle = Point(angle.getX() + angularVelocity.getX() * multiplier, angle.getY() + angularVelocity.getY() * multiplier, angle.getZ() + angularVelocity.getZ() * multiplier);
 }

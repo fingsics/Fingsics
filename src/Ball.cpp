@@ -2,17 +2,21 @@
 
 using namespace std;
 
-Ball::Ball(string id, Point pos, Point vel, Point force, double rad, double mass, double elasticityCoef, Color color) :  Object(id, pos, vel, force, mass, elasticityCoef, color) {
-    this->rad = rad;
+Ball::Ball(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius) :  Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+    this->radius = radius;
 }
 
-double Ball::getRad(){
-    return rad;
+double Ball::getRadius(){
+    return radius;
 }
 
 void Ball::draw() {
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    // TODO: ROTATE PROPERLY
+    glRotatef(angle.getX(), 1, 0, 0);
+    glRotatef(angle.getY(), 0, 1, 0);
+    glRotatef(angle.getZ(), 0, 0, 1);
 
     for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
@@ -37,10 +41,10 @@ void Ball::draw() {
             t = ((double) j) / LONGS;
 
             glNormal3d(x * zr0, y * zr0, z0);
-            glVertex3d(rad*x * zr0, rad*y * zr0, rad*z0);
+            glVertex3d(radius *x * zr0, radius *y * zr0, radius *z0);
 
             glNormal3d(x * zr1, y * zr1, z1);
-            glVertex3d(rad*x * zr1,rad* y * zr1, rad*z1);
+            glVertex3d(radius *x * zr1, radius * y * zr1, radius *z1);
         }
         glEnd();
 
@@ -48,31 +52,10 @@ void Ball::draw() {
     glPopMatrix();
  }
 
-void Ball::updatePosAndVel(double secondsElapsed, Room room) {
-    // Check collision with floor
-    if (pos.getY() - rad <= room.getFloor() && vel.getY() < 0) {
-        vel = Point(vel.getX(), -vel.getY() * elasticityCoef, vel.getZ());
-    }
-
-    // Check collision with walls
-    if (pos.getX() - rad <= room.getFrontWall() && vel.getX() < 0) {
-        vel = Point(-vel.getX() * elasticityCoef, vel.getY(), vel.getZ());
-    }
-    if (pos.getX() + rad >= room.getBackWall() && vel.getX() > 0) {
-        vel = Point(-vel.getX() * elasticityCoef, vel.getY(), vel.getZ());
-    }
-    if (pos.getZ() + rad >= room.getRightWall() && vel.getZ() > 0) {
-        vel = Point(vel.getX(), vel.getY(), -vel.getZ() * elasticityCoef);
-    }
-    if (pos.getZ() - rad <= room.getLeftWall() && vel.getZ() < 0) {
-        vel = Point(vel.getX(), vel.getY(), -vel.getZ() * elasticityCoef);
-    }
-
-    // Update velocity
-    Point acceleration = force / mass;
-    vel = vel + acceleration * secondsElapsed;
-
-    // Update position
-    float epsilon = 0.001;
-    pos = Point(pos.getX() + vel.getX() * secondsElapsed, max(rad - epsilon, pos.getY() + vel.getY() * secondsElapsed), pos.getZ() + vel.getZ() * secondsElapsed);
+Matrix Ball::getInertiaTensor() {
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
+    double v = 2.0 / 5.0 * mass * radius * radius;
+    return Matrix(v, 0, 0,
+                  0, v, 0,
+                  0, 0, v);
 }

@@ -11,11 +11,11 @@ using namespace std;
 
 class NarrowPhaseAlgorithms {
 public:
-    static map<string, pair<Object*, Object*>> getCollisions(map<string, pair<Object*, Object*>>);
+    static map<string, tuple<Object*, Object*, Point, Point>> getCollisions(map<string, pair<Object*, Object*>>);
 private:
-    static bool ballBall(Ball*, Ball*);
-    static bool ballCapsule(Ball*, Capsule*);
-    static bool capsuleCapsule(Capsule*, Capsule*);
+    static pair<Point, Point>* ballBall(Ball*, Ball*);
+    static pair<Point, Point>* ballCapsule(Ball*, Capsule*);
+    static pair<Point, Point>* capsuleCapsule(Capsule*, Capsule*);
 };
 
 #endif
