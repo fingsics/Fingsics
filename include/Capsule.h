@@ -29,6 +29,7 @@ public:
     Capsule(string, Point, Point, Point, double, double, Point, Point, double, double, Color);
     void draw();
     void updatePosAndVel(double);
+    Matrix getInertiaTensor();
 };
 
 #endif

@@ -59,6 +59,11 @@ Point Point::crossProduct(Point vector2){
     );
 }
 
+double Point::distanceTo(Point other) {
+    Point diff = *this - other;
+    return diff.magnitude();
+}
+
 Point Point::operator-(Point vector2){
     return Point(x - vector2.getX(), y - vector2.getY(), z - vector2.getZ());
 }

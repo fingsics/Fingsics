@@ -112,3 +112,12 @@ void Capsule::updatePosAndVel(double secondsElapsed) {
 
     // Update angle
 }
+
+Matrix Capsule::getInertiaTensor() {
+    double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
+    double y = x;
+    double z = 1.0 / 2.0 * mass * radius * radius;
+    return Matrix(Point(x, 0, 0),
+                  Point(0, y, 0),
+                  Point(0, 0, z));
+}

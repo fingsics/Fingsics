@@ -23,6 +23,7 @@ class Ball : public Object {
         void draw();
         double getRad();
         void updatePosAndVel(double);
+        Matrix getInertiaTensor();
 };
 
 #endif

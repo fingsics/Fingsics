@@ -19,6 +19,7 @@ class Point{
         float getZ();
         float dotProduct(Point);
         Point crossProduct(Point);
+        double distanceTo(Point);
         double magnitude();
         bool isZero();
         Point rotate(Point);
