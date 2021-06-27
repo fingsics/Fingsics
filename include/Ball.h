@@ -16,12 +16,12 @@ using namespace std;
 
 class Ball : public Object {
     private:
-        double rad;
+        double radius;
 
     public:
         Ball(string, Point, Point, Point, Point, Point, double, double, double, Color);
         void draw();
-        double getRad();
+        double getRadius();
         void updatePosAndVel(double);
         Matrix getInertiaTensor();
 };

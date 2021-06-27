@@ -92,10 +92,6 @@ void Capsule::draw() {
 }
 
 void Capsule::updatePosAndVel(double secondsElapsed) {
-    // Check collision with floor
-
-    // Check collision with walls
-
     // Update velocity
     Point acceleration = force / mass;
     vel = vel + acceleration * secondsElapsed;
@@ -103,17 +99,13 @@ void Capsule::updatePosAndVel(double secondsElapsed) {
     // Update position
     pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
 
-    // TODO: Convert to radians properly
-    secondsElapsed *= 57.2958;
-    angle = Point(angle.getX() + angularVelocity.getX() * secondsElapsed, angle.getY() + angularVelocity.getY() * secondsElapsed, angle.getZ() + angularVelocity.getZ() * secondsElapsed);
-
-
-    // Update angular velocity
-
-    // Update angle
+    // Update angular position
+    double multiplier = secondsElapsed * 180 / M_PI;
+    angle = Point(angle.getX() + angularVelocity.getX() * multiplier, angle.getY() + angularVelocity.getY() * multiplier, angle.getZ() + angularVelocity.getZ() * multiplier);
 }
 
 Matrix Capsule::getInertiaTensor() {
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
     double y = x;
     double z = 1.0 / 2.0 * mass * radius * radius;

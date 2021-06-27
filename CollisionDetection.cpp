@@ -25,8 +25,8 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-// Inertia values: https://www.thoughtco.com/moment-of-inertia-formulas-2698806
-void applyCollisions2(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
+void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
+    // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
         Object* object1 = get<0>(mapEntry.second);
@@ -34,7 +34,7 @@ void applyCollisions2(map<string, tuple<Object*, Object*, Point, Point>> oldColl
         Point collisionPoint = get<2>(mapEntry.second);
         Point collisionNormal = get<3>(mapEntry.second);
 
-        double e = 1; // e coefficient of restitution which depends on the nature of the two colliding materials  ------>   (object1->getElasticity() + object2->getElasticity()) / 2
+        double e = 1; // e coefficient of restitution which depends on the nature of the two colliding materials
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
         Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
@@ -53,24 +53,21 @@ void applyCollisions2(map<string, tuple<Object*, Object*, Point, Point>> oldColl
         Point waf; // waf final angular velocity of object a
         Point wbf; // wbf final angular velocity of object b
 
-
-
         Matrix IaInverse = Ia.inverse();
         Matrix IbInverse = Ib.inverse();
 
         Point angularVelChangea = normal.crossProduct(ra);
         angularVelChangea = IaInverse * angularVelChangea;
-        Point vaLinDueToR = angularVelChangea.crossProduct(ra);  // calculate the linear velocity of collision point on a due to rotation of a
+        Point vaLinDueToR = angularVelChangea.crossProduct(ra);
         double scalar = 1 / ma + vaLinDueToR.dotProduct(normal);
 
         Point angularVelChangeb = normal.crossProduct(rb);
         angularVelChangeb = IbInverse * angularVelChangeb;
-        Point vbLinDueToR = angularVelChangeb.crossProduct(rb);  // calculate the linear velocity of collision point on b due to rotation of b
+        Point vbLinDueToR = angularVelChangeb.crossProduct(rb);
         scalar += 1 / mb + vbLinDueToR.dotProduct(normal);
 
-        double Jmod = (e + 1) * (vai - vbi).magnitude() / scalar;
+        double Jmod = (e + 1) * (vai - vbi).getMagnitude() / scalar;
 
-        // Puede estar mal, lo hice yo
         Point collisionPlusNormal = collisionPoint + (normal * 0.01);
         double distanceToCollision = object1->getPos().distanceTo(collisionPoint);
         double distanceToCollisionPlusNormal = object1->getPos().distanceTo(collisionPlusNormal);
@@ -89,52 +86,6 @@ void applyCollisions2(map<string, tuple<Object*, Object*, Point, Point>> oldColl
         object2->setVel(vbf);
         object1->setAngularVelocity(waf);
         object2->setAngularVelocity(wbf);
-    }
-}
-
-
-void applyCollisions(map<string, pair<Object*, Object*>> oldCollisions, map<string, pair<Object*, Object*>> collisionMap) {
-    for (auto const& mapEntry : collisionMap) {
-        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
-        pair<Object*, Object*> collisionPair = mapEntry.second;
-        Object* object1 = collisionPair.first;
-        Object* object2 = collisionPair.second;
-        double object1Mass = object1->getMass();
-        double object2Mass = object2->getMass();
-        Point object1Vel = object1->getVel();
-        Point object2Vel = object2->getVel();
-        Point object1Pos = object1->getPos();
-        Point object2Pos = object2->getPos();
-
-        Point normalVector = object1Pos - object2Pos;
-        double distance = normalVector.magnitude();
-
-        Point unitVector = normalVector / distance;
-        Point tangentVector = Point(-unitVector.getZ(), -unitVector.getY(), unitVector.getX());
-
-        double vector1NormalMagnitude = unitVector.dotProduct(object1Vel);
-        double vector1TangentMagnitude = tangentVector.dotProduct(object1Vel);
-        double vector2NormalMagnitude = unitVector.dotProduct(object2Vel);
-        double vector2TangentMagnitude = tangentVector.dotProduct(object2Vel);
-
-        // Because of conservation of kinetic energy
-        double newVector1NormalMagnitude = (vector1NormalMagnitude * (object1Mass - object2Mass) + 2 * object2Mass * vector2NormalMagnitude) / (object1Mass + object2Mass);
-        double newVector2NormalMagnitude = (vector2NormalMagnitude * (object2Mass - object1Mass) + 2 * object1Mass * vector1NormalMagnitude) / (object1Mass + object2Mass);
-
-        // These are the same
-        double newVector1TangentMagnitude = vector1TangentMagnitude;
-        double newVector2TangentMagnitude = vector2TangentMagnitude;
-
-        Point newVector1Normal = unitVector * newVector1NormalMagnitude;
-        Point newVector1Tangent = tangentVector * newVector1TangentMagnitude;
-        Point newVector2Normal = unitVector * newVector2NormalMagnitude;
-        Point newVector2Tangent = tangentVector * newVector2TangentMagnitude;
-
-        Point newVector1Velocity = (newVector1Normal + newVector1Tangent) * object1->getElasticity();
-        Point newVector2Velocity = (newVector2Normal + newVector2Tangent) * object2->getElasticity();
-
-        object1->setVel(newVector1Velocity);
-        object2->setVel(newVector2Velocity);
     }
 }
 
@@ -303,7 +254,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, tuple<Object*, Object*, Point, Point>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
-            applyCollisions2(oldCollisions, collisions);
+            applyCollisions(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }

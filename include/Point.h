@@ -6,21 +6,22 @@
 
 using namespace std;
 
-class Point{
+class Point {
     private:
-        float x;
-        float y;
-        float z;
+        double x;
+        double y;
+        double z;
     public:
-        Point(float, float, float);
+        Point(double, double, double);
         Point();
-        float getX();
-        float getY();
-        float getZ();
-        float dotProduct(Point);
+        double getX();
+        double getY();
+        double getZ();
+        double dotProduct(Point);
         Point crossProduct(Point);
         double distanceTo(Point);
-        double magnitude();
+        double getMagnitude();
+        Point normalize();
         bool isZero();
         Point rotate(Point);
         Point operator-(Point);

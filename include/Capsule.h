@@ -9,7 +9,6 @@
 #include "Point.h"
 #include "Object.h"
 
-
 #define LATS 8
 #define LONGS 8
 
@@ -19,7 +18,6 @@ class Capsule : public Object {
 private:
     double radius;
     double length;
-    //Point torque;????
 public:
     Point getAxisDirection();
     double getRadius();

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Point::Point(float x, float y, float z) {
+Point::Point(double x, double y, double z) {
     this->x = x;
     this->y = y;
     this->z = z;
@@ -14,19 +14,23 @@ Point::Point() {
     this->z = 0;
 }
 
-float Point::getX() {
+double Point::getX() {
   return x;
 }
 
-float Point::getY() {
+double Point::getY() {
   return y;
 }
 
-float Point::getZ() {
+double Point::getZ() {
   return z;
 }
 
-double Point::magnitude(){
+Point Point::normalize() {
+    return (*this) / getMagnitude();
+}
+
+double Point::getMagnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
@@ -47,7 +51,7 @@ Point Point::rotate(Point angle) {
     return Point(temp2.getX() * cos(radZ) - temp2.getY() * sin(radZ), temp2.getX() * sin(radZ) + temp2.getY() * cos(radZ), temp2.getZ());
 }
 
-float Point::dotProduct(Point vector2){
+double Point::dotProduct(Point vector2){
     return (x * vector2.getX()) + (y * vector2.getY()) + (z * vector2.getZ());
 }
 
@@ -61,7 +65,7 @@ Point Point::crossProduct(Point vector2){
 
 double Point::distanceTo(Point other) {
     Point diff = *this - other;
-    return diff.magnitude();
+    return diff.getMagnitude();
 }
 
 Point Point::operator-(Point vector2){

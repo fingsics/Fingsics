@@ -7,7 +7,7 @@ pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
     Point object2Pos = ball2->getPos();
 
     Point normalVector = object1Pos - object2Pos;
-    double distance = normalVector.magnitude();
+    double distance = normalVector.getMagnitude();
 
     return NULL;//distance < ball1->getRad() + ball2->getRad();
 }
@@ -17,39 +17,39 @@ pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* caps
     Point AB = capsule->getAxisDirection();
     Point AP = ball->getPos() - capsule->getPos();
     Point displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
-    if (displacementFromA.magnitude() < capsule->getLength() / 2) {
+    if (displacementFromA.getMagnitude() < capsule->getLength() / 2) {
         // Projection of the ball's center is inside the capsule's cylinder
         Point projection = capsule->getPos() + displacementFromA;
         Point dist = ball->getPos() - projection;
-        double distttt = dist.magnitude();
-        if (distttt < ball->getRad() + capsule->getRadius()) {
+        double distttt = dist.getMagnitude();
+        if (distttt < ball->getRadius() + capsule->getRadius()) {
             Point collisionDirection = ball->getPos() - projection;
-            Point collisionPoint = projection + (collisionDirection / collisionDirection.magnitude() * capsule->getRadius());
+            Point collisionPoint = projection + (collisionDirection / collisionDirection.getMagnitude() * capsule->getRadius());
             Point collisionNormal = projection - collisionPoint;
             pair<Point, Point>* ret = new pair<Point, Point>();
             ret->first = collisionPoint;
-            ret->second = collisionNormal / collisionNormal.magnitude();
+            ret->second = collisionNormal / collisionNormal.getMagnitude();
             return ret;
         }
     }
     else {
         // Projection of the ball's center is outside of the capsule's cylinder
-        if ((ball->getPos() - capsule->getCylinderEnd1()).magnitude() < ball->getRad() + capsule->getRadius()) {
+        if ((ball->getPos() - capsule->getCylinderEnd1()).getMagnitude() < ball->getRadius() + capsule->getRadius()) {
             Point collisionDirection = ball->getPos() - capsule->getCylinderEnd1();
-            Point collisionPoint = capsule->getCylinderEnd1() + (collisionDirection / collisionDirection.magnitude() * capsule->getRadius());
+            Point collisionPoint = capsule->getCylinderEnd1() + (collisionDirection / collisionDirection.getMagnitude() * capsule->getRadius());
             pair<Point, Point>* ret = new pair<Point, Point>();
             Point collisionNormal = capsule->getCylinderEnd1() - collisionPoint;
             ret->first = collisionPoint;
-            ret->second = collisionNormal / collisionNormal.magnitude();
+            ret->second = collisionNormal / collisionNormal.getMagnitude();
             return ret;
         }
-        else if ((ball->getPos() - capsule->getCylinderEnd2()).magnitude() < ball->getRad() + capsule->getRadius()) {
+        else if ((ball->getPos() - capsule->getCylinderEnd2()).getMagnitude() < ball->getRadius() + capsule->getRadius()) {
             Point collisionDirection = ball->getPos() - capsule->getCylinderEnd2();
-            Point collisionPoint = capsule->getCylinderEnd2() + (collisionDirection / collisionDirection.magnitude() * capsule->getRadius());
+            Point collisionPoint = capsule->getCylinderEnd2() + (collisionDirection / collisionDirection.getMagnitude() * capsule->getRadius());
             pair<Point, Point>* ret = new pair<Point, Point>();
             Point collisionNormal = capsule->getCylinderEnd2() - collisionPoint;
             ret->first = collisionPoint;
-            ret->second = collisionNormal / collisionNormal.magnitude();
+            ret->second = collisionNormal / collisionNormal.getMagnitude();
             return ret;
         }
     }
