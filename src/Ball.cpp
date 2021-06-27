@@ -13,6 +13,10 @@ double Ball::getRadius(){
 void Ball::draw() {
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    // TODO: ROTATE PROPERLY
+    glRotatef(angle.getX(), 1, 0, 0);
+    glRotatef(angle.getY(), 0, 1, 0);
+    glRotatef(angle.getZ(), 0, 0, 1);
 
     for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
@@ -47,15 +51,6 @@ void Ball::draw() {
     }
     glPopMatrix();
  }
-
-void Ball::updatePosAndVel(double secondsElapsed) {
-    // Update velocity
-    Point acceleration = force / mass;
-    vel = vel + acceleration * secondsElapsed;
-
-    // Update position
-    pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
-}
 
 Matrix Ball::getInertiaTensor() {
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors

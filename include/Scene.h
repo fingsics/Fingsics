@@ -7,6 +7,7 @@
 #include "Capsule.h"
 #include "Object.h"
 #include <string>
+#include <iostream>
 #include <algorithm>
 #include "../tinyxml2/tinyxml2.h"
 

@@ -22,7 +22,6 @@ class Ball : public Object {
         Ball(string, Point, Point, Point, Point, Point, double, double, double, Color);
         void draw();
         double getRadius();
-        void updatePosAndVel(double);
         Matrix getInertiaTensor();
 };
 

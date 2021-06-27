@@ -34,10 +34,10 @@ class Object {
         void setVel(Point);
         void setAngularVelocity(Point);
         void setForce(Point);
+        void updatePosAndVel(double);
 
         // Virtual methods
         virtual void draw() = 0;
-        virtual void updatePosAndVel(double) = 0;
         virtual Matrix getInertiaTensor() = 0;
 };
 
