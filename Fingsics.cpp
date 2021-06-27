@@ -1,4 +1,4 @@
-// CollisionDetection.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// Fingsics.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 #include "SDL.h"
 #include "SDL_opengl.h"
