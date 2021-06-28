@@ -44,6 +44,13 @@ double Matrix::det() {
            values[0][2] * (values[1][0] * values[2][1] - values[1][1] * values[2][0]);
 }
 
+
+Matrix Matrix::transpose() {
+    return Matrix(values[0][0], values[1][0], values[2][0],
+                  values[0][1], values[1][1], values[2][1],
+                  values[0][2], values[1][2], values[2][2]);
+}
+
 Matrix Matrix::inverse() {
     double invdet = 1 / det();
 
@@ -70,8 +77,26 @@ Point Matrix::row2() {
     return Point(values[2][0], values[2][1], values[2][2]);
 }
 
+Point Matrix::col0() {
+    return Point(values[0][0], values[1][0], values[2][0]);
+}
+
+Point Matrix::col1() {
+    return Point(values[0][1], values[1][1], values[2][1]);
+}
+
+Point Matrix::col2() {
+    return Point(values[0][2], values[1][2], values[2][2]);
+}
+
 Point Matrix::operator*(Point vector) {
     return Point(vector.dotProduct(row0()),
                  vector.dotProduct(row1()), 
                  vector.dotProduct(row2()));
+}
+
+Matrix Matrix::operator*(Matrix other) {
+    return Matrix(row0().dotProduct(other.col0()), row0().dotProduct(other.col1()), row0().dotProduct(other.col2()),
+                  row1().dotProduct(other.col0()), row1().dotProduct(other.col1()), row1().dotProduct(other.col2()),
+                  row2().dotProduct(other.col0()), row2().dotProduct(other.col1()), row2().dotProduct(other.col2()));
 }

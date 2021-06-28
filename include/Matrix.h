@@ -15,11 +15,16 @@ class Matrix {
         Matrix(double[], double[], double[]);
         Matrix();
         double det();
+        Matrix transpose();
         Matrix inverse();
         Point row0();
         Point row1();
         Point row2();
+        Point col0();
+        Point col1();
+        Point col2();
         Point operator*(Point);
+        Matrix operator*(Matrix);
 };
 
 #endif

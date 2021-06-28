@@ -31,9 +31,9 @@ void Capsule::draw() {
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
     // TODO: ROTATE PROPERLY
-    glRotatef(angle.getX(),1,0,0);
-    glRotatef(angle.getY(),0,1,0);
     glRotatef(angle.getZ(),0,0,1);
+    glRotatef(angle.getX(), 1, 0, 0);
+    glRotatef(angle.getY(), 0, 1, 0);
     glTranslatef(0, 0,-length / 2.0);
     glColor3ub(color.getR(), color.getG(), color.getB());
     double lats = LATS * 2;
@@ -96,7 +96,22 @@ Matrix Capsule::getInertiaTensor() {
     double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
     double y = x;
     double z = 1.0 / 2.0 * mass * radius * radius;
-    return Matrix(x, 0, 0,
-                  0, y, 0,
-                  0, 0, z);
+
+    Point xAxis = Point(1, 0, 0);
+    Point yAxis = Point(0, 1, 0);
+    Point zAxis = Point(0, 0, 1);
+    Point xAxis2 = Point(1, 0, 0).rotate(angle);
+    Point yAxis2 = Point(0, 1, 0).rotate(angle);
+    Point zAxis2 = Point(0, 0, 1).rotate(angle);
+
+    Matrix baseChangeMatrix = Matrix(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
+                                     xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
+                                     xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
+
+    Matrix withoutRotation = Matrix(x, 0, 0,
+                                    0, y, 0,
+                                    0, 0, z);
+
+    Matrix rotatedTensor = baseChangeMatrix * withoutRotation * baseChangeMatrix.transpose();
+    return rotatedTensor;
 }
