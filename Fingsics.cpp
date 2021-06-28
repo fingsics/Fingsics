@@ -25,6 +25,13 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
+bool isNormalPointingTowardsObject(Point collisionPoint, Point normal, Object* object) {
+    Point collisionPlusNormal = collisionPoint + (normal * 0.01);
+    double distanceToCollision = object->getPos().distanceTo(collisionPoint);
+    double distanceToCollisionPlusNormal = object->getPos().distanceTo(collisionPlusNormal);
+    return distanceToCollisionPlusNormal < distanceToCollision;
+}
+
 void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
     // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     for (auto const& mapEntry : collisionMap) {
@@ -41,7 +48,6 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Matrix Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
         Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
-        Point collisionToCenterOfMass = object2->getPos() - collisionPoint;
         Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
         Point vai = object1->getVel(); // vai initial velocity of centre of mass on object a
         Point vbi = object2->getVel(); // vbi initial velocity of centre of mass on object b
@@ -55,32 +61,22 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
 
         Matrix IaInverse = Ia.inverse();
         Matrix IbInverse = Ib.inverse();
-
-        Point angularVelChangea = normal.crossProduct(ra);
-        angularVelChangea = IaInverse * angularVelChangea;
-        Point vaLinDueToR = angularVelChangea.crossProduct(ra);
-        double scalar = 1 / ma + vaLinDueToR.dotProduct(normal);
-
-        Point angularVelChangeb = normal.crossProduct(rb);
-        angularVelChangeb = IbInverse * angularVelChangeb;
-        Point vbLinDueToR = angularVelChangeb.crossProduct(rb);
-        scalar += 1 / mb + vbLinDueToR.dotProduct(normal);
+    
+        bool isNormalPointingTowardsA = isNormalPointingTowardsObject(collisionPoint, normal, object1);
+        
+        double scalar = 1 / ma + (IaInverse * normal.crossProduct(ra)).crossProduct(ra).dotProduct(normal)
+                      + 1 / mb + (IbInverse * normal.crossProduct(rb)).crossProduct(rb).dotProduct(normal);
 
         double Jmod = (e + 1) * (vai - vbi).getMagnitude() / scalar;
-
-        Point collisionPlusNormal = collisionPoint + (normal * 0.01);
-        double distanceToCollision = object1->getPos().distanceTo(collisionPoint);
-        double distanceToCollisionPlusNormal = object1->getPos().distanceTo(collisionPlusNormal);
-        bool isNormalPointingTowardsA = distanceToCollisionPlusNormal < distanceToCollision;
 
         Point Ja = isNormalPointingTowardsA ? normal * Jmod : normal * -Jmod;
         Point Jb = isNormalPointingTowardsA ? normal * -Jmod : normal * Jmod;
 
+        // CAREFUL: these might be wrong (some + signs could be - or the other way around)
         vaf = vai + (Ja * (1 / ma));
         vbf = vbi + (Jb * (1 / mb));
-
-        waf = wai - angularVelChangea;
-        wbf = wbi - angularVelChangeb;
+        waf = wai - (IaInverse * Ja.crossProduct(ra));
+        wbf = wbi - (IbInverse * Jb.crossProduct(rb));
 
         object1->setVel(vaf);
         object2->setVel(vbf);
