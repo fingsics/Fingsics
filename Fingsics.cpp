@@ -8,7 +8,7 @@
 #include "include/BroadPhaseAlgorithms.h"
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithms.h"
-#include "include/Matrix.h"
+#include "include/Matrix33.h"
 #include "freeglut.h"
 #include <iostream>
 #include <thread>
@@ -48,8 +48,8 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
 
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
-        Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
-        Matrix Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
+        Matrix33 Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
+        Matrix33 Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
         Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
@@ -63,8 +63,8 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point waf; // waf final angular velocity of object a
         Point wbf; // wbf final angular velocity of object b
 
-        Matrix IaInverse = Ia.inverse();
-        Matrix IbInverse = Ib.inverse();
+        Matrix33 IaInverse = Ia.inverse();
+        Matrix33 IbInverse = Ib.inverse();
     
         bool isNormalPointingTowardsA = isNormalPointingTowardsObject(collisionPoint, normal, object1);
         

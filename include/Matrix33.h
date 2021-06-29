@@ -1,5 +1,5 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX33_H
+#define MATRIX33_H
 
 #define _USE_MATH_DEFINES
 #include "Point.h"
@@ -7,16 +7,16 @@
 
 using namespace std;
 
-class Matrix {
+class Matrix33 {
     private:
         double values[3][3];
     public:
-        Matrix(double, double, double, double, double, double, double, double, double);
-        Matrix(double[], double[], double[]);
-        Matrix();
+        Matrix33(double, double, double, double, double, double, double, double, double);
+        Matrix33(double[], double[], double[]);
+        Matrix33();
         double det();
-        Matrix transpose();
-        Matrix inverse();
+        Matrix33 transpose();
+        Matrix33 inverse();
         Point row0();
         Point row1();
         Point row2();
@@ -24,7 +24,7 @@ class Matrix {
         Point col1();
         Point col2();
         Point operator*(Point);
-        Matrix operator*(Matrix);
+        Matrix33 operator*(Matrix33);
 };
 
 #endif

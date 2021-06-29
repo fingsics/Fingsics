@@ -8,7 +8,7 @@ Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelo
 }
 
 Point Capsule::getAxisDirection() {
-    return Point(0,0,1).rotate(Point(angle));
+    return rotationMatrix * Point(0,0,1);
 }
 
 double Capsule::getRadius() {
@@ -29,13 +29,13 @@ Point Capsule::getCylinderEnd2() {
 
 void Capsule::draw() {
     glPushMatrix();
+
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    // TODO: ROTATE PROPERLY
-    glRotatef(angle.getZ(),0,0,1);
-    glRotatef(angle.getX(), 1, 0, 0);
-    glRotatef(angle.getY(), 0, 1, 0);
+    glMultMatrixd(rotationMatrix.getOpenGLMatrix());
     glTranslatef(0, 0,-length / 2.0);
+
     glColor3ub(color.getR(), color.getG(), color.getB());
+
     double lats = LATS * 2;
     double longs = LONGS * 2;
     for (int i = 0; i <= lats; i++) {
@@ -91,7 +91,7 @@ void Capsule::draw() {
     glPopMatrix();
 }
 
-Matrix Capsule::getInertiaTensor() {
+Matrix33 Capsule::getInertiaTensor() {
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
     double y = x;
@@ -100,18 +100,18 @@ Matrix Capsule::getInertiaTensor() {
     Point xAxis = Point(1, 0, 0);
     Point yAxis = Point(0, 1, 0);
     Point zAxis = Point(0, 0, 1);
-    Point xAxis2 = Point(1, 0, 0).rotate(angle);
-    Point yAxis2 = Point(0, 1, 0).rotate(angle);
-    Point zAxis2 = Point(0, 0, 1).rotate(angle);
+    Point xAxis2 = rotationMatrix * Point(1, 0, 0);
+    Point yAxis2 = rotationMatrix * Point(0, 1, 0);
+    Point zAxis2 = rotationMatrix * Point(0, 0, 1);
 
-    Matrix baseChangeMatrix = Matrix(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
-                                     xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
-                                     xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
+    Matrix33 baseChangeMatrix = Matrix33(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
+                                         xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
+                                         xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
 
-    Matrix withoutRotation = Matrix(x, 0, 0,
-                                    0, y, 0,
-                                    0, 0, z);
+    Matrix33 withoutRotation = Matrix33(x, 0, 0,
+                                        0, y, 0,
+                                        0, 0, z);
 
-    Matrix rotatedTensor = baseChangeMatrix * withoutRotation * baseChangeMatrix.transpose();
+    Matrix33 rotatedTensor = baseChangeMatrix * withoutRotation * baseChangeMatrix.transpose();
     return rotatedTensor;
 }

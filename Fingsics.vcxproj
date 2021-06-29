@@ -164,7 +164,8 @@
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Helpers.cpp" />
-    <ClCompile Include="src\Matrix.cpp" />
+    <ClCompile Include="src\Matrix33.cpp" />
+    <ClCompile Include="src\Matrix44.cpp" />
     <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithms.cpp" />
     <ClCompile Include="src\Object.cpp" />
@@ -181,7 +182,8 @@
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Helpers.h" />
-    <ClInclude Include="include\Matrix.h" />
+    <ClInclude Include="include\Matrix33.h" />
+    <ClInclude Include="include\Matrix44.h" />
     <ClInclude Include="include\MidPhaseAlgorithms.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithms.h" />
     <ClInclude Include="include\Object.h" />
