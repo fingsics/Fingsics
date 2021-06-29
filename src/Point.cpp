@@ -38,17 +38,15 @@ bool Point::isZero() {
     return x == 0 && y == 0 && z == 0;
 }
 
-Point Point::rotate(Point angle) {
+Point Point::rotate(Point angleInDegrees) {
+    Point angle = angleInDegrees * M_PI / 180;
     // https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
-    double radX = angle.getX() * M_PI / 180;
-    double radY = angle.getY() * M_PI / 180;
-    double radZ = angle.getZ() * M_PI / 180;
     // Rotate around X axis
-    Point temp = Point(x, y * cos(radX) - z * sin(radX), y * sin(radX) + z * cos(radX));
+    Point temp = Point(x, y * cos(angle.getX()) - z * sin(angle.getX()), y * sin(angle.getX()) + z * cos(angle.getX()));
     // Rotate around Y axis
-    Point temp2 = Point(temp.getX() * cos(radY) + temp.getZ() * sin(radY), temp.getY(), -temp.getX() * sin(radY) + temp.getZ() * cos(radY));
+    Point temp2 = Point(temp.getX() * cos(angle.getY()) + temp.getZ() * sin(angle.getY()), temp.getY(), -temp.getX() * sin(angle.getY()) + temp.getZ() * cos(angle.getY()));
     // Rotate around Z axis
-    return Point(temp2.getX() * cos(radZ) - temp2.getY() * sin(radZ), temp2.getX() * sin(radZ) + temp2.getY() * cos(radZ), temp2.getZ());
+    return Point(temp2.getX() * cos(angle.getZ()) - temp2.getY() * sin(angle.getZ()), temp2.getX() * sin(angle.getZ()) + temp2.getY() * cos(angle.getZ()), temp2.getZ());
 }
 
 double Point::dotProduct(Point vector2){

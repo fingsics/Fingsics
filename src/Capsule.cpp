@@ -30,9 +30,9 @@ Point Capsule::getCylinderEnd2() {
 void Capsule::draw() {
     glPushMatrix();
 
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixd(rotationMatrix.getOpenGLMatrix());
-    glTranslatef(0, 0,-length / 2.0);
+    glTranslated(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixd(getOpenGLRotationMatrix());
+    glTranslated(0, 0,-length / 2.0);
 
     glColor3ub(color.getR(), color.getG(), color.getB());
 
@@ -91,7 +91,7 @@ void Capsule::draw() {
     glPopMatrix();
 }
 
-Matrix33 Capsule::getInertiaTensor() {
+Matrix Capsule::getInertiaTensor() {
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
     double y = x;
@@ -104,14 +104,14 @@ Matrix33 Capsule::getInertiaTensor() {
     Point yAxis2 = rotationMatrix * Point(0, 1, 0);
     Point zAxis2 = rotationMatrix * Point(0, 0, 1);
 
-    Matrix33 baseChangeMatrix = Matrix33(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
-                                         xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
-                                         xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
+    Matrix baseChangeMatrix = Matrix(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
+                                     xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
+                                     xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
 
-    Matrix33 withoutRotation = Matrix33(x, 0, 0,
-                                        0, y, 0,
-                                        0, 0, z);
+    Matrix withoutRotation = Matrix(x, 0, 0,
+                                    0, y, 0,
+                                    0, 0, z);
 
-    Matrix33 rotatedTensor = baseChangeMatrix * withoutRotation * baseChangeMatrix.transpose();
+    Matrix rotatedTensor = baseChangeMatrix.transpose() * withoutRotation * baseChangeMatrix;
     return rotatedTensor;
 }

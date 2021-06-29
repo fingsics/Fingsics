@@ -90,10 +90,7 @@
     <ClCompile Include="src\MidPhaseAlgorithms.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\Matrix33.cpp">
-      <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Matrix44.cpp">
+    <ClCompile Include="src\Matrix.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,10 +137,7 @@
     <ClInclude Include="include\MidPhaseAlgorithms.h">
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="include\Matrix33.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Matrix44.h">
+    <ClInclude Include="include\Matrix.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>

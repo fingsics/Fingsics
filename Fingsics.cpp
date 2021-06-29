@@ -8,7 +8,7 @@
 #include "include/BroadPhaseAlgorithms.h"
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithms.h"
-#include "include/Matrix33.h"
+#include "include/Matrix.h"
 #include "freeglut.h"
 #include <iostream>
 #include <thread>
@@ -48,8 +48,8 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
 
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
-        Matrix33 Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
-        Matrix33 Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
+        Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
+        Matrix Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
         Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
@@ -63,20 +63,24 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point waf; // waf final angular velocity of object a
         Point wbf; // wbf final angular velocity of object b
 
-        Matrix33 IaInverse = Ia.inverse();
-        Matrix33 IbInverse = Ib.inverse();
+        Matrix IaInverse = Ia.inverse();
+        Matrix IbInverse = Ib.inverse();
     
         bool isNormalPointingTowardsA = isNormalPointingTowardsObject(collisionPoint, normal, object1);
         
-        double scalar = 1 / ma + (IaInverse * normal.crossProduct(ra)).crossProduct(ra).dotProduct(normal)
-                      + 1 / mb + (IbInverse * normal.crossProduct(rb)).crossProduct(rb).dotProduct(normal);
+        // VERSION 1
+        double top = (-e - 1) * (vai - vbi).dotProduct(normal) + ra.crossProduct(normal).dotProduct(wai) - rb.crossProduct(normal).dotProduct(wbi);
+        double bottom = 1 / ma + 1 / mb + ra.crossProduct(normal).dotProduct(IaInverse * (ra.crossProduct(normal))) + rb.crossProduct(normal).dotProduct(IbInverse * (rb.crossProduct(normal)));
+        //double Jmod = top / bottom;
 
+        // VERSION 2
+        double scalar = 1 / ma + normal.dotProduct((IaInverse * (normal.crossProduct(ra))).crossProduct(ra))
+                      + 1 / mb + normal.dotProduct((IbInverse * (normal.crossProduct(rb))).crossProduct(rb));
         double Jmod = (e + 1) * (vai - vbi).getMagnitude() / scalar;
 
         Point Ja = isNormalPointingTowardsA ? normal * Jmod : normal * -Jmod;
         Point Jb = isNormalPointingTowardsA ? normal * -Jmod : normal * Jmod;
 
-        // CAREFUL: these might be wrong (some + signs could be - or the other way around)
         vaf = vai + (Ja * (1 / ma));
         vbf = vbi + (Jb * (1 / mb));
         waf = wai - (IaInverse * Ja.crossProduct(ra));
@@ -94,6 +98,24 @@ void drawObjects(Object** objects, int numObjects) {
     for (int i = 0; i < numObjects; i++) {
         objects[i]->draw();
     }
+}
+
+void drawAxis() {
+    glColor3ub(255, 0, 0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(100, 0, 0);
+    glEnd();
+    glColor3ub(0, 255, 0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 100, 0);
+    glEnd();
+    glColor3ub(0, 0, 255);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, 100);
+    glEnd();
 }
 
 SDL_Window* initializeSDL() {
@@ -222,7 +244,7 @@ int main(int argc, char* argv[]) {
     map<string, tuple<Object*, Object*, Point, Point>> oldCollisions;
 
     // Scene
-    string sceneName = "scene.xml";
+    string sceneName = "mal2.xml";
     Scene scene = Scene(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
@@ -246,6 +268,7 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         if (draw) {
+            drawAxis();
             drawObjects(objects, numObjects);
         }
 

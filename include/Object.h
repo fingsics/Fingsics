@@ -2,8 +2,7 @@
 #define OBJECT_H
 #include "Color.h"
 #include "Point.h"
-#include "Matrix33.h"
-#include "Matrix44.h"
+#include "Matrix.h"
 #include <string>
 
 using namespace std;
@@ -14,7 +13,7 @@ class Object {
         Point pos;
         Point vel;
         Point force;
-        Matrix44 rotationMatrix;
+        Matrix rotationMatrix;
         Point angularVelocity;
         double mass;
         Color color;
@@ -27,7 +26,8 @@ class Object {
         Point getPos();
         Point getVel();
         Point getForce();
-        Matrix44 getRotationMatrix();
+        Matrix getRotationMatrix();
+        double* getOpenGLRotationMatrix();
         Point getAngularVelocity();
         
         double getElasticity();
@@ -39,7 +39,7 @@ class Object {
 
         // Virtual methods
         virtual void draw() = 0;
-        virtual Matrix33 getInertiaTensor() = 0;
+        virtual Matrix getInertiaTensor() = 0;
 };
 
 #endif

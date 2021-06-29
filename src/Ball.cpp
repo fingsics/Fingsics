@@ -13,8 +13,8 @@ double Ball::getRadius(){
 void Ball::draw() {
     glPushMatrix();
 
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixd(rotationMatrix.getOpenGLMatrix());
+    glTranslated(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixd(getOpenGLRotationMatrix());
 
     for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
@@ -50,10 +50,10 @@ void Ball::draw() {
     glPopMatrix();
  }
 
-Matrix33 Ball::getInertiaTensor() {
+Matrix Ball::getInertiaTensor() {
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double v = 2.0 / 5.0 * mass * radius * radius;
-    return Matrix33(v, 0, 0,
-                    0, v, 0,
-                    0, 0, v);
+    return Matrix(v, 0, 0,
+                  0, v, 0,
+                  0, 0, v);
 }
