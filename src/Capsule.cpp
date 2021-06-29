@@ -28,13 +28,12 @@ Point Capsule::getCylinderEnd2() {
 }
 
 void Capsule::draw() {
-    glPushMatrix();
+    Color darkColor = color.darken(20);
 
+    glPushMatrix();
     glTranslated(pos.getX(), pos.getY(), pos.getZ());
     glMultMatrixd(getOpenGLRotationMatrix());
     glTranslated(0, 0,-length / 2.0);
-
-    glColor3ub(color.getR(), color.getG(), color.getB());
 
     double lats = LATS * 2;
     double longs = LONGS * 2;
@@ -48,8 +47,12 @@ void Capsule::draw() {
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
+        glBegin(GL_QUAD_STRIP);
+
         for (int j = 0; j <= longs; j++)
         {
+            if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+            else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
             double lng = 2 * M_PI * (double)(j - 1) / longs;
             double x = cos(lng);
             double y = sin(lng);
@@ -70,6 +73,8 @@ void Capsule::draw() {
             glBegin(GL_QUAD_STRIP);
             for (int j = 0; j <= longs; j++)
             {
+                if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+                else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
                 double lng = 2 * M_PI * (double)(j - 1) / longs;
                 double x = cos(lng);
                 double y = sin(lng);

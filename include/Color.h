@@ -1,6 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+#include <algorithm>
+
 using namespace std;
 
 class Color{
@@ -14,6 +16,8 @@ class Color{
         int getR();
         int getG();
         int getB();
+        Color darken(double);
+        Color lighten(double);
 };
 
 #endif

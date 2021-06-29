@@ -11,6 +11,8 @@ double Ball::getRadius(){
 }
 
 void Ball::draw() {
+    Color darkColor = color.darken(20);
+
     glPushMatrix();
 
     glTranslated(pos.getX(), pos.getY(), pos.getZ());
@@ -26,9 +28,10 @@ void Ball::draw() {
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        glColor3ub( color.getR(), color.getG(), color.getB());
         for(int j = 0; j <= LONGS; j++)
         {
+            if (j > LONGS / 2) glColor3ub( color.getR(), color.getG(), color.getB());
+            else glColor3ub( darkColor.getR(), darkColor.getG(), darkColor.getB());
             double lng = 2 * M_PI * (double) (j - 1) / LONGS;
             double x = cos(lng);
             double y = sin(lng);
