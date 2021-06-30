@@ -19,6 +19,8 @@ class Object {
         Color color;
         double elasticityCoef;
         Matrix baseInertiaTensor;
+        Point velocityForUpdate;
+        Point angularVelocityForUpdate;
     public:
         Object(string, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -33,10 +35,10 @@ class Object {
         
         double getElasticity();
         void setPos(Point);
-        void setVel(Point);
-        void setAngularVelocity(Point);
         void setForce(Point);
         void updatePosAndVel(double);
+        void queueVelocityUpdates(Point, Point);
+        void applyVelocityUpdates();
 
         // Virtual methods
         virtual void draw() = 0;

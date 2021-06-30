@@ -35,11 +35,10 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point collisionNormal = get<3>(mapEntry.second);
 
         double e = (object1->getElasticity() + object2->getElasticity()) / 2; // e coefficient of restitution which depends on the nature of the two colliding materials
-
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
-        Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
-        Matrix Ib = object2->getInertiaTensor(); // Ib inertia tensor for body a in absolute coordinates
+        Matrix iaInverse = object1->getInertiaTensor().inverse(); // iaInverse inverse of the inertia tensor for body a in absolute coordinates
+        Matrix ibInverse = object2->getInertiaTensor().inverse(); // ibInverse inverse of the inertia tensor for body a in absolute coordinates
         Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
@@ -48,29 +47,27 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point wai = object1->getAngularVelocity(); // wai initial angular velocity of object a
         Point wbi = object2->getAngularVelocity(); // wbi initial angular velocity of object b
 
-        Point vaf; // vaf final velocity of centre of mass on object a
-        Point vbf; // vbf final velocity of centre of mass on object a
-        Point waf; // waf final angular velocity of object a
-        Point wbf; // wbf final angular velocity of object b
-
-        Matrix IaInverse = Ia.inverse();
-        Matrix IbInverse = Ib.inverse();
-
         double top = -(1 + e) * (vbi - vai).dotProduct(normal);
-        double bottom = 1 / ma + 1 / mb + (IaInverse * ra.crossProduct(normal).crossProduct(ra)
-            + IbInverse * rb.crossProduct(normal).crossProduct(rb)).dotProduct(normal);
+        double bottom = 1 / ma + 1 / mb + (iaInverse * ra.crossProduct(normal).crossProduct(ra)
+            + ibInverse * rb.crossProduct(normal).crossProduct(rb)).dotProduct(normal);
 
         double jr = top / bottom;
 
-        vaf = vai - normal * jr / ma;
-        vbf = vbi + normal * jr / mb;
-        waf = wai - IaInverse * ra.crossProduct(normal) * jr;
-        wbf = wbi + IbInverse * rb.crossProduct(normal) * jr;
+        Point vaDiff = normal * -jr / ma;
+        Point vbDiff = normal * jr / mb;
+        Point waDiff = iaInverse * ra.crossProduct(normal) * -jr;
+        Point wbDiff = ibInverse * rb.crossProduct(normal) * jr;
 
-        object1->setVel(vaf);
-        object2->setVel(vbf);
-        object1->setAngularVelocity(waf);
-        object2->setAngularVelocity(wbf);
+        object1->queueVelocityUpdates(vaDiff, waDiff);
+        object2->queueVelocityUpdates(vbDiff, wbDiff);
+    }
+
+    for (auto const& mapEntry : collisionMap) {
+        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
+        Object* object1 = get<0>(mapEntry.second);
+        Object* object2 = get<1>(mapEntry.second);
+        object1->applyVelocityUpdates();
+        object2->applyVelocityUpdates();
     }
 }
 
@@ -225,7 +222,7 @@ int main(int argc, char* argv[]) {
     map<string, tuple<Object*, Object*, Point, Point>> oldCollisions;
 
     // Scene
-    string sceneName = "mal.xml";
+    string sceneName = "scene.xml";
     Scene scene = Scene(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];

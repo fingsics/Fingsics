@@ -58,14 +58,6 @@ void Object::setPos(Point pos){
     this->pos = pos;
 }
 
-void Object::setVel(Point vel) {
-    this->vel = vel;
-}
-
-void Object::setAngularVelocity(Point angularVelocity) {
-    this->angularVelocity = angularVelocity;
-}
-
 void Object::setForce(Point force) {
     this->force = force;
 }
@@ -84,4 +76,16 @@ void Object::updatePosAndVel(double secondsElapsed) {
 
 Matrix Object::getInertiaTensor() {
     return rotationMatrix * baseInertiaTensor * rotationMatrix.transpose();
+}
+
+void Object::queueVelocityUpdates(Point velocity, Point angularVelocity) {
+    velocityForUpdate = velocityForUpdate + velocity;
+    angularVelocityForUpdate = angularVelocityForUpdate + angularVelocity;
+}
+
+void Object::applyVelocityUpdates() {
+    vel = vel + velocityForUpdate;
+    angularVelocity = angularVelocity + angularVelocityForUpdate;
+    velocityForUpdate = Point();
+    angularVelocityForUpdate = Point();
 }
