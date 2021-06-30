@@ -14,6 +14,7 @@ class Matrix {
     public:
         Matrix(double, double, double, double, double, double, double, double, double);
         Matrix(double[], double[], double[]);
+        Matrix(Point, Point, Point);
         Matrix(Point angles);
         Matrix();
         double det();
@@ -26,6 +27,7 @@ class Matrix {
         Point col0();
         Point col1();
         Point col2();
+        Matrix operator*(double);
         Point operator*(Point);
         Matrix operator*(Matrix);
         double* operator[](int);

@@ -15,7 +15,10 @@ Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelo
     double m = mcy + 2 * mhs;
     double x = mcy * (length * length / 12 + radius * radius / 4) + 2 * mhs * (2 * radius * radius / 5 + length * length / 2 + 3 * length * radius / 8);
     double z = mcy * radius * radius / 2 + 2 * mhs * 2 * radius * radius / 5;
-    this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
+
+    double density = mass / (M_PI * radius * radius * length + (4/3) * M_PI * radius * radius * radius);
+
+    this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z) * density;
 }
 
 Point Capsule::getAxisDirection() {

@@ -14,6 +14,8 @@ Matrix::Matrix(double* row0, double* row1, double* row2) {
     this->values[2][2] = row2[2];
 }
 
+Matrix::Matrix(Point row0, Point row1, Point row2) : Matrix::Matrix(row0.getX(), row0.getY(), row0.getZ(), row1.getX(), row1.getY(), row1.getZ(), row2.getX(), row2.getY(), row2.getZ()) {}
+
 Matrix::Matrix(double v00, double v01, double v02, double v10, double v11, double v12, double v20, double v21, double v22) {
     this->values[0][0] = v00;
     this->values[0][1] = v01;
@@ -123,6 +125,11 @@ Point Matrix::col1() {
 
 Point Matrix::col2() {
     return Point(values[0][2], values[1][2], values[2][2]);
+}
+Matrix Matrix::operator*(double scalar) {
+    return Matrix(row0() * scalar,
+                  row1() * scalar,
+                  row2() * scalar);
 }
 
 Point Matrix::operator*(Point vector) {
