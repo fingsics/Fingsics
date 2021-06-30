@@ -42,8 +42,8 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
         Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
-        Point vai = object1->getVel(); // vai initial velocity of centre of mass on object a
-        Point vbi = object2->getVel(); // vbi initial velocity of centre of mass on object b
+        Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra); // vai initial velocity of contact point on object a
+        Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb); // vbi initial velocity of contact point on object b
         Point wai = object1->getAngularVelocity(); // wai initial angular velocity of object a
         Point wbi = object2->getAngularVelocity(); // wbi initial angular velocity of object b
 
