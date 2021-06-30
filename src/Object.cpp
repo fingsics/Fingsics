@@ -11,7 +11,7 @@ Object::Object(string id, Point pos, Point vel, Point angle, Point angularVeloci
     this->force = force;
     this->color = color;
     this->id = id;
-    this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle * M_PI / 180);
+    this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
 }
 
 bool Object::isMoving(){
@@ -79,8 +79,7 @@ void Object::updatePosAndVel(double secondsElapsed) {
     pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
 
     // Update rotation matrix
-    Matrix newRotation = Matrix(angularVelocity * secondsElapsed);
-    rotationMatrix = newRotation * rotationMatrix;
+    rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
 }
 
 Matrix Object::getInertiaTensor() {

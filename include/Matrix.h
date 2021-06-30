@@ -15,7 +15,7 @@ class Matrix {
         Matrix(double, double, double, double, double, double, double, double, double);
         Matrix(double[], double[], double[]);
         Matrix(Point, Point, Point);
-        Matrix(Point angles);
+        Matrix(Point);
         Matrix();
         double det();
         Matrix transpose();

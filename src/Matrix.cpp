@@ -41,7 +41,7 @@ Matrix::Matrix() {
 }
 
 Matrix::Matrix(Point angles) {
-    // TODO: Get actual rotation matrix
+    // TODO: Check rotation matrix
     Matrix x = Matrix(1, 0, 0,
                       0, cos(angles.getX()), -sin(angles.getX()),
                       0, sin(angles.getX()), cos(angles.getX()));

@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
     map<string, tuple<Object*, Object*, Point, Point>> oldCollisions;
 
     // Scene
-    string sceneName = "mal2.xml";
+    string sceneName = "mal.xml";
     Scene scene = Scene(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];

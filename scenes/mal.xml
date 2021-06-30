@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<capsule pos="1,2,3" mass="0.4" elasticityCoef="0.8" vel="0,0,-2" ang="39,213,153" angVel="1,2,3" color="50,200,200" radius="0.5" length="4" />
+		<capsule pos="1,2,3" mass="0.4" elasticityCoef="0.8" vel="0,0,-2" ang="39,213,153" color="50,200,200" radius="0.5" length="4" />
 		<sphere pos="2,3,-3" mass="0.2" elasticityCoef="0.8" vel="0,0,4" ang="333,-124,12" color="200,200,50" radius="0.4" />
 	</objects>
 </config>
