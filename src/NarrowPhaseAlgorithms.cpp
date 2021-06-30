@@ -73,6 +73,8 @@ map<string, tuple<Object*, Object*, Point, Point>> NarrowPhaseAlgorithms::getCol
         }
         else if (ball2 && capsule1) {
             collision = ballCapsule(ball2, capsule1);
+            // Change normal direction so it points towards the second object
+            if (collision) collision = new pair<Point, Point>(collision->first, collision->second * -1);
         }
 
         if (collision) {

@@ -25,13 +25,6 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-bool isNormalPointingTowardsObject(Point collisionPoint, Point normal, Object* object) {
-    Point collisionPlusNormal = collisionPoint + (normal * 0.01);
-    double distanceToCollision = object->getPos().distanceTo(collisionPoint);
-    double distanceToCollisionPlusNormal = object->getPos().distanceTo(collisionPlusNormal);
-    return distanceToCollisionPlusNormal < distanceToCollision;
-}
-
 void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
     // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     for (auto const& mapEntry : collisionMap) {
@@ -41,11 +34,7 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point collisionPoint = get<2>(mapEntry.second);
         Point collisionNormal = get<3>(mapEntry.second);
 
-
-        // TODO: this should be calculated
         double e = 1; // e coefficient of restitution which depends on the nature of the two colliding materials
-
-
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
         Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
@@ -65,26 +54,17 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
 
         Matrix IaInverse = Ia.inverse();
         Matrix IbInverse = Ib.inverse();
-    
-        bool isNormalPointingTowardsA = isNormalPointingTowardsObject(collisionPoint, normal, object1);
-        
-        // VERSION 1
-        double top = (-e - 1) * (vai - vbi).dotProduct(normal) + ra.crossProduct(normal).dotProduct(wai) - rb.crossProduct(normal).dotProduct(wbi);
-        double bottom = 1 / ma + 1 / mb + ra.crossProduct(normal).dotProduct(IaInverse * (ra.crossProduct(normal))) + rb.crossProduct(normal).dotProduct(IbInverse * (rb.crossProduct(normal)));
-        //double Jmod = top / bottom;
 
-        // VERSION 2
-        double scalar = 1 / ma + normal.dotProduct((IaInverse * (normal.crossProduct(ra))).crossProduct(ra))
-                      + 1 / mb + normal.dotProduct((IbInverse * (normal.crossProduct(rb))).crossProduct(rb));
-        double Jmod = (e + 1) * (vai - vbi).getMagnitude() / scalar;
+        double top = -(1 + e) * (vbi - vai).dotProduct(normal);
+        double bottom = 1 / ma + 1 / mb + (IaInverse * ra.crossProduct(normal).crossProduct(ra)
+            + IbInverse * rb.crossProduct(normal).crossProduct(rb)).dotProduct(normal);
 
-        Point Ja = isNormalPointingTowardsA ? normal * Jmod : normal * -Jmod;
-        Point Jb = isNormalPointingTowardsA ? normal * -Jmod : normal * Jmod;
+        double jr = top / bottom;
 
-        vaf = vai + (Ja * (1 / ma));
-        vbf = vbi + (Jb * (1 / mb));
-        waf = wai - (IaInverse * Ja.crossProduct(ra));
-        wbf = wbi - (IbInverse * Jb.crossProduct(rb));
+        vaf = vai - normal * jr / ma;
+        vbf = vbi + normal * jr / mb;
+        waf = wai - IaInverse * ra.crossProduct(normal) * jr;
+        wbf = wbi + IbInverse * rb.crossProduct(normal) * jr;
 
         object1->setVel(vaf);
         object2->setVel(vbf);

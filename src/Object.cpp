@@ -82,3 +82,7 @@ void Object::updatePosAndVel(double secondsElapsed) {
     Matrix newRotation = Matrix(angularVelocity * secondsElapsed);
     rotationMatrix = newRotation * rotationMatrix;
 }
+
+Matrix Object::getInertiaTensor() {
+    return rotationMatrix * baseInertiaTensor * rotationMatrix.transpose();
+}

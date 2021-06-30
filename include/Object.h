@@ -18,6 +18,7 @@ class Object {
         double mass;
         Color color;
         double elasticityCoef;
+        Matrix baseInertiaTensor;
     public:
         Object(string, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -39,7 +40,7 @@ class Object {
 
         // Virtual methods
         virtual void draw() = 0;
-        virtual Matrix getInertiaTensor() = 0;
+        virtual Matrix getInertiaTensor();
 };
 
 #endif

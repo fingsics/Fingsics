@@ -4,6 +4,10 @@ using namespace std;
 
 Ball::Ball(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius) :  Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->radius = radius;
+
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
+    double v = 2.0 / 5.0 * mass * radius * radius;
+    this->baseInertiaTensor = Matrix(v, 0, 0, 0, v, 0, 0, 0, v);
 }
 
 double Ball::getRadius(){
@@ -11,7 +15,7 @@ double Ball::getRadius(){
 }
 
 void Ball::draw() {
-    Color darkColor = color.darken(20);
+    Color darkColor = Color(255, 255, 255);
 
     glPushMatrix();
 
@@ -54,9 +58,5 @@ void Ball::draw() {
  }
 
 Matrix Ball::getInertiaTensor() {
-    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
-    double v = 2.0 / 5.0 * mass * radius * radius;
-    return Matrix(v, 0, 0,
-                  0, v, 0,
-                  0, 0, v);
+    return baseInertiaTensor;
 }
