@@ -7,11 +7,11 @@ Object::Object(string id, Point pos, Point vel, Point angle, Point angularVeloci
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
     this->vel = vel;
-    this->angle = angle;
     this->angularVelocity = angularVelocity;
     this->force = force;
     this->color = color;
     this->id = id;
+    this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
 }
 
 bool Object::isMoving(){
@@ -26,8 +26,12 @@ string Object::getId() {
     return id;
 }
 
-Point Object::getAngle() {
-    return angle;
+Matrix Object::getRotationMatrix() {
+    return rotationMatrix;
+}
+
+double* Object::getOpenGLRotationMatrix() {
+    return rotationMatrix.getOpenGLRotationMatrix();
 }
 
 Point Object::getAngularVelocity() {
@@ -74,7 +78,10 @@ void Object::updatePosAndVel(double secondsElapsed) {
     // Update position
     pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
 
-    // Update angular position
-    double multiplier = secondsElapsed * 180 / M_PI;
-    angle = Point(angle.getX() + angularVelocity.getX() * multiplier, angle.getY() + angularVelocity.getY() * multiplier, angle.getZ() + angularVelocity.getZ() * multiplier);
+    // Update rotation matrix
+    rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
+}
+
+Matrix Object::getInertiaTensor() {
+    return rotationMatrix * baseInertiaTensor * rotationMatrix.transpose();
 }

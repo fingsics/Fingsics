@@ -25,13 +25,6 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-bool isNormalPointingTowardsObject(Point collisionPoint, Point normal, Object* object) {
-    Point collisionPlusNormal = collisionPoint + (normal * 0.01);
-    double distanceToCollision = object->getPos().distanceTo(collisionPoint);
-    double distanceToCollisionPlusNormal = object->getPos().distanceTo(collisionPlusNormal);
-    return distanceToCollisionPlusNormal < distanceToCollision;
-}
-
 void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
     // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     for (auto const& mapEntry : collisionMap) {
@@ -62,22 +55,17 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
 
         Matrix IaInverse = Ia.inverse();
         Matrix IbInverse = Ib.inverse();
-    
-        bool isNormalPointingTowardsA = isNormalPointingTowardsObject(collisionPoint, normal, object1);
-        
-        double scalar = 1 / ma + (IaInverse * normal.crossProduct(ra)).crossProduct(ra).dotProduct(normal)
-                      + 1 / mb + (IbInverse * normal.crossProduct(rb)).crossProduct(rb).dotProduct(normal);
 
-        double Jmod = (e + 1) * (vai - vbi).getMagnitude() / scalar;
+        double top = -(1 + e) * (vbi - vai).dotProduct(normal);
+        double bottom = 1 / ma + 1 / mb + (IaInverse * ra.crossProduct(normal).crossProduct(ra)
+            + IbInverse * rb.crossProduct(normal).crossProduct(rb)).dotProduct(normal);
 
-        Point Ja = isNormalPointingTowardsA ? normal * Jmod : normal * -Jmod;
-        Point Jb = isNormalPointingTowardsA ? normal * -Jmod : normal * Jmod;
+        double jr = top / bottom;
 
-        // CAREFUL: these might be wrong (some + signs could be - or the other way around)
-        vaf = vai + (Ja * (1 / ma));
-        vbf = vbi + (Jb * (1 / mb));
-        waf = wai - (IaInverse * Ja.crossProduct(ra));
-        wbf = wbi - (IbInverse * Jb.crossProduct(rb));
+        vaf = vai - normal * jr / ma;
+        vbf = vbi + normal * jr / mb;
+        waf = wai - IaInverse * ra.crossProduct(normal) * jr;
+        wbf = wbi + IbInverse * rb.crossProduct(normal) * jr;
 
         object1->setVel(vaf);
         object2->setVel(vbf);
@@ -91,6 +79,24 @@ void drawObjects(Object** objects, int numObjects) {
     for (int i = 0; i < numObjects; i++) {
         objects[i]->draw();
     }
+}
+
+void drawAxis() {
+    glColor3ub(255, 0, 0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(100, 0, 0);
+    glEnd();
+    glColor3ub(0, 255, 0);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 100, 0);
+    glEnd();
+    glColor3ub(0, 0, 255);
+    glBegin(GL_LINES);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, 100);
+    glEnd();
 }
 
 SDL_Window* initializeSDL() {
@@ -219,7 +225,7 @@ int main(int argc, char* argv[]) {
     map<string, tuple<Object*, Object*, Point, Point>> oldCollisions;
 
     // Scene
-    string sceneName = "scene.xml";
+    string sceneName = "mal.xml";
     Scene scene = Scene(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
@@ -243,6 +249,7 @@ int main(int argc, char* argv[]) {
 
         // Draw objects
         if (draw) {
+            drawAxis();
             drawObjects(objects, numObjects);
         }
 

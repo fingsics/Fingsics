@@ -4,6 +4,10 @@ using namespace std;
 
 Ball::Ball(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius) :  Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->radius = radius;
+
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
+    double v = 2.0 / 5.0 * mass * radius * radius;
+    this->baseInertiaTensor = Matrix(v, 0, 0, 0, v, 0, 0, 0, v);
 }
 
 double Ball::getRadius(){
@@ -11,12 +15,12 @@ double Ball::getRadius(){
 }
 
 void Ball::draw() {
+    Color darkColor = Color(255, 255, 255);
+
     glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    // TODO: ROTATE PROPERLY
-    glRotatef(angle.getX(), 1, 0, 0);
-    glRotatef(angle.getY(), 0, 1, 0);
-    glRotatef(angle.getZ(), 0, 0, 1);
+
+    glTranslated(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixd(getOpenGLRotationMatrix());
 
     for(int i = 0; i <= LATS; i++) {
         double lat0 = M_PI * (-0.5 + (double) (i - 1) / LATS);
@@ -28,9 +32,10 @@ void Ball::draw() {
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        glColor3ub( color.getR(), color.getG(), color.getB());
         for(int j = 0; j <= LONGS; j++)
         {
+            if (j > LONGS / 2) glColor3ub( color.getR(), color.getG(), color.getB());
+            else glColor3ub( darkColor.getR(), darkColor.getG(), darkColor.getB());
             double lng = 2 * M_PI * (double) (j - 1) / LONGS;
             double x = cos(lng);
             double y = sin(lng);
@@ -53,9 +58,5 @@ void Ball::draw() {
  }
 
 Matrix Ball::getInertiaTensor() {
-    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
-    double v = 2.0 / 5.0 * mass * radius * radius;
-    return Matrix(v, 0, 0,
-                  0, v, 0,
-                  0, 0, v);
+    return baseInertiaTensor;
 }

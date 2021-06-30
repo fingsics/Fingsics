@@ -26,3 +26,13 @@ int Color::getG() {
 int Color::getB() {
   return b;
 }
+
+Color Color::darken(double percentage) {
+    double reduction = min(100.0, max(0.0, percentage)) / 100;
+    return Color(r - r * reduction, g - g * reduction, b - b * reduction);
+}
+
+Color Color::lighten(double percentage) {
+    double reduction = min(100.0, max(0.0, percentage)) / 100;
+    return Color(r + r * reduction, g + g * reduction, b + b * reduction);
+}

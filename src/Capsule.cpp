@@ -5,10 +5,24 @@ using namespace std;
 Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length) : Object(id, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
+
+    //double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
+    //double z = 1.0 / 2.0 * mass * radius * radius;
+
+    // https://www.gamedev.net/tutorials/programming/math-and-physics/capsule-inertia-tensor-r3856/
+    double mcy = length * radius * radius * M_PI;
+    double mhs = 2 * radius * radius * radius * M_PI / 3;
+    double m = mcy + 2 * mhs;
+    double x = mcy * (length * length / 12 + radius * radius / 4) + 2 * mhs * (2 * radius * radius / 5 + length * length / 2 + 3 * length * radius / 8);
+    double z = mcy * radius * radius / 2 + 2 * mhs * 2 * radius * radius / 5;
+
+    double density = mass / (M_PI * radius * radius * length + (4/3) * M_PI * radius * radius * radius);
+
+    this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z) * density;
 }
 
 Point Capsule::getAxisDirection() {
-    return Point(0,0,1).rotate(Point(angle));
+    return rotationMatrix * Point(0,0,1);
 }
 
 double Capsule::getRadius() {
@@ -28,14 +42,13 @@ Point Capsule::getCylinderEnd2() {
 }
 
 void Capsule::draw() {
+    Color darkColor = Color(255, 255, 255);
+
     glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    // TODO: ROTATE PROPERLY
-    glRotatef(angle.getZ(),0,0,1);
-    glRotatef(angle.getX(), 1, 0, 0);
-    glRotatef(angle.getY(), 0, 1, 0);
-    glTranslatef(0, 0,-length / 2.0);
-    glColor3ub(color.getR(), color.getG(), color.getB());
+    glTranslated(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixd(getOpenGLRotationMatrix());
+    glTranslated(0, 0,-length / 2.0);
+
     double lats = LATS * 2;
     double longs = LONGS * 2;
     for (int i = 0; i <= lats; i++) {
@@ -48,8 +61,12 @@ void Capsule::draw() {
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
+        glBegin(GL_QUAD_STRIP);
+
         for (int j = 0; j <= longs; j++)
         {
+            if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+            else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
             double lng = 2 * M_PI * (double)(j - 1) / longs;
             double x = cos(lng);
             double y = sin(lng);
@@ -70,6 +87,8 @@ void Capsule::draw() {
             glBegin(GL_QUAD_STRIP);
             for (int j = 0; j <= longs; j++)
             {
+                if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+                else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
                 double lng = 2 * M_PI * (double)(j - 1) / longs;
                 double x = cos(lng);
                 double y = sin(lng);
@@ -89,29 +108,4 @@ void Capsule::draw() {
         }
     }
     glPopMatrix();
-}
-
-Matrix Capsule::getInertiaTensor() {
-    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
-    double x = 1.0 / 12.0 * (3 * radius * radius + length * length);
-    double y = x;
-    double z = 1.0 / 2.0 * mass * radius * radius;
-
-    Point xAxis = Point(1, 0, 0);
-    Point yAxis = Point(0, 1, 0);
-    Point zAxis = Point(0, 0, 1);
-    Point xAxis2 = Point(1, 0, 0).rotate(angle);
-    Point yAxis2 = Point(0, 1, 0).rotate(angle);
-    Point zAxis2 = Point(0, 0, 1).rotate(angle);
-
-    Matrix baseChangeMatrix = Matrix(xAxis.dotProduct(xAxis2), yAxis.dotProduct(xAxis2), zAxis.dotProduct(xAxis2),
-                                     xAxis.dotProduct(yAxis2), yAxis.dotProduct(yAxis2), zAxis.dotProduct(yAxis2),
-                                     xAxis.dotProduct(zAxis2), yAxis.dotProduct(zAxis2), zAxis.dotProduct(zAxis2));
-
-    Matrix withoutRotation = Matrix(x, 0, 0,
-                                    0, y, 0,
-                                    0, 0, z);
-
-    Matrix rotatedTensor = baseChangeMatrix * withoutRotation * baseChangeMatrix.transpose();
-    return rotatedTensor;
 }

@@ -34,9 +34,9 @@ Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
     parseError = xmlObject->QueryStringAttribute("vel", &velChar);
     vel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(velChar) : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("ang", &angChar);
-    ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) : Point(0, 0, 0);
+    ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("angVel", &angVelChar);
-    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) : Point(0, 0, 0);
+    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("force", &forceChar);
     force = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(forceChar) : Point(0, 0, 0);
     parseError = xmlObject->QueryDoubleAttribute("mass", &mass);
@@ -61,9 +61,9 @@ Capsule* Scene::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     parseError = xmlObject->QueryStringAttribute("vel", &velChar);
     vel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(velChar) : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("ang", &angChar);
-    ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) : Point(0, 0, 0);
+    ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("angVel", &angVelChar);
-    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) : Point(0, 0, 0);
+    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("force", &forceChar);
     force = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(forceChar) : Point(0, 0, 0);
     parseError = xmlObject->QueryDoubleAttribute("mass", &mass);

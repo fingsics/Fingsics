@@ -13,11 +13,12 @@ class Object {
         Point pos;
         Point vel;
         Point force;
-        Point angle;
+        Matrix rotationMatrix;
         Point angularVelocity;
         double mass;
         Color color;
         double elasticityCoef;
+        Matrix baseInertiaTensor;
     public:
         Object(string, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -26,7 +27,8 @@ class Object {
         Point getPos();
         Point getVel();
         Point getForce();
-        Point getAngle();
+        Matrix getRotationMatrix();
+        double* getOpenGLRotationMatrix();
         Point getAngularVelocity();
         
         double getElasticity();
@@ -38,7 +40,7 @@ class Object {
 
         // Virtual methods
         virtual void draw() = 0;
-        virtual Matrix getInertiaTensor() = 0;
+        virtual Matrix getInertiaTensor();
 };
 
 #endif
