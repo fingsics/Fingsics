@@ -34,7 +34,8 @@ void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldColli
         Point collisionPoint = get<2>(mapEntry.second);
         Point collisionNormal = get<3>(mapEntry.second);
 
-        double e = 1; // e coefficient of restitution which depends on the nature of the two colliding materials
+        double e = (object1->getElasticity() + object2->getElasticity()) / 2; // e coefficient of restitution which depends on the nature of the two colliding materials
+
         double ma = object1->getMass(); // ma total mass of body a
         double mb = object2->getMass(); // mb total mass of body b
         Matrix Ia = object1->getInertiaTensor(); // Ia inertia tensor for body a in absolute coordinates
