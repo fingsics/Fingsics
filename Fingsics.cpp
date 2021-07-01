@@ -203,7 +203,7 @@ int main(int argc, char* argv[]) {
     // Camera
     Camera* centeredCamera = new CenteredCamera();
     Camera* freeCamera = new FreeCamera();
-    Camera* camera = freeCamera;
+    Camera* camera = centeredCamera;
 
     // Program options
     bool quit = false;

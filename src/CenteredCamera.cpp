@@ -30,17 +30,18 @@ void CenteredCamera::eventUpdate(SDL_Event event) {
         if (move) {
             yaw -= event.motion.xrel * 0.4;
             pitch -= event.motion.yrel * 0.4;
-            if (pitch > -0.5) pitch = -0.5; // Avoid camera going under the floor
-            else if (pitch < -90) pitch = -90; // Avoid camera flipping when rotating to the top of the scene
+            // Avoid camera flipping
+            if (pitch > 90) pitch = 90;
+            else if (pitch < -90) pitch = -90;
         }
         break;
     case SDL_KEYDOWN: {
         switch (event.key.keysym.sym) {
         case SDLK_s:
-            radius -= .3;
+            radius -= .7;
             break;
         case SDLK_w:
-            if (radius < 0) radius += .3;
+            if (radius < 0) radius += .7;
             break;
         }
     }
