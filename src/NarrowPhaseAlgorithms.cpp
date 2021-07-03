@@ -2,47 +2,44 @@
 
 using namespace std;
 
-pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
-    Point normalVector = ball1->getPos() - ball2->getPos();
-    if (normalVector.getMagnitude() < ball1->getRadius() + ball2->getRadius()) {
-        double radiusRatio = ball2->getRadius() / (ball1->getRadius() + ball2->getRadius());
-        Point collisionPoint = ball2->getPos() + normalVector * radiusRatio;
+pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Point center1, double radius1, Point center2, double radius2) {
+    Point normalVector = center1 - center2;
+    if (normalVector.getMagnitude() < radius1 + radius2) {
+        double radiusRatio = radius1 / (radius1 + radius2);
+        Point collisionPoint = center2 + normalVector * radiusRatio;
         return new pair<Point, Point>(collisionPoint, normalVector.normalize());
     }
     return NULL;
 }
 
-pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* capsule) {
+pair<Point, Point>* NarrowPhaseAlgorithms::ballCylinder(Point ballCenter, double ballRadius, Point cylinderCenter, double cylinderRadius, double cylinderLength, Point cylinderAxisDirection) {
     // https://gamedev.stackexchange.com/questions/72528/how-can-i-project-a-3d-point-onto-a-3d-line
-    Point AB = capsule->getAxisDirection();
-    Point AP = ball->getPos() - capsule->getPos();
+    Point AB = cylinderAxisDirection;
+    Point AP = ballCenter - cylinderCenter;
     Point displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
-    if (displacementFromA.getMagnitude() < capsule->getLength() / 2) {
-        // Projection of the ball's center is inside the capsule's cylinder
-        Point projection = capsule->getPos() + displacementFromA;
-        if ((ball->getPos() - projection).getMagnitude() < ball->getRadius() + capsule->getRadius()) {
-            Point collisionDirection = ball->getPos() - projection;
-            Point collisionPoint = projection + (collisionDirection.normalize() * capsule->getRadius());
+    // Projection of the ball's center is inside the capsule's cylinder
+    if (displacementFromA.getMagnitude() < cylinderLength / 2) {
+        Point projection = cylinderCenter + displacementFromA;
+        if ((ballCenter - projection).getMagnitude() < ballRadius + cylinderRadius) {
+            Point collisionDirection = ballCenter - projection;
+            Point collisionPoint = projection + (collisionDirection.normalize() * cylinderRadius);
             Point collisionNormal = projection - collisionPoint;
             return new pair<Point, Point>(collisionPoint, collisionNormal.normalize());
         }
     }
-    else {
-        // Projection of the ball's center is outside of the capsule's cylinder
-        if ((ball->getPos() - capsule->getCylinderEnd1()).getMagnitude() < ball->getRadius() + capsule->getRadius()) {
-            Point collisionDirection = ball->getPos() - capsule->getCylinderEnd1();
-            Point collisionPoint = capsule->getCylinderEnd1() + (collisionDirection.normalize() * capsule->getRadius());
-            Point collisionNormal = capsule->getCylinderEnd1() - collisionPoint;
-            return new pair<Point, Point>(collisionPoint, collisionNormal.normalize());
-        }
-        else if ((ball->getPos() - capsule->getCylinderEnd2()).getMagnitude() < ball->getRadius() + capsule->getRadius()) {
-            Point collisionDirection = ball->getPos() - capsule->getCylinderEnd2();
-            Point collisionPoint = capsule->getCylinderEnd2() + (collisionDirection.normalize() * capsule->getRadius());
-            Point collisionNormal = capsule->getCylinderEnd2() - collisionPoint;
-            return new pair<Point, Point>(collisionPoint, collisionNormal.normalize());
-        }
-    }
     return NULL;
+}
+
+pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
+    return ballBall(ball1->getPos(), ball1->getRadius(), ball2->getPos(), ball2->getRadius());
+}
+
+pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* capsule) {
+    pair<Point, Point>* cylinderCollision = ballCylinder(ball->getPos(), ball->getRadius(), capsule->getPos(), capsule->getRadius(), capsule->getLength(), capsule->getAxisDirection());
+    if (cylinderCollision) return cylinderCollision;
+    pair<Point, Point>* end1Collision = ballBall(ball->getPos(), ball->getRadius(), capsule->getCylinderEnd1(), capsule->getRadius());
+    if (end1Collision) return end1Collision;
+    return ballBall(ball->getPos(), ball->getRadius(), capsule->getCylinderEnd2(), capsule->getRadius());
 }
 
 pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Capsule* capsule2) {

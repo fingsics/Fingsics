@@ -25,7 +25,7 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-void applyCollisions(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
+void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
     // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
@@ -255,7 +255,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, tuple<Object*, Object*, Point, Point>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
-            applyCollisions(oldCollisions, collisions);
+            collisionResponse(oldCollisions, collisions);
             oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }
