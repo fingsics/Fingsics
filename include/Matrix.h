@@ -31,6 +31,7 @@ class Matrix {
         Point operator*(Point);
         Matrix operator*(Matrix);
         double* operator[](int);
+        double** toArrays();
 };
 
 #endif

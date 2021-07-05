@@ -30,6 +30,23 @@ pair<Point, Point>* NarrowPhaseAlgorithms::ballCylinder(Point ballCenter, double
     return NULL;
 }
 
+pair<Point, Point>* NarrowPhaseAlgorithms::cylinderCylinder(Point cylinder1Center, double cylinder1Radius, double cylinder1Length, Point cylinder1AxisDirection, Point cylinder2Center, double cylinder2Radius, double cylinder2Length, Point cylinder2AxisDirection) {
+    
+    // https://stackoverflow.com/questions/20181940/most-efficient-way-to-solve-a-system-of-linear-equations
+    Point UA = cylinder1AxisDirection;
+    Point UB = cylinder2AxisDirection;
+    Point UC = cylinder2AxisDirection.crossProduct(cylinder1AxisDirection).normalize();
+    Point RHS = cylinder2Center - cylinder1Center;
+    Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
+    double* solution = solveLinearSystem(LHS, RHS);
+
+    Point puntoLinea1 = UA * solution[0] + cylinder1Center;
+    Point puntoLinea2 = UB * solution[1] + cylinder2Center;
+    double distancia = solution[2];
+
+    return NULL;
+}
+
 pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
     return ballBall(ball1->getPos(), ball1->getRadius(), ball2->getPos(), ball2->getRadius());
 }

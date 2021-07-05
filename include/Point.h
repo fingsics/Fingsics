@@ -28,6 +28,8 @@ class Point {
         Point operator+(Point);
         Point operator/(double);
         Point operator*(double);
+        double* toArray();
+        double operator[](int i);
 };
 
 #endif
