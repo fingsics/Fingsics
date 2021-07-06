@@ -3,10 +3,10 @@
 using namespace std;
 
 pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Point center1, double radius1, Point center2, double radius2) {
-    Point normalVector = center1 - center2;
+    Point normalVector = center2 - center1;
     if (normalVector.getMagnitude() < radius1 + radius2) {
-        double radiusRatio = radius1 / (radius1 + radius2);
-        Point collisionPoint = center2 + normalVector * radiusRatio;
+        double radiusRatio = radius2 / (radius1 + radius2);
+        Point collisionPoint = center1 + normalVector * radiusRatio;
         return new pair<Point, Point>(collisionPoint, normalVector.normalize());
     }
     return NULL;
@@ -30,36 +30,99 @@ pair<Point, Point>* NarrowPhaseAlgorithms::ballCylinder(Point ballCenter, double
     return NULL;
 }
 
-pair<Point, Point>* NarrowPhaseAlgorithms::cylinderCylinder(Point cylinder1Center, double cylinder1Radius, double cylinder1Length, Point cylinder1AxisDirection, Point cylinder2Center, double cylinder2Radius, double cylinder2Length, Point cylinder2AxisDirection) {
-    
-    // https://stackoverflow.com/questions/20181940/most-efficient-way-to-solve-a-system-of-linear-equations
-    Point UA = cylinder1AxisDirection;
-    Point UB = cylinder2AxisDirection;
-    Point UC = cylinder2AxisDirection.crossProduct(cylinder1AxisDirection).normalize();
-    Point RHS = cylinder2Center - cylinder1Center;
-    Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
-    double* solution = solveLinearSystem(LHS, RHS);
-
-    Point puntoLinea1 = UA * solution[0] + cylinder1Center;
-    Point puntoLinea2 = UB * solution[1] + cylinder2Center;
-    double distancia = solution[2];
-
-    return NULL;
-}
-
 pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Ball* ball1, Ball* ball2) {
     return ballBall(ball1->getPos(), ball1->getRadius(), ball2->getPos(), ball2->getRadius());
 }
 
-pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* capsule) {
-    pair<Point, Point>* cylinderCollision = ballCylinder(ball->getPos(), ball->getRadius(), capsule->getPos(), capsule->getRadius(), capsule->getLength(), capsule->getAxisDirection());
+pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Point ballPos, double ballRadius, Point capsulePos, double capsuleRadius, double capsuleLength, Point capsuleAxisDirection, Point capsulePositiveEnd, Point capsuleNegativeEnd) {
+    pair<Point, Point>* cylinderCollision = ballCylinder(ballPos, ballRadius, capsulePos, capsuleRadius, capsuleLength, capsuleAxisDirection);
     if (cylinderCollision) return cylinderCollision;
-    pair<Point, Point>* end1Collision = ballBall(ball->getPos(), ball->getRadius(), capsule->getCylinderEnd1(), capsule->getRadius());
-    if (end1Collision) return end1Collision;
-    return ballBall(ball->getPos(), ball->getRadius(), capsule->getCylinderEnd2(), capsule->getRadius());
+    pair<Point, Point>* positiveEndCollision = ballBall(ballPos, ballRadius, capsulePositiveEnd, capsuleRadius);
+    if (positiveEndCollision) return positiveEndCollision;
+    return ballBall(ballPos, ballRadius, capsuleNegativeEnd, capsuleRadius);
 }
 
+pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* capsule) {
+    return ballCapsule(ball->getPos(), ball->getRadius(), capsule->getPos(), capsule->getRadius(), capsule->getLength(), capsule->getAxisDirection(), capsule->getCylinderPositiveEnd(), capsule->getCylinderNegativeEnd());
+}
+
+// VER HACIA DONDE APUNTA LA NORMAL
 pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Capsule* capsule2) {
+    Point UA = capsule1->getAxisDirection();
+    Point UB = capsule2->getAxisDirection();
+
+    // Check if capsules are parallel
+    if (UA.equals(UB) || UA.equals(UB * -1)) {
+        
+        pair<Point, Point>* capsule1Ball1 = ballCapsule(capsule1->getCylinderPositiveEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
+        pair<Point, Point>* capsule1Ball2 = ballCapsule(capsule1->getCylinderNegativeEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
+        
+        if (capsule1Ball1 && capsule1Ball2) {
+            return new pair<Point, Point>((capsule1Ball1->first + capsule1Ball2->first) / 2, capsule1Ball1->second);
+        }
+
+        pair<Point, Point>* capsule2Ball1 = ballCapsule(capsule2->getCylinderPositiveEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
+
+        if (capsule1Ball1 && capsule2Ball1) {
+            return new pair<Point, Point>((capsule1Ball1->first + capsule2Ball1->first) / 2, capsule1Ball1->second);
+        }
+        if (capsule1Ball2 && capsule2Ball1) {
+            return new pair<Point, Point>((capsule1Ball2->first + capsule2Ball1->first) / 2, capsule1Ball2->second);
+        }
+
+        pair<Point, Point>* capsule2Ball2 = ballCapsule(capsule2->getCylinderNegativeEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
+
+        if (capsule2Ball1 && capsule2Ball2) {
+            return new pair<Point, Point>((capsule2Ball1->first + capsule2Ball2->first) / 2, capsule2Ball1->second);
+        }
+        if (capsule1Ball1 && capsule2Ball2) {
+            return new pair<Point, Point>((capsule1Ball1->first + capsule2Ball2->first) / 2, capsule1Ball1->second);
+        }
+        if (capsule1Ball2 && capsule2Ball2) {
+            return new pair<Point, Point>((capsule1Ball2->first + capsule2Ball2->first) / 2, capsule1Ball2->second);
+        }
+
+        return NULL;
+    }
+
+    Point UC = UB.crossProduct(UA).normalize();
+    Point RHS = capsule2->getPos() - capsule1->getPos();
+    Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
+
+    // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
+    double* solution = solveLinearSystem(LHS, RHS);
+    Point puntoLinea1 = UA * solution[0] + capsule1->getPos();
+    Point puntoLinea2 = UB * solution[1] + capsule2->getPos();
+    double distancia = solution[2];
+
+    if (distancia < capsule1->getRadius() + capsule2->getRadius()) {
+        if (abs(solution[0]) < capsule1->getLength() / 2 && abs(solution[1]) < capsule2->getLength() / 2) {
+            // Cilinders collide with each other
+            Point normalVector = puntoLinea2 - puntoLinea1;
+            double radiusRatio = capsule2->getRadius() / (capsule1->getRadius() + capsule2->getRadius());
+            Point collisionPoint = puntoLinea1 + normalVector * radiusRatio;
+            return new pair<Point, Point>(collisionPoint, normalVector.normalize());
+        }
+        else if (abs(solution[0]) < capsule1->getLength()) {
+            // Cilinder of capsule 1 may collide with one of the ends of capsule 2
+            Point ballCenter = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
+            pair<Point, Point>* collision = ballCylinder(ballCenter, capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection());
+            if (collision) collision = new pair<Point, Point>(collision->first, collision->second * -1);
+            return collision;
+        }
+        else if (abs(solution[1]) < capsule2->getLength()) {
+            // Cilinder of capsule 2 may collide with one of the ends of capsule 1
+            Point ballCenter = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
+            return ballCylinder(ballCenter, capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection());
+        }
+        else {
+            // The ends of the capsules may collide
+            Point ball1Center = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderPositiveEnd();
+            Point ball2Center = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderPositiveEnd();
+            return ballBall(ball1Center, capsule1->getRadius(), ball2Center, capsule2->getRadius());
+        }
+    }
+
     return NULL;
 }
 

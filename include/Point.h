@@ -21,6 +21,7 @@ class Point {
         Point crossProduct(Point);
         double distanceTo(Point);
         double getMagnitude();
+        double getSquareMagnitude();
         Point normalize();
         bool isZero();
         Point rotate(Point);
@@ -30,6 +31,7 @@ class Point {
         Point operator*(double);
         double* toArray();
         double operator[](int i);
+        bool equals(Point);
 };
 
 #endif

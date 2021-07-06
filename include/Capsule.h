@@ -22,8 +22,8 @@ public:
     Point getAxisDirection();
     double getRadius();
     double getLength();
-    Point getCylinderEnd1();
-    Point getCylinderEnd2();
+    Point getCylinderPositiveEnd();
+    Point getCylinderNegativeEnd();
     Capsule(string, Point, Point, Point, Point, Point, double, double, Color, double, double);
     void draw();
 };

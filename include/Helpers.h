@@ -1,10 +1,10 @@
 #ifndef HELPERS_H
 #define HELPERS_H
-#include "Object.h"
-#include "Point.h"
-#include "Matrix.h"
 #include <map>
 #include <string>
+#include "Object.h"
+#include "Matrix.h"
+#include "Point.h"
 
 using namespace std;
 

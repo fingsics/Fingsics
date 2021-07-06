@@ -34,6 +34,10 @@ double Point::getMagnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
+double Point::getSquareMagnitude() {
+    return pow(x, 2) + pow(y, 2) + pow(z, 2);
+}
+
 bool Point::isZero() {
     return x == 0 && y == 0 && z == 0;
 }
@@ -95,4 +99,9 @@ double Point::operator[](int i) {
     else if (i == 1) return y;
     else if (i == 2) return z;
     throw "Invalid point index.";
+}
+
+bool Point::equals(Point other) {
+    Point diff = *this - other;
+    return diff.getSquareMagnitude() < 0.00001;
 }
