@@ -46,7 +46,6 @@ pair<Point, Point>* NarrowPhaseAlgorithms::ballCapsule(Ball* ball, Capsule* caps
     return ballCapsule(ball->getPos(), ball->getRadius(), capsule->getPos(), capsule->getRadius(), capsule->getLength(), capsule->getAxisDirection(), capsule->getCylinderPositiveEnd(), capsule->getCylinderNegativeEnd());
 }
 
-// VER HACIA DONDE APUNTA LA NORMAL
 pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Capsule* capsule2) {
     Point UA = capsule1->getAxisDirection();
     Point UB = capsule2->getAxisDirection();
@@ -93,7 +92,67 @@ pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Cap
     double* solution = solveLinearSystem(LHS, RHS);
     Point puntoLinea1 = UA * solution[0] + capsule1->getPos();
     Point puntoLinea2 = UB * solution[1] + capsule2->getPos();
-    double distancia = solution[2];
+    double distancia = abs(solution[2]);
+
+    if (distancia < capsule1->getRadius() + capsule2->getRadius()) {
+        // Check collision between cylinders
+        if (abs(solution[0]) < capsule1->getLength() / 2 && abs(solution[1]) < capsule2->getLength() / 2) {
+            Point normalVector = puntoLinea2 - puntoLinea1;
+            double radiusRatio = capsule2->getRadius() / (capsule1->getRadius() + capsule2->getRadius());
+            Point collisionPoint = puntoLinea1 + normalVector * radiusRatio;
+            return new pair<Point, Point>(collisionPoint, normalVector.normalize());
+        }
+
+        // Check collision between capsule 1 and one of the ends of capsule 2
+        Point test1BallCenter = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
+        pair<Point, Point>* collision = ballCylinder(test1BallCenter, capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection());
+        if (collision) return new pair<Point, Point>(collision->first, collision->second * -1);
+        
+        // Check collision between capsule 2 and one of the ends of capsule 1
+        Point test2BallCenter = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
+        collision =  ballCylinder(test2BallCenter, capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection());
+        if (collision) return collision;
+
+        // Check collision between ends of the capsules
+        Point ball1Center = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
+        Point ball2Center = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
+        return ballBall(ball1Center, capsule1->getRadius(), ball2Center, capsule2->getRadius());
+    }
+
+    return NULL;
+}
+
+/*
+
+pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Capsule* capsule2) {
+    pair<Point, Point>* capsule1Ball1 = ballCapsule(capsule1->getCylinderPositiveEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
+    pair<Point, Point>* capsule1Ball2 = ballCapsule(capsule1->getCylinderNegativeEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
+
+    if (capsule1Ball1 && capsule1Ball2) return new pair<Point, Point>((capsule1Ball1->first + capsule1Ball2->first) / 2, capsule1Ball1->second);
+
+    pair<Point, Point>* capsule2Ball1 = ballCapsule(capsule2->getCylinderPositiveEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
+
+    if (capsule1Ball1 && capsule2Ball1) return new pair<Point, Point>((capsule1Ball1->first + capsule2Ball1->first) / 2, capsule1Ball1->second);
+    if (capsule1Ball2 && capsule2Ball1) return new pair<Point, Point>((capsule1Ball2->first + capsule2Ball1->first) / 2, capsule1Ball2->second);
+
+    pair<Point, Point>* capsule2Ball2 = ballCapsule(capsule2->getCylinderNegativeEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
+
+    if (capsule2Ball1 && capsule2Ball2) return new pair<Point, Point>((capsule2Ball1->first + capsule2Ball2->first) / 2, capsule2Ball1->second);
+    if (capsule1Ball1 && capsule2Ball2) return new pair<Point, Point>((capsule1Ball1->first + capsule2Ball2->first) / 2, capsule1Ball1->second);
+    if (capsule1Ball2 && capsule2Ball2) return new pair<Point, Point>((capsule1Ball2->first + capsule2Ball2->first) / 2, capsule1Ball2->second);
+
+
+    Point UA = capsule1->getAxisDirection();
+    Point UB = capsule2->getAxisDirection();
+    Point UC = UB.crossProduct(UA).normalize();
+    Point RHS = capsule2->getPos() - capsule1->getPos();
+    Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
+
+    // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
+    double* solution = solveLinearSystem(LHS, RHS);
+    Point puntoLinea1 = UA * solution[0] + capsule1->getPos();
+    Point puntoLinea2 = UB * solution[1] + capsule2->getPos();
+    double distancia = abs(solution[2]);
 
     if (distancia < capsule1->getRadius() + capsule2->getRadius()) {
         if (abs(solution[0]) < capsule1->getLength() / 2 && abs(solution[1]) < capsule2->getLength() / 2) {
@@ -103,28 +162,12 @@ pair<Point, Point>* NarrowPhaseAlgorithms::capsuleCapsule(Capsule* capsule1, Cap
             Point collisionPoint = puntoLinea1 + normalVector * radiusRatio;
             return new pair<Point, Point>(collisionPoint, normalVector.normalize());
         }
-        else if (abs(solution[0]) < capsule1->getLength()) {
-            // Cilinder of capsule 1 may collide with one of the ends of capsule 2
-            Point ballCenter = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
-            pair<Point, Point>* collision = ballCylinder(ballCenter, capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection());
-            if (collision) collision = new pair<Point, Point>(collision->first, collision->second * -1);
-            return collision;
-        }
-        else if (abs(solution[1]) < capsule2->getLength()) {
-            // Cilinder of capsule 2 may collide with one of the ends of capsule 1
-            Point ballCenter = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
-            return ballCylinder(ballCenter, capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection());
-        }
-        else {
-            // The ends of the capsules may collide
-            Point ball1Center = (solution[0] > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderPositiveEnd();
-            Point ball2Center = (solution[1] > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderPositiveEnd();
-            return ballBall(ball1Center, capsule1->getRadius(), ball2Center, capsule2->getRadius());
-        }
     }
 
     return NULL;
 }
+
+*/
 
 map<string, tuple<Object*, Object*, Point, Point>> NarrowPhaseAlgorithms::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
     map<string, tuple<Object*, Object*, Point, Point>> collisionMap;
