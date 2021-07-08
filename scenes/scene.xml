@@ -2,6 +2,9 @@
 <config>
 	<objects>
 		<capsule pos="0,0,0" mass="0.4" elasticityCoef="0.8" vel="0,0,0" ang="0,0,0" angVel="0,0,0" color="50,200,200" radius="0.5" length="10" />
+		<capsule pos="0,1,0" mass="0.4" elasticityCoef="0.8" vel="0,0,0" ang="0,0,0" angVel="0,0,0" color="50,200,200" radius="0.5" length="10" />
+		<capsule pos="1,1,0" mass="0.4" elasticityCoef="0.8" vel="0,0,0" ang="0,0,0" angVel="0,0,0" color="50,200,200" radius="0.5" length="10" />
+		<capsule pos="1,0,0" mass="0.4" elasticityCoef="0.8" vel="0,0,0" ang="0,0,0" angVel="0,0,0" color="50,200,200" radius="0.5" length="10" />
 		<capsule pos="2,-3,1.5" mass="0.4" elasticityCoef="0.8" vel="0,2,0" ang="0,90,30" angVel="0,0,0" color="50,200,200" radius="0.5" length="10" />
 	</objects>
 </config>

@@ -48,8 +48,8 @@ void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCol
         Point wbi = object2->getAngularVelocity(); // wbi initial angular velocity of object b
 
         double top = -(1 + e) * (vbi - vai).dotProduct(normal);
-        double bottom = 1 / ma + 1 / mb + (iaInverse * ra.crossProduct(normal).crossProduct(ra)
-            + ibInverse * rb.crossProduct(normal).crossProduct(rb)).dotProduct(normal);
+        double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
+            + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
 
         double jr = top / bottom;
 
