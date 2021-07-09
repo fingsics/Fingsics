@@ -6,20 +6,14 @@ Capsule::Capsule(string id, Point pos, Point vel, Point angle, Point angularVelo
     this->length = length;
     this->radius = radius;
 
-    double cylinderLength = length + radius * 2;
-    double x = 1.0 / 12.0 * (3 * radius * radius + cylinderLength * cylinderLength);
+    // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
+    double extraLengthFactor = 2.0 / 3.0;
+    double extraLength = (radius * 2.0) * extraLengthFactor;
+
+    double cylinderLength = length + extraLength;
+    double x = 1.0 / 12.0 * (3.0 * radius * radius + cylinderLength * cylinderLength);
     double z = 1.0 / 2.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
-
-    // https://www.gamedev.net/tutorials/programming/math-and-physics/capsule-inertia-tensor-r3856/
-    //double mcy = length * radius * radius * M_PI;
-    //double mhs = 2 * radius * radius * radius * M_PI / 3;
-    //double m = mcy + 2 * mhs;
-    //double x = mcy * (length * length / 12 + radius * radius / 4) + 2 * mhs * (2 * radius * radius / 5 + length * length / 2 + 3 * length * radius / 8);
-    //double z = mcy * radius * radius / 2 + 2 * mhs * 2 * radius * radius / 5;
-    //double density = mass / (M_PI * radius * radius * length + (4/3) * M_PI * radius * radius * radius);
-    //this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z) * density;
-
 }
 
 Point Capsule::getAxisDirection() {
