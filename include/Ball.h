@@ -19,7 +19,7 @@ class Ball : public Object {
         double radius;
 
     public:
-        Ball(string, Point, Point, Point, Point, Point, double, double, Color, double);
+        Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double);
         void draw();
         double getRadius();
         Matrix getInertiaTensor();

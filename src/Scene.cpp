@@ -27,6 +27,7 @@ Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
     const char *posChar, *velChar, *angChar, *angVelChar, *forceChar, *colorChar;
     Point pos, vel, ang, angVel, force;
     Color color;
+    bool isStatic;
     double radius, mass, elasticityCoef;
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryStringAttribute("pos", &posChar);
@@ -47,13 +48,16 @@ Ball* Scene::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
     color = (parseError == tinyxml2::XML_SUCCESS) ? parseColor(colorChar) : Color(200, 200, 200);
     parseError = xmlObject->QueryDoubleAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
-    return new Ball(id, pos, vel, ang, angVel, force, mass, elasticityCoef, color, radius);
+    parseError = xmlObject->QueryBoolAttribute("static", &isStatic);
+    isStatic = (parseError == tinyxml2::XML_SUCCESS) ? isStatic : false;
+    return new Ball(id, isStatic, pos, vel, ang, angVel, force, mass, elasticityCoef, color, radius);
 }
 
 Capsule* Scene::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     const char *posChar, *velChar, *angChar, *angVelChar, *forceChar, *colorChar;
     Point pos, vel, ang, angVel, force;
     Color color;
+    bool isStatic;
     double radius, length, mass, elasticityCoef;
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryStringAttribute("pos", &posChar);
@@ -76,7 +80,9 @@ Capsule* Scene::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     parseError = xmlObject->QueryDoubleAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
-    return new Capsule(id, pos, vel, ang, angVel, force, mass, elasticityCoef, color, radius, length);
+    parseError = xmlObject->QueryBoolAttribute("static", &isStatic);
+    isStatic = (parseError == tinyxml2::XML_SUCCESS) ? isStatic : false;
+    return new Capsule(id, isStatic, pos, vel, ang, angVel, force, mass, elasticityCoef, color, radius, length);
 }
 
 vector<Object*> Scene::getObjects() {

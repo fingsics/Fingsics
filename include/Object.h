@@ -21,8 +21,9 @@ class Object {
         Matrix baseInertiaTensor;
         Point velocityForUpdate;
         Point angularVelocityForUpdate;
+        bool isStatic;
     public:
-        Object(string, Point, Point, Point, Point, Point, double, double, Color);
+        Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
         bool isMoving();
         string getId();
@@ -32,6 +33,8 @@ class Object {
         Matrix getRotationMatrix();
         double* getOpenGLRotationMatrix();
         Point getAngularVelocity();
+
+        bool getIsStatic();
         
         double getElasticity();
         void setPos(Point);

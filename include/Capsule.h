@@ -24,7 +24,7 @@ public:
     double getLength();
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
-    Capsule(string, Point, Point, Point, Point, Point, double, double, Color, double, double);
+    Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double);
     void draw();
 };
 

@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Object::Object(string id, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color) {
+    this->isStatic = isStatic;
     this->pos = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
@@ -52,6 +53,10 @@ Point Object::getForce() {
 
 double Object::getElasticity() {
     return elasticityCoef;
+}
+
+bool Object::getIsStatic() {
+    return isStatic;
 }
 
 void Object::setPos(Point pos){
