@@ -208,6 +208,8 @@ map<string, tuple<Object*, Object*, Point, Point>> NarrowPhaseAlgorithms::getCol
             if (collisionMap.find(objectPairId) == collisionMap.end()) {
                 collisionMap.insert(pair<string, tuple<Object*, Object*, Point, Point>>(objectPairId, objectTuple));
             }
+
+            delete collision;
         }
     }
 

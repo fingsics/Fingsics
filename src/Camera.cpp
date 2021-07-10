@@ -4,7 +4,6 @@ Camera::Camera() {
 	move = false;
 }
 
-
 void Camera::eventUpdate(SDL_Event event) {
     switch (event.type) {
     case SDL_MOUSEBUTTONDOWN:

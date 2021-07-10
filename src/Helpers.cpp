@@ -6,7 +6,7 @@ string getObjectPairId(pair<Object*, Object*> objectPair) {
     return firstKey + "-" + secondKey;
 }
 
-double** prepareForEscalerization(Matrix LHS, Point RHS) {
+double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
         double* row0 = new double[4];
         double* row1 = new double[4];
         double* row2 = new double[4];
@@ -31,7 +31,7 @@ double** prepareForEscalerization(Matrix LHS, Point RHS) {
 
 // Works only if the system has a SINGLE solution
 double* solveLinearSystem(Matrix LHS, Point RHS) {
-    double** A = prepareForEscalerization(LHS, RHS);
+    double** A = getMatrixForGausianElimination(LHS, RHS);
     int h = 0;
     int k = 0;
     int m = 3;
@@ -50,7 +50,8 @@ double* solveLinearSystem(Matrix LHS, Point RHS) {
         }
         if (A[i_max][k] == 0) {
             k++; // No pivot in this column, pass to next column
-        } else {
+        }
+        else {
             // Swap rows
             double* temp = A[h];
             A[h] = A[i_max];
@@ -73,9 +74,11 @@ double* solveLinearSystem(Matrix LHS, Point RHS) {
         A[i][n - 1] /= A[i][i];
     }
 
-    double* ret = new double[3];
-    ret[0] = A[0][3];
-    ret[1] = A[1][3];
-    ret[2] = A[2][3];
+    double ret[3] = { A[0][3], A[1][3], A[2][3] };
+
+    // Free memory
+    for (int i = 0; i < m; i++) delete[] A[i];
+    delete[] A;
+
     return ret;
 }

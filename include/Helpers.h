@@ -9,7 +9,7 @@
 using namespace std;
 
 string getObjectPairId(pair<Object*, Object*> objectPair);
-double** prepareForEscalerization(Matrix, Point);
+double** getMatrixForGausianElimination(Matrix, Point);
 double* solveLinearSystem(Matrix, Point);
 
 #endif

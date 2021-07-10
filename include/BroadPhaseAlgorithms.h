@@ -23,4 +23,9 @@ public:
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);
 };
 
+class SweepAndPruneBroadPhase : public BroadPhaseAlgorithm {
+public:
+    map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+};
+
 #endif

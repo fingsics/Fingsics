@@ -23,3 +23,9 @@ map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object**
     map<string, pair<Object*, Object*>> collisionMap;
     return collisionMap;
 }
+
+// TODO: implement
+map<string, pair<Object*, Object*>> SweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {
+    map<string, pair<Object*, Object*>> collisionMap;
+    return collisionMap;
+}

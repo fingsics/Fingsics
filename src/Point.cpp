@@ -86,14 +86,6 @@ Point Point::operator*(double divisor){
     return Point(x * divisor, y * divisor, z * divisor);
 }
 
-double* Point::toArray() {
-    double* ret = new double[3];
-    ret[0] = x;
-    ret[1] = y;
-    ret[2] = z;
-    return ret;
-}
-
 double Point::operator[](int i) {
     if (i == 0) return x;
     else if (i == 1) return y;

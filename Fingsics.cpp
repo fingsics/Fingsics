@@ -26,21 +26,21 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
 }
 
 void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point collisionNormal) {
-    double e = (object1->getElasticity() + object2->getElasticity()) / 2; // e coefficient of restitution which depends on the nature of the two colliding materials
-    double ma = object1->getMass(); // ma total mass of body a
-    double mb = object2->getMass(); // mb total mass of body b
-    Matrix iaInverse = object1->getInertiaTensor().inverse(); // iaInverse inverse of the inertia tensor for body a in absolute coordinates
-    Matrix ibInverse = object2->getInertiaTensor().inverse(); // ibInverse inverse of the inertia tensor for body a in absolute coordinates
-    Point ra = collisionPoint - object1->getPos(); // ra position of collision point relative to centre of mass of body a in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
-    Point rb = collisionPoint - object2->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
-    Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
-    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra); // vai initial velocity of contact point on object a
-    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb); // vbi initial velocity of contact point on object b
+    // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
+    double e = (object1->getElasticity() + object2->getElasticity()) / 2;
+    double ma = object1->getMass();
+    double mb = object2->getMass();
+    Matrix iaInverse = object1->getInertiaTensor().inverse();
+    Matrix ibInverse = object2->getInertiaTensor().inverse();
+    Point ra = collisionPoint - object1->getPos();
+    Point rb = collisionPoint - object2->getPos();
+    Point normal = collisionNormal;
+    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
+    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
 
     double top = -(1 + e) * (vbi - vai).dotProduct(normal);
     double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
         + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
-
     double jr = abs(top / bottom);
 
     Point vaDiff = normal * -jr / ma;
@@ -53,18 +53,18 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
 }
 
 void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point collisionNormal) {
-    double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2; // e coefficient of restitution which depends on the nature of the two colliding materials
-    double m = nonStaticObject->getMass(); // mb total mass of body b
-    Matrix iInverse = nonStaticObject->getInertiaTensor().inverse(); // ibInverse inverse of the inertia tensor for body a in absolute coordinates
+    // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
+    double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
+    double m = nonStaticObject->getMass();
+    Matrix iInverse = nonStaticObject->getInertiaTensor().inverse();
     Point rs = collisionPoint - staticObject->getPos();
-    Point r = collisionPoint - nonStaticObject->getPos(); // rb position of collision point relative to centre of mass of body b in absolute coordinates(if this is known in local body coordinates it must be converted before this is called).
-    Point normal = collisionNormal; // n normal to collision point, the line along which the impulse acts.
-    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r); // vbi initial velocity of contact point on object b
+    Point r = collisionPoint - nonStaticObject->getPos();
+    Point normal = collisionNormal;
+    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
     Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
 
     double top = -(1 + e) * (vi - vsi).dotProduct(normal);
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
-
     double jr = abs(top / bottom);
 
     Point vDiff = normal * jr / m;
@@ -74,7 +74,6 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
 }
 
 void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
-    // https://www.euclideanspace.com/physics/dynamics/collision/threed/index.htm
     // Calculate per-collision impulses
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
@@ -98,10 +97,7 @@ void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCol
 }
 
 void drawObjects(Object** objects, int numObjects) {
-    int i = 0;
-    for (int i = 0; i < numObjects; i++) {
-        objects[i]->draw();
-    }
+    for (int i = 0; i < numObjects; i++) objects[i]->draw();
 }
 
 void drawAxis() {

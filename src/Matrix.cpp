@@ -41,7 +41,6 @@ Matrix::Matrix() {
 }
 
 Matrix::Matrix(Point angles) {
-    // TODO: Check rotation matrix
     Matrix x = Matrix(1, 0, 0,
                       0, cos(angles.getX()), -sin(angles.getX()),
                       0, sin(angles.getX()), cos(angles.getX()));
@@ -146,24 +145,4 @@ Matrix Matrix::operator*(Matrix other) {
 
 double* Matrix::operator[](int i) {
     return values[i];
-}
-
-double** Matrix::toArrays() {
-    double* row0 = new double[3];
-    double* row1 = new double[3];
-    double* row2 = new double[3];
-    double** ret = new double* [3];
-    row0[0] = values[0][0];
-    row0[1] = values[0][1];
-    row0[2] = values[0][2];
-    row1[0] = values[1][0];
-    row1[1] = values[1][1];
-    row1[2] = values[1][2];
-    row2[0] = values[2][0];
-    row2[1] = values[2][1];
-    row2[2] = values[2][2];
-    ret[0] = row0;
-    ret[1] = row1;
-    ret[2] = row2;
-    return ret;
 }
