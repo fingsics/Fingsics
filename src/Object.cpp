@@ -13,6 +13,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->color = color;
     this->id = id;
     this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
+    this->collisionsInFrame = 0;
 }
 
 bool Object::isMoving(){
@@ -81,11 +82,15 @@ Matrix Object::getInertiaTensor() {
 void Object::queueVelocityUpdates(Point velocity, Point angularVelocity) {
     velocityForUpdate = velocityForUpdate + velocity;
     angularVelocityForUpdate = angularVelocityForUpdate + angularVelocity;
+    collisionsInFrame++;
 }
 
 void Object::applyVelocityUpdates() {
-    vel = vel + velocityForUpdate;
-    angularVelocity = angularVelocity + angularVelocityForUpdate;
-    velocityForUpdate = Point();
-    angularVelocityForUpdate = Point();
+    if (collisionsInFrame > 0) {
+        vel = vel + velocityForUpdate / collisionsInFrame;
+        angularVelocity = angularVelocity + angularVelocityForUpdate / collisionsInFrame;
+        velocityForUpdate = Point();
+        angularVelocityForUpdate = Point();
+        collisionsInFrame = 0;
+    }
 }
