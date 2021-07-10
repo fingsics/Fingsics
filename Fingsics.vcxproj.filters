@@ -84,7 +84,7 @@
     <ClCompile Include="src\FreeCamera.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene.cpp">
+    <ClCompile Include="src\ObjectLoader.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
     <ClCompile Include="src\MidPhaseAlgorithms.cpp">
@@ -131,7 +131,7 @@
     <ClInclude Include="include\FreeCamera.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="include\Scene.h">
+    <ClInclude Include="include\ObjectLoader.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="include\MidPhaseAlgorithms.h">

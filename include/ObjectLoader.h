@@ -1,5 +1,5 @@
-#ifndef SCENE_H
-#define SCENE_H
+#ifndef OBJLOADER_H
+#define OBJLOADER_H
 
 #include "Color.h"
 #include "Point.h"
@@ -12,19 +12,33 @@
 #include <algorithm>
 #include "../tinyxml2/tinyxml2.h"
 
-class Scene {
+struct CommonFields {
+	Point pos;
+	Point vel;
+	Point ang;
+	Point angVel;
+	Point force;
+	double mass;
+	double elasticityCoef;
+	Color color;
+	bool isStatic;
+	CommonFields(Point, Point, Point, Point, Point, double, double, Color, bool);
+};
+
+class ObjectLoader {
 private:
 	vector<Object*> objects;
-	void loadRoom(tinyxml2::XMLElement*);
+    CommonFields parseCommonFields(tinyxml2::XMLElement*);
 	void loadObjects(tinyxml2::XMLElement*);
 	Ball* loadBall(tinyxml2::XMLElement*, string);
 	Capsule* loadCapsule(tinyxml2::XMLElement*, string);
+	vector<double> parseTriplet(const char* charPoint);
 	Point parsePoint(const char*);
 	Color parseColor(const char*);
 public:
-	Scene(string);
-	Scene();
+	ObjectLoader(string);
+	ObjectLoader();
 	vector<Object*> getObjects();
 };
 
-#endif SCENE_H
+#endif OBJLOADER_H

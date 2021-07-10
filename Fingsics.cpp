@@ -2,7 +2,7 @@
 //
 #include "SDL.h"
 #include "SDL_opengl.h"
-#include "include/Scene.h"
+#include "include/ObjectLoader.h"
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
 
     // Scene
     string sceneName = "scene.xml";
-    Scene scene = Scene(sceneName);
+    ObjectLoader scene = ObjectLoader(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
