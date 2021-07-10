@@ -168,6 +168,7 @@
     <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithms.cpp" />
     <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
     <ClCompile Include="tinyxml2\tinyxml2.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="include\MidPhaseAlgorithms.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithms.h" />
     <ClInclude Include="include\Object.h" />
+    <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="include\ObjectLoader.h" />
     <ClInclude Include="tinyxml2\tinyxml2.h" />

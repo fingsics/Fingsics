@@ -2,6 +2,28 @@
 
 using namespace std;
 
+pair<Point, Point>* NarrowPhaseAlgorithms::ballPlane(Point ballCenter, double ballRadius, Point planePoint, Point planeNormal) {
+    double d = planeNormal.dotProduct(ballCenter - planePoint);
+    if (d < ballRadius) {
+        Point projection = ballCenter - planeNormal * d;
+        return new pair<Point, Point>(projection, planeNormal);
+    }
+    return NULL;
+}
+
+pair<Point, Point>* NarrowPhaseAlgorithms::ballPlane(Ball* ball, Plane* plane) {
+    return ballPlane(ball->getPos(), ball->getRadius(), plane->getPos(), plane->getNormal());
+}
+
+pair<Point, Point>* NarrowPhaseAlgorithms::capsulePlane(Capsule* capsule, Plane* plane) {
+    pair<Point, Point>* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
+    pair<Point, Point>* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
+    if (positiveBallCollision && negativeBallCollision) return new pair<Point, Point>((positiveBallCollision->first + negativeBallCollision->first) / 2, positiveBallCollision->second);
+    if (positiveBallCollision) return positiveBallCollision;
+    return negativeBallCollision;
+}
+
+
 pair<Point, Point>* NarrowPhaseAlgorithms::ballBall(Point center1, double radius1, Point center2, double radius2) {
     Point normalVector = center2 - center1;
     if (normalVector.getMagnitude() < radius1 + radius2) {
@@ -181,20 +203,23 @@ map<string, tuple<Object*, Object*, Point, Point>> NarrowPhaseAlgorithms::getCol
         Ball* ball2 = dynamic_cast<Ball*>(object2);
         Capsule* capsule1 = dynamic_cast<Capsule*>(object1);
         Capsule* capsule2 = dynamic_cast<Capsule*>(object2);
+        Plane* plane1 = dynamic_cast<Plane*>(object1);
+        Plane* plane2 = dynamic_cast<Plane*>(object2);
 
-        if (ball1 && ball2) {
-            collision = ballBall(ball1, ball2);
+        if (ball1) {
+            if (ball2) collision = ballBall(ball1, ball2);
+            if (capsule2) collision = ballCapsule(ball1, capsule2);
+            if (plane2) collision = ballPlane(ball1, plane2);
         }
-        else if (capsule1 && capsule2) {
-            collision = capsuleCapsule(capsule1, capsule2);
+        if (capsule1) {
+            if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision = new pair<Point, Point>(collision->first, collision->second * -1); }
+            if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
+            if (plane2) collision = capsulePlane(capsule1, plane2);
         }
-        else if (ball1 && capsule2) {
-            collision = ballCapsule(ball1, capsule2);
-        }
-        else if (ball2 && capsule1) {
-            collision = ballCapsule(ball2, capsule1);
-            // Change normal direction so it points towards the second object
-            if (collision) collision = new pair<Point, Point>(collision->first, collision->second * -1);
+        if (plane1) {
+            if (ball2) collision = ballPlane(ball2, plane1);
+            if (capsule2) collision = capsulePlane(capsule2, plane1);
+            if (plane2) collision = NULL;
         }
 
         if (collision) {

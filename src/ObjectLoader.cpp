@@ -32,6 +32,7 @@ void ObjectLoader::loadObjects(tinyxml2::XMLElement* config) {
         string objectType = string(xmlObject->Name());
         if (objectType == "sphere") objects.push_back((Object*)loadBall(xmlObject, to_string(objects.size())));
         else if (objectType == "capsule") objects.push_back((Object*)loadCapsule(xmlObject, to_string(objects.size())));
+        else if (objectType == "plane") objects.push_back((Object*)loadPlane(xmlObject, to_string(objects.size())));
     }
 }
 
@@ -83,6 +84,17 @@ Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     parseError = xmlObject->QueryDoubleAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
     return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length);
+}
+
+Plane* ObjectLoader::loadPlane(tinyxml2::XMLElement* xmlObject, string id) {
+    CommonFields commonFields = parseCommonFields(xmlObject);
+    double drawLength, drawWidth;
+    tinyxml2::XMLError parseError;
+    parseError = xmlObject->QueryDoubleAttribute("drawLength", &drawLength);
+    drawLength = (parseError == tinyxml2::XML_SUCCESS) ? drawLength : 30;
+    parseError = xmlObject->QueryDoubleAttribute("drawWidth", &drawWidth);
+    drawWidth = (parseError == tinyxml2::XML_SUCCESS) ? drawWidth: 30;
+    return new Plane(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, drawLength, drawWidth);
 }
 
 vector<Object*> ObjectLoader::getObjects() {
