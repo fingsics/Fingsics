@@ -11,7 +11,7 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     double extraLength = (radius * 2.0) * extraLengthFactor;
 
     double cylinderLength = length + extraLength;
-    double x = 1.0 / 12.0 * (3.0 * radius * radius + cylinderLength * cylinderLength);
+    double x = 1.0 / 12.0 * mass * (3.0 * radius * radius + cylinderLength * cylinderLength);
     double z = 1.0 / 2.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
 }
