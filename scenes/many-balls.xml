@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<objects>
+		<plane pos="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="8" drawWidth="8" />
+		<plane pos="4,2,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,0,0" static="true" drawLength="4" drawWidth="8" />
+		<plane pos="0,2,-4" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" static="true" drawLength="8" drawWidth="4" />
+		<plane pos="0,2,4" mass="1" elasticityCoef="1" ang="-90,0,0" color="0,0,220" static="true" drawLength="8" drawWidth="4" />
+		<plane pos="-4,2,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,0,0" static="true" drawLength="0" drawWidth="0" />
+		
+		<sphere pos="0,1.2,0" radius="0.2" mass="1" elasticityCoef="1" vel="5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="1,2,0" radius="0.3" mass="1" elasticityCoef="1" vel="5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="1,3,1" radius="0.25" mass="1" elasticityCoef="1" vel="5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="0,2.2,1" radius="0.2" mass="1" elasticityCoef="1" vel="5,0,5" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="0,3.2,2" radius="0.4" mass="2" elasticityCoef="1" vel="2,0,0" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="2,3.2,0.3" radius="0.33" mass="0.33" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="-2,3.2,0.3" radius="0.1" mass="0.05" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="2,4,0.3" radius="0.33" mass="0.33" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="-2,2.2,-2" radius="0.33" mass="0.33" elasticityCoef="1" vel="2,1,5" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="-1.5,2,0.7" radius="0.33" mass="0.33" elasticityCoef="1" vel="3,-2,7" color="200,200,200" acceleration="0,-9.8,0" />
+		<sphere pos="-1,1.5,-0.3" radius="0.33" mass="0.33" elasticityCoef="1" vel="7,0,0" color="200,200,200" acceleration="0,-9.8,0" />
+	</objects>
+</config>

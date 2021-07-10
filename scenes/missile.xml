@@ -25,6 +25,6 @@
 		<capsule pos="0,-1,-4" mass="1" elasticityCoef="0.8" ang="0,90,0" angVel="0,0,0" color="50,200,200" radius="0.45" length="10" />
 		<capsule pos="0,-1,-5" mass="1" elasticityCoef="0.8" ang="0,90,0" angVel="0,0,0" color="50,200,200" radius="0.45" length="10" />
 		
-		<capsule pos="1.5,20,1.5" mass="2" elasticityCoef="0.1" vel="0,0,0" ang="90,0,0" angVel="0,0,0" color="50,200,200" radius="2" length="5" force="0,-9.8,0" static="true" />
+		<capsule pos="1.5,20,1.5" mass="2" elasticityCoef="0.1" vel="0,0,0" ang="90,0,0" angVel="0,0,0" color="50,200,200" radius="2" length="5" acceleration="0,-9.8,0" static="true" />
 	</objects>
 </config>

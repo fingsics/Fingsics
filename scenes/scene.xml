@@ -1,12 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<plane pos="0,0,0" mass="1" elasticityCoef="0.8" ang="90,0,0" angVel="0,0,0" color="255,165,0" static="true" drawLength="30" drawWidth="30" />
-		
-		<capsule pos="0,6,6" mass="1" elasticityCoef="0.1" vel="0,0,-10" ang="45,20,0" angVel="0,0,0" color="50,200,200" radius="1" length="4" />
-		<sphere pos="-1,8,6" mass="1" elasticityCoef="0.1" vel="0,0,-10" ang="45,20,0" angVel="0,0,0" color="50,200,200" radius="2" />
-		<sphere pos="0,6,6" mass="1" elasticityCoef="0.1" vel="0,0,-10" ang="45,20,0" angVel="0,0,0" color="50,200,200" radius="0.6" />
-		<capsule pos="0,6,6" mass="1" elasticityCoef="0.1" vel="0,0,-10" ang="45,20,0" angVel="0,0,0" color="50,200,200" radius="1.5" length="6" />
-		<sphere pos="0,6,6" mass="1" elasticityCoef="0.1" vel="0,0,-10" ang="45,20,0" angVel="0,0,0" color="50,200,200" radius="2"  />
+		<plane pos="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="16" drawWidth="16" />
+		<plane pos="8,4,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,0,0" static="true" drawLength="8" drawWidth="16" />
+		<plane pos="0,4,-8" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" static="true" drawLength="16" drawWidth="8" />
+		<plane pos="0,4,8" mass="1" elasticityCoef="1" ang="-90,0,0" color="0,0,220" static="true" drawLength="16" drawWidth="8" />
+		<plane pos="-8,4,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,0,0" static="true" drawLength="0" drawWidth="0" />
 	</objects>
 </config>
