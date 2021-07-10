@@ -25,7 +25,7 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point collisionNormal) {
+void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point collisionNormal, int numCollisionsObject1, int numCollisionsObject2) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     double e = (object1->getElasticity() + object2->getElasticity()) / 2;
     double ma = object1->getMass();
@@ -43,16 +43,16 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
         + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    Point vaDiff = normal * -jr / ma;
-    Point vbDiff = normal * jr / mb;
-    Point waDiff = iaInverse * ra.crossProduct(normal) * -jr;
-    Point wbDiff = ibInverse * rb.crossProduct(normal) * jr;
+    Point vaDiff = normal * -jr / ma / numCollisionsObject1;
+    Point vbDiff = normal * jr / mb / numCollisionsObject2;
+    Point waDiff = (iaInverse / numCollisionsObject1) * ra.crossProduct(normal) * -jr;
+    Point wbDiff = (ibInverse / numCollisionsObject2) * rb.crossProduct(normal) * jr;
 
     object1->queueVelocityUpdates(vaDiff, waDiff);
     object2->queueVelocityUpdates(vbDiff, wbDiff);
 }
 
-void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point collisionNormal) {
+void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point collisionNormal, int numCollisionsObject) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     double m = nonStaticObject->getMass();
@@ -67,13 +67,29 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    Point vDiff = normal * jr / m;
-    Point wDiff = iInverse * r.crossProduct(normal) * jr;
+    Point vDiff = normal * jr / m / numCollisionsObject;
+    Point wDiff = (iInverse / numCollisionsObject) * r.crossProduct(normal) * jr;
 
     nonStaticObject->queueVelocityUpdates(vDiff, wDiff);
 }
 
 void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
+
+    // Calculate number of collisions per-object
+    map<string, int> numCollisionsPerObject = map<string, int>();
+    for (auto const& mapEntry : collisionMap) {
+        string object1Id = get<0>(mapEntry.second)->getId();
+        string object2Id = get<1>(mapEntry.second)->getId();
+
+        auto it1 = numCollisionsPerObject.find(object1Id);
+        if (it1 == numCollisionsPerObject.end()) numCollisionsPerObject.insert(pair<string, int>(object1Id, 1));
+        else it1->second++;
+
+        auto it2 = numCollisionsPerObject.find(object2Id);
+        if (it2 == numCollisionsPerObject.end()) numCollisionsPerObject.insert(pair<string, int>(object2Id, 1));
+        else it2->second++;
+    }
+
     // Calculate per-collision impulses
     for (auto const& mapEntry : collisionMap) {
         if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
@@ -81,9 +97,9 @@ void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCol
         Object* object2 = get<1>(mapEntry.second);
         Point collisionPoint = get<2>(mapEntry.second);
         Point collisionNormal = get<3>(mapEntry.second);
-        if (object1->getIsStatic()) calculateStaticCollision(object1, object2, collisionPoint, collisionNormal);
-        else if (object2->getIsStatic()) calculateStaticCollision(object2, object1, collisionPoint, collisionNormal * -1);
-        else calculateNonStaticCollision(object1, object2, collisionPoint, collisionNormal);
+        if (object1->getIsStatic()) calculateStaticCollision(object1, object2, collisionPoint, collisionNormal, numCollisionsPerObject.find(object2->getId())->second);
+        else if (object2->getIsStatic()) calculateStaticCollision(object2, object1, collisionPoint, collisionNormal * -1, numCollisionsPerObject.find(object1->getId())->second);
+        else calculateNonStaticCollision(object1, object2, collisionPoint, collisionNormal, numCollisionsPerObject.find(object1->getId())->second, numCollisionsPerObject.find(object2->getId())->second);
     }
 
     // Calculate net impulse and apply it

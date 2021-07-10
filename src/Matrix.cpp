@@ -125,10 +125,19 @@ Point Matrix::col1() {
 Point Matrix::col2() {
     return Point(values[0][2], values[1][2], values[2][2]);
 }
+
 Matrix Matrix::operator*(double scalar) {
-    return Matrix(row0() * scalar,
-                  row1() * scalar,
-                  row2() * scalar);
+    return Matrix(values[0][0] * scalar, values[0][1] * scalar, values[0][2] * scalar,
+                  values[1][0] * scalar, values[1][1] * scalar, values[1][2] * scalar,
+                  values[2][0] * scalar, values[2][1] * scalar, values[2][2] * scalar);
+                  
+}
+
+Matrix Matrix::operator/(double scalar) {
+    return Matrix(values[0][0] / scalar, values[0][1] / scalar, values[0][2] / scalar,
+                  values[1][0] / scalar, values[1][1] / scalar, values[1][2] / scalar,
+                  values[2][0] / scalar, values[2][1] / scalar, values[2][2] / scalar);
+
 }
 
 Point Matrix::operator*(Point vector) {

@@ -28,6 +28,7 @@ class Matrix {
         Point col1();
         Point col2();
         Matrix operator*(double);
+        Matrix operator/(double);
         Point operator*(Point);
         Matrix operator*(Matrix);
         double* operator[](int);
