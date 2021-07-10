@@ -1,11 +1,11 @@
 #include "../include/ObjectLoader.h"
 
-CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point f, double m, double ec, Color c, bool s) {
+CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, double m, double ec, Color c, bool s) {
     pos = p;
     vel = v;
     ang = a;
     angVel = av;
-    force = f;
+    acceleration = acc;
     mass = m;
     elasticityCoef = ec;
     color = c;
@@ -36,8 +36,8 @@ void ObjectLoader::loadObjects(tinyxml2::XMLElement* config) {
 }
 
 CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
-    const char* posChar, * velChar, * angChar, * angVelChar, * forceChar, * colorChar;
-    Point pos, vel, ang, angVel, force;
+    const char* posChar, * velChar, * angChar, * angVelChar, * accelerationChar, * colorChar;
+    Point pos, vel, ang, angVel, acceleration;
     Color color;
     bool isStatic;
     double radius, mass, elasticityCoef;
@@ -51,8 +51,8 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("angVel", &angVelChar);
     angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) * M_PI / 180 : Point(0, 0, 0);
-    parseError = xmlObject->QueryStringAttribute("force", &forceChar);
-    force = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(forceChar) : Point(0, 0, 0);
+    parseError = xmlObject->QueryStringAttribute("acceleration", &accelerationChar);
+    acceleration = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(accelerationChar) : Point(0, 0, 0);
     parseError = xmlObject->QueryDoubleAttribute("mass", &mass);
     mass = (parseError == tinyxml2::XML_SUCCESS) ? mass : 1;
     parseError = xmlObject->QueryDoubleAttribute("elasticityCoef", &elasticityCoef);
@@ -62,7 +62,7 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     parseError = xmlObject->QueryBoolAttribute("static", &isStatic);
     isStatic = (parseError == tinyxml2::XML_SUCCESS) ? isStatic : false;
 
-    return CommonFields(pos, vel, ang, angVel, force, mass, elasticityCoef, color, isStatic);
+    return CommonFields(pos, vel, ang, angVel, acceleration, mass, elasticityCoef, color, isStatic);
 }
 
 Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
@@ -71,7 +71,7 @@ Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryDoubleAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
-    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.force, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius);
+    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius);
 }
 
 Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
@@ -82,7 +82,7 @@ Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     parseError = xmlObject->QueryDoubleAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
-    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.force, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length);
+    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length);
 }
 
 vector<Object*> ObjectLoader::getObjects() {

@@ -2,14 +2,14 @@
 
 using namespace std;
 
-Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, double mass, double elasticityCoef, Color color) {
     this->isStatic = isStatic;
     this->pos = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
     this->vel = vel;
     this->angularVelocity = angularVelocity;
-    this->force = force;
+    this->acceleration = acceleration;
     this->color = color;
     this->id = id;
     this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
@@ -47,8 +47,8 @@ Point Object::getVel(){
     return vel;
 }
 
-Point Object::getForce() {
-    return force;
+Point Object::getAcceleration() {
+    return acceleration;
 }
 
 double Object::getElasticity() {
@@ -63,13 +63,8 @@ void Object::setPos(Point pos){
     this->pos = pos;
 }
 
-void Object::setForce(Point force) {
-    this->force = force;
-}
-
 void Object::updatePosAndVel(double secondsElapsed) {
     // Update velocity
-    Point acceleration = force / mass;
     vel = vel + acceleration * secondsElapsed;
 
     // Update position

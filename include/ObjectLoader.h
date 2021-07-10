@@ -17,7 +17,7 @@ struct CommonFields {
 	Point vel;
 	Point ang;
 	Point angVel;
-	Point force;
+	Point acceleration;
 	double mass;
 	double elasticityCoef;
 	Color color;

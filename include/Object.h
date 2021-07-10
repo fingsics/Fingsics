@@ -12,7 +12,7 @@ class Object {
         string id;
         Point pos;
         Point vel;
-        Point force;
+        Point acceleration;
         Matrix rotationMatrix;
         Point angularVelocity;
         double mass;
@@ -29,7 +29,7 @@ class Object {
         string getId();
         Point getPos();
         Point getVel();
-        Point getForce();
+        Point getAcceleration();
         Matrix getRotationMatrix();
         double* getOpenGLRotationMatrix();
         Point getAngularVelocity();
@@ -38,7 +38,6 @@ class Object {
         
         double getElasticity();
         void setPos(Point);
-        void setForce(Point);
         void updatePosAndVel(double);
         void queueVelocityUpdates(Point, Point);
         void applyVelocityUpdates();
