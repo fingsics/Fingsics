@@ -16,6 +16,7 @@ class NarrowPhaseAlgorithm {
 public:
     map<string, Collision> getCollisions(map<string, pair<Object*, Object*>>);
 private:
+    map<string, Collision> lastFrameCollisions;
     Collision* ballPlane(Point, double, Point, Point);
     Collision* ballBall(Point, double, Point, double);
     Collision* ballCylinder(Point, double, Point, double, double, Point);

@@ -23,6 +23,7 @@ struct Collision {
         double getPenetrationDepth();
         double getLastPenetrationDepth();
         void setObjects(Object*, Object*);
+        void setLastPenetrationDepth(double);
         void invertNormal();
 };
 

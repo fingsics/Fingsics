@@ -5,8 +5,8 @@ using namespace std;
 Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, double ballRadius, Point planePoint, Point planeNormal) {
     double d = planeNormal.dotProduct(ballCenter - planePoint);
     if (d < ballRadius) {
-        Point projection = ballCenter - planeNormal * d;
-        return new Collision(projection, planeNormal, 0);
+        Point projection = ballCenter - planeNormal * (d - (ballRadius - d) / 2);
+        return new Collision(projection, planeNormal, ballRadius - d);
     }
     return NULL;
 }
@@ -18,7 +18,7 @@ Collision* NarrowPhaseAlgorithm::ballPlane(Ball* ball, Plane* plane) {
 Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
     Collision* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
     Collision* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
-    if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), 0);
+    if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), positiveBallCollision->getPenetrationDepth());
     if (positiveBallCollision) return positiveBallCollision;
     return negativeBallCollision;
 }
@@ -26,10 +26,11 @@ Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
 
 Collision* NarrowPhaseAlgorithm::ballBall(Point center1, double radius1, Point center2, double radius2) {
     Point normalVector = center2 - center1;
-    if (normalVector.getMagnitude() < radius1 + radius2) {
+    double normalMagnitude = normalVector.getMagnitude();
+    if (normalMagnitude < radius1 + radius2) {
         double radiusRatio = radius2 / (radius1 + radius2);
         Point collisionPoint = center1 + normalVector * radiusRatio;
-        return new Collision(collisionPoint, normalVector.normalize(), 0);
+        return new Collision(collisionPoint, normalVector.normalize(), radius1 + radius2 - normalMagnitude);
     }
     return NULL;
 }
@@ -46,7 +47,7 @@ Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, double ballRadiu
             Point collisionDirection = ballCenter - projection;
             Point collisionPoint = projection + (collisionDirection.normalize() * cylinderRadius);
             Point collisionNormal = projection - collisionPoint;
-            return new Collision(collisionPoint, collisionNormal.normalize(), 0);
+            return new Collision(collisionPoint, collisionNormal.normalize(), ballRadius + cylinderRadius - (ballCenter - projection).getMagnitude());
         }
     }
     return NULL;
@@ -79,16 +80,16 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
         Collision* capsule1Ball2 = ballCapsule(capsule1->getCylinderNegativeEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
         Collision* collision = NULL;
 
-        if (capsule1Ball1 && capsule1Ball2) collision = new Collision((capsule1Ball1->getPoint() + capsule1Ball2->getPoint()) / 2, capsule1Ball1->getNormal(), 0);
+        if (capsule1Ball1 && capsule1Ball2) collision = new Collision((capsule1Ball1->getPoint() + capsule1Ball2->getPoint()) / 2, capsule1Ball1->getNormal(), capsule1Ball1->getPenetrationDepth());
         else {
             Collision* capsule2Ball1 = ballCapsule(capsule2->getCylinderPositiveEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
-            if (capsule1Ball1 && capsule2Ball1) collision = new Collision((capsule1Ball1->getPoint() + capsule2Ball1->getPoint()) / 2, capsule1Ball1->getNormal(), 0);
-            else if (capsule1Ball2 && capsule2Ball1) collision = new Collision((capsule1Ball2->getPoint() + capsule2Ball1->getPoint()) / 2, capsule1Ball2->getNormal(), 0);
+            if (capsule1Ball1 && capsule2Ball1) collision = new Collision((capsule1Ball1->getPoint() + capsule2Ball1->getPoint()) / 2, capsule1Ball1->getNormal(), capsule1Ball1->getPenetrationDepth());
+            else if (capsule1Ball2 && capsule2Ball1) collision = new Collision((capsule1Ball2->getPoint() + capsule2Ball1->getPoint()) / 2, capsule1Ball2->getNormal(), capsule1Ball2->getPenetrationDepth());
             else {
                 Collision* capsule2Ball2 = ballCapsule(capsule2->getCylinderNegativeEnd(), capsule2->getRadius(), capsule1->getPos(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection(), capsule1->getCylinderPositiveEnd(), capsule1->getCylinderNegativeEnd());
-                if (capsule2Ball1 && capsule2Ball2) collision = new Collision((capsule2Ball1->getPoint() + capsule2Ball2->getPoint()) / 2, capsule2Ball1->getNormal(), 0);
-                else if (capsule1Ball1 && capsule2Ball2) collision = new Collision((capsule1Ball1->getPoint() + capsule2Ball2->getPoint()) / 2, capsule1Ball1->getNormal(), 0);
-                else if (capsule1Ball2 && capsule2Ball2) collision = new Collision((capsule1Ball2->getPoint() + capsule2Ball2->getPoint()) / 2, capsule1Ball2->getNormal(), 0);
+                if (capsule2Ball1 && capsule2Ball2) collision = new Collision((capsule2Ball1->getPoint() + capsule2Ball2->getPoint()) / 2, capsule2Ball1->getNormal(), capsule2Ball1->getPenetrationDepth());
+                else if (capsule1Ball1 && capsule2Ball2) collision = new Collision((capsule1Ball1->getPoint() + capsule2Ball2->getPoint()) / 2, capsule1Ball1->getNormal(), capsule1Ball1->getPenetrationDepth());
+                else if (capsule1Ball2 && capsule2Ball2) collision = new Collision((capsule1Ball2->getPoint() + capsule2Ball2->getPoint()) / 2, capsule1Ball2->getNormal(), capsule1Ball2->getPenetrationDepth());
                 if (capsule2Ball2) delete capsule2Ball2;
             }
             if (capsule2Ball1) delete capsule2Ball1;
@@ -116,7 +117,7 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
             Point normalVector = puntoLinea2 - puntoLinea1;
             double radiusRatio = capsule2->getRadius() / (capsule1->getRadius() + capsule2->getRadius());
             Point collisionPoint = puntoLinea1 + normalVector * radiusRatio;
-            return new Collision(collisionPoint, normalVector.normalize(), 0);
+            return new Collision(collisionPoint, normalVector.normalize(), capsule1->getRadius() + capsule2->getRadius() - distancia);
         }
 
         // Check collision between capsule 1 and one of the ends of capsule 2
@@ -142,7 +143,7 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
 }
 
 map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
-    map<string, Collision> collisionMap;
+    map<string, Collision> collisions;
     for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
         Object* object1 = it->second.first;
         Object* object2 = it->second.second;
@@ -173,15 +174,23 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         }
 
         if (collision) {
-            collision->setObjects(object1, object2);
             string objectPairId = getObjectPairId(make_pair(object1, object2));
-            if (collisionMap.find(objectPairId) == collisionMap.end()) {
-                collisionMap.insert(pair<string, Collision>(objectPairId, *collision));
+            collision->setObjects(object1, object2);
+
+            auto it = lastFrameCollisions.find(objectPairId);
+            if (it != lastFrameCollisions.end()) {
+                Collision lastFrameCollision = it->second;
+                collision->setLastPenetrationDepth(lastFrameCollision.getPenetrationDepth());
+            }
+
+            if (collisions.find(objectPairId) == collisions.end()) {
+                collisions.insert(pair<string, Collision>(objectPairId, *collision));
             }
 
             delete collision;
         }
     }
 
-    return collisionMap;
+    lastFrameCollisions = collisions;
+    return collisions;
 }
