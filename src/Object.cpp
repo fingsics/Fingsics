@@ -60,19 +60,23 @@ bool Object::getIsStatic() {
     return isStatic;
 }
 
-void Object::setPos(Point pos){
+void Object::setPos(Point pos) {
     this->pos = pos;
 }
 
-void Object::updatePosAndVel(double secondsElapsed) {
-    // Update velocity
-    vel = vel + acceleration * secondsElapsed;
+void Object::setVel(Point vel) {
+    this->vel = vel;
+}
 
+void Object::updatePosAndVel(double secondsElapsed) {
     // Update position
-    pos = Point(pos.getX() + vel.getX() * secondsElapsed, pos.getY() + vel.getY() * secondsElapsed, pos.getZ() + vel.getZ() * secondsElapsed);
+    pos = pos + vel * secondsElapsed;
 
     // Update rotation matrix
     rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
+
+    // Update velocity
+    vel = vel + acceleration * secondsElapsed;
 }
 
 Matrix Object::getInertiaTensor() {

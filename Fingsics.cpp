@@ -25,18 +25,25 @@ void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point collisionNormal) {
+void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
+    Point ra = collisionPoint - object1->getPos();
+    Point rb = collisionPoint - object2->getPos();
+    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
+    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
+
+    //Point van = normal * normal.dotProduct(vai);
+    //Point vbn = normal * normal.dotProduct(vbi);
+    //if ((van - vbn).getMagnitude() < 0.01) {
+    //    object1->setPos(object1->getPos() - object1->getVel() * 0.016);
+    //    object2->setPos(object2->getPos() - object2->getVel() * 0.016);
+    //};
+
     double e = (object1->getElasticity() + object2->getElasticity()) / 2;
     double ma = object1->getMass();
     double mb = object2->getMass();
     Matrix iaInverse = object1->getInertiaTensor().inverse();
     Matrix ibInverse = object2->getInertiaTensor().inverse();
-    Point ra = collisionPoint - object1->getPos();
-    Point rb = collisionPoint - object2->getPos();
-    Point normal = collisionNormal;
-    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
-    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
 
     double top = -(1 + e) * (vbi - vai).dotProduct(normal);
     double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
@@ -52,16 +59,23 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
     object2->queueVelocityUpdates(vbDiff, wbDiff);
 }
 
-void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point collisionNormal) {
+void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
+    Point r = collisionPoint - nonStaticObject->getPos();
+    Point rs = collisionPoint - staticObject->getPos();
+    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
+    Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
+
+    //Point vn = normal * normal.dotProduct(vi);
+    //Point vsn = normal * normal.dotProduct(vsi);
+    //if ((vn - vsn).getMagnitude() < 1) {
+    //    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+    //    return;
+    //};
+
     double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     double m = nonStaticObject->getMass();
     Matrix iInverse = nonStaticObject->getInertiaTensor().inverse();
-    Point rs = collisionPoint - staticObject->getPos();
-    Point r = collisionPoint - nonStaticObject->getPos();
-    Point normal = collisionNormal;
-    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
-    Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
 
     double top = -(1 + e) * (vi - vsi).dotProduct(normal);
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
@@ -278,7 +292,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, tuple<Object*, Object*, Point, Point>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
             collisionResponse(oldCollisions, collisions);
-            oldCollisions = collisions;
+            //oldCollisions = collisions;
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }
 

@@ -39,6 +39,7 @@ class Object {
         
         double getElasticity();
         void setPos(Point);
+        void setVel(Point);
         void updatePosAndVel(double);
         void queueVelocityUpdates(Point, Point);
         void applyVelocityUpdates();
