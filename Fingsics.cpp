@@ -140,7 +140,7 @@ SDL_Window* initializeSDL() {
 
     atexit(SDL_Quit);
 
-    SDL_Window* window = SDL_CreateWindow("Fingsycs", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("Fingsics", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
     if (window == NULL) {
         cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
         exit(1);

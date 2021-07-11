@@ -191,6 +191,7 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         }
     }
 
+    lastFrameCollisions.clear();
     lastFrameCollisions = collisions;
     return collisions;
 }
