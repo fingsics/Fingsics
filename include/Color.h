@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class Color{
+class Color {
     private:
         int r;
         int g;

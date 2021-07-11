@@ -7,7 +7,7 @@
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
 #include "include/MidPhaseAlgorithms.h"
-#include "include/NarrowPhaseAlgorithms.h"
+#include "include/NarrowPhaseAlgorithm.h"
 #include "include/Matrix.h"
 #include "freeglut.h"
 #include <iostream>
@@ -87,24 +87,22 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
     nonStaticObject->queueVelocityUpdates(vDiff, wDiff);
 }
 
-void collisionResponse(map<string, tuple<Object*, Object*, Point, Point>> oldCollisions, map<string, tuple<Object*, Object*, Point, Point>> collisionMap) {
+void collisionResponse(map<string, Collision> collisionMap) {
     // Calculate per-collision impulses
-    for (auto const& mapEntry : collisionMap) {
-        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
-        Object* object1 = get<0>(mapEntry.second);
-        Object* object2 = get<1>(mapEntry.second);
-        Point collisionPoint = get<2>(mapEntry.second);
-        Point collisionNormal = get<3>(mapEntry.second);
+    for (auto mapEntry : collisionMap) {
+        Object* object1 = mapEntry.second.getObject1();
+        Object* object2 = mapEntry.second.getObject2();
+        Point collisionPoint = mapEntry.second.getPoint();
+        Point collisionNormal = mapEntry.second.getNormal();
         if (object1->getIsStatic()) calculateStaticCollision(object1, object2, collisionPoint, collisionNormal);
         else if (object2->getIsStatic()) calculateStaticCollision(object2, object1, collisionPoint, collisionNormal * -1);
         else calculateNonStaticCollision(object1, object2, collisionPoint, collisionNormal);
     }
 
     // Calculate net impulse and apply it
-    for (auto const& mapEntry : collisionMap) {
-        if (oldCollisions.find(mapEntry.first) != oldCollisions.end()) continue;
-        Object* object1 = get<0>(mapEntry.second);
-        Object* object2 = get<1>(mapEntry.second);
+    for (auto mapEntry : collisionMap) {
+        Object* object1 = mapEntry.second.getObject1();
+        Object* object2 = mapEntry.second.getObject2();
         object1->applyVelocityUpdates();
         object2->applyVelocityUpdates();
     }
@@ -252,10 +250,10 @@ int main(int argc, char* argv[]) {
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
 
-    // Collision detection algorithm
+    // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
-    map<string, tuple<Object*, Object*, Point, Point>> oldCollisions;
+    NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
     string sceneName = "scene.xml";
@@ -290,9 +288,8 @@ int main(int argc, char* argv[]) {
         if (!pause) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            map<string, tuple<Object*, Object*, Point, Point>> collisions = NarrowPhaseAlgorithms::getCollisions(midPhaseCollisions);
-            collisionResponse(oldCollisions, collisions);
-            //oldCollisions = collisions;
+            map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
+            collisionResponse(collisions);
             moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
         }
 
