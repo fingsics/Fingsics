@@ -164,12 +164,12 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         if (ball1) {
             if (ball2) collision = ballBall(ball1, ball2);
             if (capsule2) collision = ballCapsule(ball1, capsule2);
-            if (plane2) collision = ballPlane(ball1, plane2);
+            if (plane2) { collision = ballPlane(ball1, plane2); if (collision) collision->invertNormal(); }
         }
         if (capsule1) {
             if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision->invertNormal(); }
             if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
-            if (plane2) collision = capsulePlane(capsule1, plane2);
+            if (plane2) { collision = capsulePlane(capsule1, plane2); if (collision) collision->invertNormal(); }
         }
         if (plane1) {
             if (ball2) collision = ballPlane(ball2, plane1);

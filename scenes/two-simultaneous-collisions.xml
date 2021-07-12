@@ -2,7 +2,8 @@
 <config>
 	<objects>
 		<capsule pos="0,0,0" mass="0.4" elasticityCoef="0.8" vel="0,0,0" ang="0,0,0" angVel="0,0,0" color="50,200,200" radius="0.5" length="4" />
-		<sphere pos="-4,0,1" mass="0.2" elasticityCoef="0.8" vel="4,0,0" ang="0,0,0" color="200,200,50" radius="0.4" />
-		<sphere pos="-4,0,-1" mass="0.2" elasticityCoef="0.8" vel="4,0,0" ang="0,0,0" color="200,200,50" radius="0.4" />
+		<sphere pos="-4,0,0" mass="0.4" elasticityCoef="0.8" vel="4,0,0" ang="0,0,0" color="200,200,50" radius="0.4" />
+		<sphere pos="-4,0,-1" mass="0.0002" elasticityCoef="0.8" vel="4,0,0" ang="0,0,0" color="200,200,50" radius="0.4" />
+
 	</objects>
 </config>

@@ -46,6 +46,17 @@ bool Point::isZero() {
     return x == 0 && y == 0 && z == 0;
 }
 
+Point Point::increaseIfNotZero(Point val) {
+    double retX = x;
+    double retY = y;
+    double retZ = z;
+    if (fabs(val.getX()) > 0.0001) retX += 1.0;
+    if (fabs(val.getY()) > 0.0001) retY += 1.0;
+    if (fabs(val.getZ()) > 0.0001) retZ += 1.0;
+
+    return Point(retX, retY, retZ);
+}
+
 Point Point::rotate(Point angleInDegrees) {
     Point angle = angleInDegrees * M_PI / 180;
     // https://stackoverflow.com/questions/14607640/rotating-a-vector-in-3d-space
@@ -67,6 +78,12 @@ Point Point::crossProduct(Point vector2){
         z * vector2.getX() - x * vector2.getZ(),
         x * vector2.getY() - y * vector2.getX()
     );
+}
+
+Point Point::operator/(Point divisor) {
+    return Point(fabs(divisor.getX()) > 0.0001 ? x / divisor.getX() : 0,
+                 fabs(divisor.getY()) > 0.0001 ? y / divisor.getY() : 0, 
+                 fabs(divisor.getZ()) > 0.0001 ? z / divisor.getZ() : 0);
 }
 
 Point Point::operator-(Point vector2){

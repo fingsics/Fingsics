@@ -22,7 +22,8 @@ class Object {
         Point velocityForUpdate;
         Point angularVelocityForUpdate;
         bool isStatic;
-        int collisionsInFrame;
+        Point numVelocityUpdatesThisFramePerAxis;
+        Point numAngularVelocityUpdatesThisFramePerAxis;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();

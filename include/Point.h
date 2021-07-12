@@ -24,7 +24,9 @@ class Point {
         Point invert();
         Point normalize();
         bool isZero();
+        Point increaseIfNotZero(Point);
         Point rotate(Point);
+        Point operator/(Point);
         Point operator-(Point);
         Point operator+(Point);
         Point operator/(double);
