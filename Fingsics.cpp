@@ -292,7 +292,7 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
             collisionResponse(collisions);
-            moveObjects(objects, numObjects, timeSinceLastFrame, slowMotion);
+            moveObjects(objects, numObjects, 1.0 / FPS, slowMotion);
         }
 
         // Process events

@@ -19,7 +19,6 @@ class Point {
         double getZ();
         double dotProduct(Point);
         Point crossProduct(Point);
-        double distanceTo(Point);
         double getMagnitude();
         double getSquareMagnitude();
         Point normalize();
