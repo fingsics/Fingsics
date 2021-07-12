@@ -30,11 +30,15 @@ Point Point::normalize() {
     return (*this) / getMagnitude();
 }
 
+Point Point::invert() {
+    return (*this) * -1;
+}
+
 double Point::getMagnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
-double Point::getSquareMagnitude() {
+double Point::getMagnitudeSqr() {
     return pow(x, 2) + pow(y, 2) + pow(z, 2);
 }
 
@@ -90,5 +94,5 @@ double Point::operator[](int i) {
 
 bool Point::equals(Point other) {
     Point diff = *this - other;
-    return diff.getSquareMagnitude() < 0.00001;
+    return diff.getMagnitudeSqr() < 0.00001;
 }

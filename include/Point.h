@@ -20,7 +20,8 @@ class Point {
         double dotProduct(Point);
         Point crossProduct(Point);
         double getMagnitude();
-        double getSquareMagnitude();
+        double getMagnitudeSqr();
+        Point invert();
         Point normalize();
         bool isZero();
         Point rotate(Point);

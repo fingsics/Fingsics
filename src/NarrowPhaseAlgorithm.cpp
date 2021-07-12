@@ -30,7 +30,7 @@ Collision* NarrowPhaseAlgorithm::ballBall(Point center1, double radius1, Point c
     if (normalMagnitude < radius1 + radius2) {
         double radiusRatio = radius2 / (radius1 + radius2);
         Point collisionPoint = center1 + normalVector * radiusRatio;
-        return new Collision(collisionPoint, normalVector.normalize(), radius1 + radius2 - normalMagnitude);
+        return new Collision(collisionPoint, normalVector / normalMagnitude, radius1 + radius2 - normalMagnitude);
     }
     return NULL;
 }
@@ -41,13 +41,13 @@ Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, double ballRadiu
     Point AP = ballCenter - cylinderCenter;
     Point displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
     // Projection of the ball's center is inside the capsule's cylinder
-    if (displacementFromA.getMagnitude() < cylinderLength / 2) {
+    if (displacementFromA.getMagnitudeSqr() < pow(cylinderLength / 2, 2)) {
         Point projection = cylinderCenter + displacementFromA;
-        if ((ballCenter - projection).getMagnitude() < ballRadius + cylinderRadius) {
-            Point collisionDirection = ballCenter - projection;
-            Point collisionPoint = projection + (collisionDirection.normalize() * cylinderRadius);
-            Point collisionNormal = projection - collisionPoint;
-            return new Collision(collisionPoint, collisionNormal.normalize(), ballRadius + cylinderRadius - (ballCenter - projection).getMagnitude());
+        double distance = (ballCenter - projection).getMagnitude();
+        if (distance < ballRadius + cylinderRadius) {
+            Point collisionNormal = (ballCenter - projection).invert().normalize();
+            Point collisionPoint = projection + collisionNormal * cylinderRadius;
+            return new Collision(collisionPoint, collisionNormal, ballRadius + cylinderRadius - distance);
         }
     }
     return NULL;
