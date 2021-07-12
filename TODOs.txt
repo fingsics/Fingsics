@@ -1,9 +1,8 @@
-TODO LIST
-
-- Remove object pointers from Collision, use map's key to index all objects array instead.
-- Fix vector magnitude in all NarrowPhaseCollisionDetection functions.
+BUGS/FEATURES:
 - Fix bug in Planes.
 - Model (or fix) resting contact.
+- Fix bug in many-balls scene (ball gets stuck in wall)
 
-Nice to have:
-- Fix penetration between objects (may be related to resting contact).
+REFACTORS/OPTIMIZATIONS:
+- Remove object pointers from Collision, use map's key to index all objects array instead.
+- Fix vector magnitude in all NarrowPhaseCollisionDetection functions.

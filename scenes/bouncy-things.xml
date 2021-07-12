@@ -19,7 +19,6 @@
 		<sphere pos="-3,4,-5" radius="0.6" mass="1" elasticityCoef="1" vel="0,0,2" color="200,200,200" acceleration="0,-9.8,0" />
 		<capsule pos="-2,3,-6" mass="2" elasticityCoef="1" vel="3,1,1" ang="23,14,-52" angVel="20,20,20" color="50,200,200" radius="0.7" length="3" acceleration="0,-9.8,0" />
 		
-		<sphere pos="-3,4,-5" radius="0.3" mass="0.5" elasticityCoef="1" vel="0,0,2" color="200,200,200" acceleration="0,-9.8,0" />
 		<capsule pos="6,3,6" mass="2" elasticityCoef="1" vel="1,0,1" ang="23,14,-52" angVel="90,0,0" color="50,200,200" radius="0.8" length="2" acceleration="0,-9.8,0" />
 
 	</objects>
