@@ -77,6 +77,10 @@ void Object::setVel(Point vel) {
     this->vel = vel;
 }
 
+void Object::setAngularVelocity(Point angularVelocity) {
+    this->angularVelocity = angularVelocity;
+}
+
 void Object::updatePosAndVel(double secondsElapsed) {
     if (!vel.isZero()) pos = pos + vel * secondsElapsed;
 

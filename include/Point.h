@@ -24,6 +24,7 @@ class Point {
         Point invert();
         Point normalize();
         bool isZero();
+        bool isZero(double);
         Point addIfComponentNotZero(Point, double);
         Point rotate(Point);
         Point operator/(Point);
@@ -32,9 +33,10 @@ class Point {
         Point operator/(double);
         Point operator*(double);
         Point operator*(Point);
-        double* toArray();
         double operator[](int i);
         bool equals(Point);
+        bool equals(Point, double);
+        bool hasSameDirection(Point, double);
 };
 
 #endif

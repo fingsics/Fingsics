@@ -32,13 +32,6 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
     Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
     Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
 
-    //Point van = normal * normal.dotProduct(vai);
-    //Point vbn = normal * normal.dotProduct(vbi);
-    //if ((van - vbn).getMagnitude() < 0.01) {
-    //    object1->setPos(object1->getPos() - object1->getVel() * 0.016);
-    //    object2->setPos(object2->getPos() - object2->getVel() * 0.016);
-    //};
-
     double e = (object1->getElasticity() + object2->getElasticity()) / 2;
     double ma = object1->getMass();
     double mb = object2->getMass();
@@ -54,6 +47,38 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
     object2->queueImpulse(normal, rb.crossProduct(normal), jr, ma);
 }
 
+bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
+    Plane* plane = dynamic_cast<Plane*>(staticObject);
+    if (plane) {
+        Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
+        Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
+        if (ball) {
+            Point vn = normal * normal.dotProduct(vi);
+            Point vsn = normal * normal.dotProduct(vsi);
+            if ((vn - vsn).getMagnitude() < 1) {
+                nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+                return true;
+            };
+        }
+        else if (capsule) {
+            Point vn = normal * normal.dotProduct(vi);
+            Point vsn = normal * normal.dotProduct(vsi);
+            if ((vn - vsn).getMagnitude() < 1 && (nonStaticObject->getAngularVelocity().isZero(0.1) || nonStaticObject->getAngularVelocity().hasSameDirection(capsule->getAxisDirection(), 0.1) || nonStaticObject->getAngularVelocity().hasSameDirection(normal, 0.1))) {
+                if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
+                    nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
+                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+                    return true;
+                }
+                else if (abs(normal.dotProduct(capsule->getAxisDirection())) > 0.9) {
+                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+                    return true;
+                }
+            };
+        }
+    }
+    return false;
+}
+
 void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     Point r = collisionPoint - nonStaticObject->getPos();
@@ -61,12 +86,7 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
     Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
     Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
 
-    //Point vn = normal * normal.dotProduct(vi);
-    //Point vsn = normal * normal.dotProduct(vsi);
-    //if ((vn - vsn).getMagnitude() < 1) {
-    //    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-    //    return;
-    //};
+    if (handleContact(staticObject, nonStaticObject, normal, vi, vsi)) return;
 
     double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     double m = nonStaticObject->getMass();
@@ -250,7 +270,7 @@ int main(int argc, char* argv[]) {
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "ramp.xml";
+    string sceneName = "objects-resting.xml";
     ObjectLoader scene = ObjectLoader(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];

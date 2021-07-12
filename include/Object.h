@@ -33,6 +33,9 @@ class Object {
         Point velCollisionMassPerAxis;
         Point angVelCollisionMassPerAxis;
         bool isStatic;
+        bool isBall;
+        bool isCapsule;
+        bool isPlane;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -50,6 +53,7 @@ class Object {
         double getElasticity();
         void setPos(Point);
         void setVel(Point);
+        void setAngularVelocity(Point);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();

@@ -46,6 +46,10 @@ bool Point::isZero() {
     return fabs(x) < 0.0001 && fabs(y) < 0.0001 && fabs(z) < 0.0001;
 }
 
+bool Point::isZero(double tolerance) {
+    return fabs(x) < tolerance && fabs(y) < tolerance && fabs(z) < tolerance;
+}
+
 Point Point::addIfComponentNotZero(Point vector, double value) {
     double retX = x;
     double retY = y;
@@ -116,4 +120,23 @@ double Point::operator[](int i) {
 bool Point::equals(Point other) {
     Point diff = *this - other;
     return diff.getMagnitudeSqr() < 0.00001;
+}
+
+bool Point::equals(Point other, double tolerance) {
+    Point diff = *this - other;
+    return diff.getMagnitudeSqr() < tolerance;
+}
+
+bool Point::hasSameDirection(Point other, double tolerance) {
+    double coef;
+    if (fabs(x) > tolerance) {
+        coef = other.getX() / x;
+    } else if (fabs(y) > tolerance) {
+        coef = other.getY() / y;
+    } else if (fabs(z) > tolerance) {
+        coef = other.getZ() / z;
+    } else {
+        return other.isZero();
+    }
+    return this->equals(other / coef, tolerance);
 }
