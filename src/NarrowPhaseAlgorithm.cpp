@@ -4,9 +4,10 @@ using namespace std;
 
 Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, double ballRadius, Point planePoint, Point planeNormal) {
     double d = planeNormal.dotProduct(ballCenter - planePoint);
-    if (d < ballRadius) {
-        Point projection = ballCenter - planeNormal * (d - (ballRadius - d) / 2);
-        return new Collision(projection, planeNormal, ballRadius - d);
+    if (abs(d) < ballRadius) {
+        Point normal = (d > 0) ? planeNormal : planeNormal * -1;
+        Point projection = ballCenter - normal * (abs(d) - (ballRadius - abs(d)) / 2);
+        return new Collision(projection, normal, ballRadius - abs(d));
     }
     return NULL;
 }

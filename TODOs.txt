@@ -2,6 +2,10 @@ BUGS/FEATURES:
 - Fix bug in Planes.
 - Model (or fix) resting contact.
 
+- XML -> YAML
+- Choose scene on start.
+
 REFACTORS/OPTIMIZATIONS:
 - Remove object pointers from Collision, use map's key to index all objects array instead.
-- agregar un epsilon y un "infinito"
+- Add epsilon and infinite
+- Isolate main loop from SDL functions
