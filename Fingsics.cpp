@@ -90,7 +90,7 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
 void collisionResponse(map<string, Collision> collisionMap) {
     // Calculate per-collision impulses
     for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) return;
+        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
         Object* object1 = mapEntry.second.getObject1();
         Object* object2 = mapEntry.second.getObject2();
         Point collisionPoint = mapEntry.second.getPoint();
@@ -102,7 +102,7 @@ void collisionResponse(map<string, Collision> collisionMap) {
 
     // Calculate net impulse and apply it
     for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) return;
+        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
         Object* object1 = mapEntry.second.getObject1();
         Object* object2 = mapEntry.second.getObject2();
         object1->applyVelocityUpdates();
@@ -258,7 +258,7 @@ int main(int argc, char* argv[]) {
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "missile.xml";
+    string sceneName = "scene.xml";
     ObjectLoader scene = ObjectLoader(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
