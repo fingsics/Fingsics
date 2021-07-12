@@ -10,6 +10,6 @@ using namespace std;
 
 string getObjectPairId(pair<Object*, Object*> objectPair);
 double** getMatrixForGausianElimination(Matrix, Point);
-double* solveLinearSystem(Matrix, Point);
+tuple<double, double, double> solveLinearSystem(Matrix, Point);
 
 #endif

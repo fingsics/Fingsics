@@ -30,7 +30,7 @@ double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
 }
 
 // Works only if the system has a SINGLE solution
-double* solveLinearSystem(Matrix LHS, Point RHS) {
+tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
     double** A = getMatrixForGausianElimination(LHS, RHS);
     int h = 0;
     int k = 0;
@@ -74,7 +74,7 @@ double* solveLinearSystem(Matrix LHS, Point RHS) {
         A[i][n - 1] /= A[i][i];
     }
 
-    double ret[3] = { A[0][3], A[1][3], A[2][3] };
+    tuple<double, double, double> ret = tuple<double, double, double>(A[0][3], A[1][3], A[2][3]);
 
     // Free memory
     for (int i = 0; i < m; i++) delete[] A[i];
