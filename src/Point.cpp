@@ -46,13 +46,13 @@ bool Point::isZero() {
     return x == 0 && y == 0 && z == 0;
 }
 
-Point Point::increaseIfNotZero(Point val) {
+Point Point::addIfComponentNotZero(Point vector, double value) {
     double retX = x;
     double retY = y;
     double retZ = z;
-    if (fabs(val.getX()) > 0.0001) retX += 1.0;
-    if (fabs(val.getY()) > 0.0001) retY += 1.0;
-    if (fabs(val.getZ()) > 0.0001) retZ += 1.0;
+    if (fabs(vector.getX()) > 0.0001) retX += value;
+    if (fabs(vector.getY()) > 0.0001) retY += value;
+    if (fabs(vector.getZ()) > 0.0001) retZ += value;
 
     return Point(retX, retY, retZ);
 }
@@ -100,6 +100,10 @@ Point Point::operator/(double divisor){
 
 Point Point::operator*(double divisor){
     return Point(x * divisor, y * divisor, z * divisor);
+}
+
+Point Point::operator*(Point other) {
+    return Point(x * other.getX(), y * other.getY(), z * other.getZ());
 }
 
 double Point::operator[](int i) {

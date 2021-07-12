@@ -4,3 +4,5 @@ BUGS/FEATURES:
 
 REFACTORS/OPTIMIZATIONS:
 - Remove object pointers from Collision, use map's key to index all objects array instead.
+- no invertir la matriz cada vez. hacerlo al principio y listo
+- agregar un epsilon y un "infinito"

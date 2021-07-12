@@ -2,6 +2,13 @@
 
 using namespace std;
 
+Impulse::Impulse(Point normal, Point tangent, double magnitude, double mass) {
+    this->normal = normal;
+    this->tangent = tangent;
+    this->magnitude = magnitude;
+    this->mass = mass;
+}
+
 Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, double mass, double elasticityCoef, Color color) {
     this->isStatic = isStatic;
     this->pos = pos;
@@ -13,8 +20,9 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->color = color;
     this->id = id;
     this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
-    this->numVelocityUpdatesThisFramePerAxis = Point();
-    this->numAngularVelocityUpdatesThisFramePerAxis = Point();
+    this->queuedImpulses = list<Impulse>();
+    this->velCollisionMassPerAxis = Point();
+    this->angVelCollisionMassPerAxis = Point();
 }
 
 bool Object::isMoving(){
@@ -84,19 +92,28 @@ Matrix Object::getInertiaTensor() {
     return rotationMatrix * baseInertiaTensor * rotationMatrix.transpose();
 }
 
-void Object::queueVelocityUpdates(Point velocity, Point angularVelocity) {
-    velocityForUpdate = velocityForUpdate + velocity;
-    angularVelocityForUpdate = angularVelocityForUpdate + angularVelocity;
-    numVelocityUpdatesThisFramePerAxis = numVelocityUpdatesThisFramePerAxis.increaseIfNotZero(velocity);
-    numAngularVelocityUpdatesThisFramePerAxis = numAngularVelocityUpdatesThisFramePerAxis.increaseIfNotZero(angularVelocity);
+void Object::queueImpulse(Point normal, Point tangent, double magnitude, double mass) {
+    queuedImpulses.insert(queuedImpulses.begin(), Impulse(normal, tangent, magnitude, mass));
+    velCollisionMassPerAxis = velCollisionMassPerAxis.addIfComponentNotZero(normal, mass);
+    angVelCollisionMassPerAxis = angVelCollisionMassPerAxis.addIfComponentNotZero(tangent, mass);
 }
 
-void Object::applyVelocityUpdates() {
-    vel = vel + (velocityForUpdate / numVelocityUpdatesThisFramePerAxis);
-    angularVelocity = angularVelocity + (angularVelocityForUpdate / numAngularVelocityUpdatesThisFramePerAxis);
+void Object::applyQueuedImpulses() {
+    for (auto it = queuedImpulses.begin(); it != queuedImpulses.end(); ++it) {
+        Point velProportion = Point(it->mass, it->mass, it->mass) / velCollisionMassPerAxis;
+        Point angVelProportion = Point(it->mass, it->mass, it->mass) / angVelCollisionMassPerAxis;
+        applyImpulse(it->normal * velProportion * it->magnitude, it->tangent * angVelProportion * it->magnitude);
+    }
 
-    velocityForUpdate = Point();
-    angularVelocityForUpdate = Point();
-    numVelocityUpdatesThisFramePerAxis = Point();
-    numAngularVelocityUpdatesThisFramePerAxis = Point();
+    queuedImpulses.clear();
+    velCollisionMassPerAxis = Point();
+    angVelCollisionMassPerAxis = Point();
+}
+
+void Object::applyImpulse(Point normal, Point tangent) {
+    Point velDiff = normal / mass;
+    Point angVelDiff = getInertiaTensor().inverse() * tangent;
+
+    vel = vel + velDiff;
+    angularVelocity = angularVelocity + angVelDiff;
 }

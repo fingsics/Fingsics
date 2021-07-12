@@ -4,8 +4,17 @@
 #include "Point.h"
 #include "Matrix.h"
 #include <string>
+#include <list>
 
 using namespace std;
+
+struct Impulse {
+    Point normal;
+    Point tangent;
+    double magnitude;
+    double mass;
+    Impulse(Point, Point, double, double);
+};
 
 class Object {
     protected:
@@ -19,11 +28,10 @@ class Object {
         Color color;
         double elasticityCoef;
         Matrix baseInertiaTensor;
-        Point velocityForUpdate;
-        Point angularVelocityForUpdate;
+        list<Impulse> queuedImpulses;
+        Point velCollisionMassPerAxis;
+        Point angVelCollisionMassPerAxis;
         bool isStatic;
-        Point numVelocityUpdatesThisFramePerAxis;
-        Point numAngularVelocityUpdatesThisFramePerAxis;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -42,8 +50,9 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void updatePosAndVel(double);
-        void queueVelocityUpdates(Point, Point);
-        void applyVelocityUpdates();
+        void queueImpulse(Point, Point, double, double);
+        void applyQueuedImpulses();
+        void applyImpulse(Point, Point);
 
         // Virtual methods
         virtual void draw() = 0;

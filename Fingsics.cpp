@@ -50,13 +50,8 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
         + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    Point vaDiff = normal * -jr / ma;
-    Point vbDiff = normal * jr / mb;
-    Point waDiff = iaInverse * ra.crossProduct(normal) * -jr;
-    Point wbDiff = ibInverse * rb.crossProduct(normal) * jr;
-
-    object1->queueVelocityUpdates(vaDiff, waDiff);
-    object2->queueVelocityUpdates(vbDiff, wbDiff);
+    object1->queueImpulse(normal, ra.crossProduct(normal), -jr, mb);
+    object2->queueImpulse(normal, rb.crossProduct(normal), jr, ma);
 }
 
 void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
@@ -81,10 +76,7 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    Point vDiff = normal * jr / m;
-    Point wDiff = iInverse * r.crossProduct(normal) * jr;
-
-    nonStaticObject->queueVelocityUpdates(vDiff, wDiff);
+    nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, 99999999999);
 }
 
 void collisionResponse(map<string, Collision> collisionMap) {
@@ -105,8 +97,8 @@ void collisionResponse(map<string, Collision> collisionMap) {
         if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
         Object* object1 = mapEntry.second.getObject1();
         Object* object2 = mapEntry.second.getObject2();
-        object1->applyVelocityUpdates();
-        object2->applyVelocityUpdates();
+        object1->applyQueuedImpulses();
+        object2->applyQueuedImpulses();
     }
 }
 

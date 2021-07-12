@@ -24,13 +24,14 @@ class Point {
         Point invert();
         Point normalize();
         bool isZero();
-        Point increaseIfNotZero(Point);
+        Point addIfComponentNotZero(Point, double);
         Point rotate(Point);
         Point operator/(Point);
         Point operator-(Point);
         Point operator+(Point);
         Point operator/(double);
         Point operator*(double);
+        Point operator*(Point);
         double* toArray();
         double operator[](int i);
         bool equals(Point);
