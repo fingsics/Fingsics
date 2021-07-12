@@ -42,8 +42,8 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
     double e = (object1->getElasticity() + object2->getElasticity()) / 2;
     double ma = object1->getMass();
     double mb = object2->getMass();
-    Matrix iaInverse = object1->getInertiaTensor().inverse();
-    Matrix ibInverse = object2->getInertiaTensor().inverse();
+    Matrix iaInverse = object1->getInertiaTensorInverse();
+    Matrix ibInverse = object2->getInertiaTensorInverse();
 
     double top = -(1 + e) * (vbi - vai).dotProduct(normal);
     double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
@@ -70,7 +70,7 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
 
     double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     double m = nonStaticObject->getMass();
-    Matrix iInverse = nonStaticObject->getInertiaTensor().inverse();
+    Matrix iInverse = nonStaticObject->getInertiaTensorInverse();
 
     double top = -(1 + e) * (vi - vsi).dotProduct(normal);
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);

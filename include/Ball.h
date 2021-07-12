@@ -22,7 +22,7 @@ class Ball : public Object {
         Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double);
         void draw();
         double getRadius();
-        Matrix getInertiaTensor();
+        Matrix getInertiaTensorInverse();
 };
 
 #endif

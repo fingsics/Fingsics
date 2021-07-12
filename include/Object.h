@@ -28,6 +28,7 @@ class Object {
         Color color;
         double elasticityCoef;
         Matrix baseInertiaTensor;
+        Matrix invertedInertiaTensor;
         list<Impulse> queuedImpulses;
         Point velCollisionMassPerAxis;
         Point angVelCollisionMassPerAxis;
@@ -56,7 +57,7 @@ class Object {
 
         // Virtual methods
         virtual void draw() = 0;
-        virtual Matrix getInertiaTensor();
+        virtual Matrix getInertiaTensorInverse();
 };
 
 #endif

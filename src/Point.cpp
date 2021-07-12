@@ -43,7 +43,7 @@ double Point::getMagnitudeSqr() {
 }
 
 bool Point::isZero() {
-    return x == 0 && y == 0 && z == 0;
+    return fabs(x) < 0.0001 && fabs(y) < 0.0001 && fabs(z) < 0.0001;
 }
 
 Point Point::addIfComponentNotZero(Point vector, double value) {

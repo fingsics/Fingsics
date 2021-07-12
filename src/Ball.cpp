@@ -8,6 +8,7 @@ Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point an
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia#List_of_3D_inertia_tensors
     double v = 2.0 / 5.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(v, 0, 0, 0, v, 0, 0, 0, v);
+    this->invertedInertiaTensor = baseInertiaTensor.inverse();
 }
 
 double Ball::getRadius(){
@@ -57,6 +58,6 @@ void Ball::draw() {
     glPopMatrix();
  }
 
-Matrix Ball::getInertiaTensor() {
-    return baseInertiaTensor;
+Matrix Ball::getInertiaTensorInverse() {
+    return invertedInertiaTensor;
 }

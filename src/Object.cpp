@@ -78,18 +78,18 @@ void Object::setVel(Point vel) {
 }
 
 void Object::updatePosAndVel(double secondsElapsed) {
-    // Update position
-    pos = pos + vel * secondsElapsed;
+    if (!vel.isZero()) pos = pos + vel * secondsElapsed;
 
-    // Update rotation matrix
-    rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
-
-    // Update velocity
-    vel = vel + acceleration * secondsElapsed;
+    if (!angularVelocity.isZero()) {
+        rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
+        invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
+    }
+    
+    if (!acceleration.isZero()) vel = vel + acceleration * secondsElapsed;
 }
 
-Matrix Object::getInertiaTensor() {
-    return rotationMatrix * baseInertiaTensor * rotationMatrix.transpose();
+Matrix Object::getInertiaTensorInverse() {
+    return invertedInertiaTensor;
 }
 
 void Object::queueImpulse(Point normal, Point tangent, double magnitude, double mass) {
@@ -112,7 +112,7 @@ void Object::applyQueuedImpulses() {
 
 void Object::applyImpulse(Point normal, Point tangent) {
     Point velDiff = normal / mass;
-    Point angVelDiff = getInertiaTensor().inverse() * tangent;
+    Point angVelDiff = getInertiaTensorInverse() * tangent;
 
     vel = vel + velDiff;
     angularVelocity = angularVelocity + angVelDiff;
