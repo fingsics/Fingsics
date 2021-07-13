@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<plane pos="0,3,-6" mass="1" elasticityCoef="1" ang="30,0,0" color="120,20,20" static="true" drawLength="20" drawWidth="20" />
-		<plane pos="0,3,6" mass="1" elasticityCoef="1" ang="-30,0,0" color="20,20,120" static="true" drawLength="20" drawWidth="20" />
+		<plane pos="0,3,-8" mass="1" elasticityCoef="1" ang="30,0,0" color="120,20,20" static="true" drawLength="20" drawWidth="20" />
+		<plane pos="0,3,8" mass="1" elasticityCoef="1" ang="-30,0,0" color="20,20,120" static="true" drawLength="20" drawWidth="20" />
 		<plane pos="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,200,200" static="true" drawLength="20" drawWidth="20" />
 		
 		<sphere pos="2.5,6,-5" mass="1" elasticityCoef="0.7" ang="90,213,421" angVel="0,0,0" color="50,200,200" radius="0.8" acceleration="0,-9.8,0" />
