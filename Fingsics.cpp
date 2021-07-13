@@ -49,7 +49,7 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
 
 bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
     Plane* plane = dynamic_cast<Plane*>(staticObject);
-    if (plane) {
+    if (plane && normal.hasSameDirection(Point(0,1,0), 0.01)) {
         Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
         Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
         if (ball) {
@@ -63,7 +63,7 @@ bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, 
         else if (capsule) {
             Point vn = normal * normal.dotProduct(vi);
             Point vsn = normal * normal.dotProduct(vsi);
-            if ((vn - vsn).getMagnitude() < 1 && (nonStaticObject->getAngularVelocity().isZero(0.1) || nonStaticObject->getAngularVelocity().hasSameDirection(capsule->getAxisDirection(), 0.1) || nonStaticObject->getAngularVelocity().hasSameDirection(normal, 0.1))) {
+            if ((vn - vsn).getMagnitude() < 1) {
                 if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
                     nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
                     nonStaticObject->setVel(nonStaticObject->getVel() - vn);
@@ -270,7 +270,7 @@ int main(int argc, char* argv[]) {
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "objects-resting.xml";
+    string sceneName = "scene.xml";
     ObjectLoader scene = ObjectLoader(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
