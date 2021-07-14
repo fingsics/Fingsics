@@ -9,7 +9,7 @@
 #include "include/BroadPhaseAlgorithms.h"
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithm.h"
-#include "include/CollisionResponseAlgorithms.h"
+#include "include/CollisionResponseAlgorithm.h"
 #include <iostream>
 #include <thread>
 #include <map>
@@ -82,8 +82,8 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
-            collisionResponse(collisions);
-            moveObjects(objects, numObjects, 1.0 / FPS, slowMotion);
+            CollisionResponseAlgorithm::collisionResponse(collisions);
+            CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / FPS, slowMotion);
         }
 
         // Process events

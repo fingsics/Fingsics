@@ -1,11 +1,11 @@
-#include "../include/CollisionResponseAlgorithms.h"
+#include "../include/CollisionResponseAlgorithm.h"
 
-void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
+void CollisionResponseAlgorithm::moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
     float time = slowMotion ? frames / 3 : frames;
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
-void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {
+void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     Point ra = collisionPoint - object1->getPos();
     Point rb = collisionPoint - object2->getPos();
@@ -27,7 +27,7 @@ void calculateNonStaticCollision(Object* object1, Object* object2, Point collisi
     object2->queueImpulse(normal, rb.crossProduct(normal), jr, ma);
 }
 
-bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
+bool CollisionResponseAlgorithm::handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
     Plane* plane = dynamic_cast<Plane*>(staticObject);
     if (plane && normal.hasSameDirection(Point(0, 1, 0), 0.01)) {
         Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
@@ -59,7 +59,7 @@ bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, 
     return false;
 }
 
-void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
+void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     Point r = collisionPoint - nonStaticObject->getPos();
     Point rs = collisionPoint - staticObject->getPos();
@@ -79,7 +79,7 @@ void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Poi
     nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, 99999999999);
 }
 
-void collisionResponse(map<string, Collision> collisionMap) {
+void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collisionMap) {
     // Calculate per-collision impulses
     for (auto mapEntry : collisionMap) {
         if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;

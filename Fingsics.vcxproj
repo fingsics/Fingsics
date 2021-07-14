@@ -162,7 +162,7 @@
     <ClCompile Include="src\Capsule.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
     <ClCompile Include="src\Collision.cpp" />
-    <ClCompile Include="src\CollisionResponseAlgorithms.cpp" />
+    <ClCompile Include="src\CollisionResponseAlgorithm.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Helpers.cpp" />
@@ -184,7 +184,7 @@
     <ClInclude Include="include\Capsule.h" />
     <ClInclude Include="include\CenteredCamera.h" />
     <ClInclude Include="include\Collision.h" />
-    <ClInclude Include="include\CollisionResponseAlgorithms.h" />
+    <ClInclude Include="include\CollisionResponseAlgorithm.h" />
     <ClInclude Include="include\Color.h" />
     <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Helpers.h" />

@@ -105,7 +105,7 @@
     <ClCompile Include="src\OpenGLHelpers.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="src\CollisionResponseAlgorithms.cpp">
+    <ClCompile Include="src\CollisionResponseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>
@@ -167,7 +167,7 @@
     <ClInclude Include="include\OpenGLHelpers.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="include\CollisionResponseAlgorithms.h">
+    <ClInclude Include="include\CollisionResponseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
   </ItemGroup>
