@@ -9,8 +9,8 @@
 #include "Point.h"
 #include "Object.h"
 
-#define LATS 8
-#define LONGS 8
+#define LATS 50
+#define LONGS 50
 
 using namespace std;
 

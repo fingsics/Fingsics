@@ -1,239 +1,23 @@
 // Fingsics.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-#include "SDL.h"
-#include "SDL_opengl.h"
+
+#include "include/SDLHelpers.h";
+#include "include/OpenGlHelpers.h";
 #include "include/ObjectLoader.h"
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithm.h"
-#include "include/Matrix.h"
-#include "freeglut.h"
+#include "include/CollisionResponseAlgorithms.h"
 #include <iostream>
 #include <thread>
-#include <string>
 #include <map>
 
 #define _USE_MATH_DEFINES
 #define FPS 60
 
 using namespace std;
-
-void moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
-    float time = slowMotion ? frames / 3 : frames;
-    for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
-}
-
-void calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {
-    // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
-    Point ra = collisionPoint - object1->getPos();
-    Point rb = collisionPoint - object2->getPos();
-    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
-    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
-
-    double e = (object1->getElasticity() + object2->getElasticity()) / 2;
-    double ma = object1->getMass();
-    double mb = object2->getMass();
-    Matrix iaInverse = object1->getInertiaTensorInverse();
-    Matrix ibInverse = object2->getInertiaTensorInverse();
-
-    double top = -(1 + e) * (vbi - vai).dotProduct(normal);
-    double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
-        + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
-    double jr = abs(top / bottom);
-
-    object1->queueImpulse(normal, ra.crossProduct(normal), -jr, mb);
-    object2->queueImpulse(normal, rb.crossProduct(normal), jr, ma);
-}
-
-bool handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
-    Plane* plane = dynamic_cast<Plane*>(staticObject);
-    if (plane && normal.hasSameDirection(Point(0,1,0), 0.01)) {
-        Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
-        Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
-        if (ball) {
-            Point vn = normal * normal.dotProduct(vi);
-            Point vsn = normal * normal.dotProduct(vsi);
-            if ((vn - vsn).getMagnitude() < 1) {
-                nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                return true;
-            };
-        }
-        else if (capsule) {
-            Point vn = normal * normal.dotProduct(vi);
-            Point vsn = normal * normal.dotProduct(vsi);
-            if ((vn - vsn).getMagnitude() < 1) {
-                if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
-                    nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
-                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                    return true;
-                }
-                else if (abs(normal.dotProduct(capsule->getAxisDirection())) > 0.9) {
-                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                    return true;
-                }
-            };
-        }
-    }
-    return false;
-}
-
-void calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
-    // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
-    Point r = collisionPoint - nonStaticObject->getPos();
-    Point rs = collisionPoint - staticObject->getPos();
-    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
-    Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
-
-    if (handleContact(staticObject, nonStaticObject, normal, vi, vsi)) return;
-
-    double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
-    double m = nonStaticObject->getMass();
-    Matrix iInverse = nonStaticObject->getInertiaTensorInverse();
-
-    double top = -(1 + e) * (vi - vsi).dotProduct(normal);
-    double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
-    double jr = abs(top / bottom);
-
-    nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, 99999999999);
-}
-
-void collisionResponse(map<string, Collision> collisionMap) {
-    // Calculate per-collision impulses
-    for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
-        Object* object1 = mapEntry.second.getObject1();
-        Object* object2 = mapEntry.second.getObject2();
-        Point collisionPoint = mapEntry.second.getPoint();
-        Point collisionNormal = mapEntry.second.getNormal();
-        if (object1->getIsStatic()) calculateStaticCollision(object1, object2, collisionPoint, collisionNormal);
-        else if (object2->getIsStatic()) calculateStaticCollision(object2, object1, collisionPoint, collisionNormal * -1);
-        else calculateNonStaticCollision(object1, object2, collisionPoint, collisionNormal);
-    }
-
-    // Calculate net impulse and apply it
-    for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
-        Object* object1 = mapEntry.second.getObject1();
-        Object* object2 = mapEntry.second.getObject2();
-        object1->applyQueuedImpulses();
-        object2->applyQueuedImpulses();
-    }
-}
-
-void drawObjects(Object** objects, int numObjects) {
-    for (int i = 0; i < numObjects; i++) objects[i]->draw();
-}
-
-void drawAxis() {
-    glColor3ub(255, 0, 0);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(100, 0, 0);
-    glEnd();
-    glColor3ub(0, 255, 0);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 100, 0);
-    glEnd();
-    glColor3ub(0, 0, 255);
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, 100);
-    glEnd();
-}
-
-SDL_Window* initializeSDL() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
-        exit(1);
-    }
-
-    atexit(SDL_Quit);
-
-    SDL_Window* window = SDL_CreateWindow("Fingsics", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
-    if (window == NULL) {
-        cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
-        exit(1);
-    }
-    SDL_GL_CreateContext(window);
-
-    return window;
-}
-
-void setLighting() {
-    float lightR = 1.0f;
-    float lightG = 1.0f;
-    float lightB = 1.0f;
-
-    GLfloat position[] = { 0, 5, 0, 1 };
-    GLfloat ambient[] = { lightR / 10, lightG / 10, lightB / 10, 0.4f };
-    GLfloat specular[] = { lightR, lightG, lightB, 2.0f };
-    GLfloat diffuse[] = { lightR, lightG, lightB, 2.0f };
-    GLfloat direction[] = { 0, -1, 0 };
-
-    GLfloat materialAmbient[] = { .2, .2, .2, 1 };
-    GLfloat materialDiffuse[] = { .8, .8, .8, 1 };
-
-    glPushMatrix();
-
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glEnable(GL_COLOR_MATERIAL);
-
-    glLightfv(GL_LIGHT0, GL_POSITION, position);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, direction);
-
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, materialAmbient);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, materialDiffuse);
-
-    glPopMatrix();
-}
-
-void checkForInput(bool &slowMotion, bool &pause, bool &quit, bool& draw, Camera* &camera, Camera* freeCamera, Camera* centeredCamera) {
-    SDL_Event event;
-    int xm, ym;
-    SDL_GetMouseState(&xm, &ym);
-    while (SDL_PollEvent(&event)) {
-        camera->eventUpdate(event);
-        switch (event.type) {
-        case SDL_QUIT:
-            quit = true;
-            break;
-        case SDL_KEYUP: {
-            switch (event.key.keysym.sym) {
-            case SDLK_ESCAPE:
-                quit = true;
-                break;
-            case SDLK_q:
-                quit = true;
-                break;
-            case SDLK_p:
-                pause = !pause;
-                break;
-            case SDLK_m:
-                slowMotion = !slowMotion;
-                break;
-            case SDLK_f:
-                draw = !draw;
-                break;
-            case SDLK_c:
-                if (camera == centeredCamera) camera = freeCamera;
-                else camera = centeredCamera;
-                break;
-            default:
-                break;
-            }
-        }
-        default:
-            break;
-        }
-    }
-}
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
     double minFrameTime = 1.0 / FPS;
@@ -270,21 +54,16 @@ int main(int argc, char* argv[]) {
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "scene.xml";
+    string sceneName = "bouncy-things.xml";
     ObjectLoader scene = ObjectLoader(sceneName);
     vector<Object*> objectsVector = scene.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
-    glMatrixMode(GL_PROJECTION);
-    glClearColor(0, 0, 0, 1);
-    gluPerspective(45, 1280 / 720.f, 0.1, 100);
-    glEnable(GL_DEPTH_TEST);
-    glMatrixMode(GL_MODELVIEW);
+    initializeOpenGL();
 
     while (!quit) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glLoadIdentity();
+        setupFrame();
 
         // Set camera position
         camera->lookAt();
