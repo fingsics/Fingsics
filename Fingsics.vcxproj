@@ -186,6 +186,7 @@
     <ClInclude Include="include\Collision.h" />
     <ClInclude Include="include\CollisionResponseAlgorithm.h" />
     <ClInclude Include="include\Color.h" />
+    <ClInclude Include="include\Constants.h" />
     <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\Matrix.h" />

@@ -28,20 +28,22 @@ void CenteredCamera::eventUpdate(SDL_Event event) {
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {
-            yaw -= event.motion.xrel * 0.4;
-            pitch -= event.motion.yrel * 0.4;
+            float speed = 0.4;
+            yaw -= event.motion.xrel * speed;
+            pitch -= event.motion.yrel * speed;
             // Avoid camera flipping
             if (pitch > 90) pitch = 90;
             else if (pitch < -90) pitch = -90;
         }
         break;
     case SDL_KEYDOWN: {
+        float speed = 0.7;
         switch (event.key.keysym.sym) {
         case SDLK_s:
-            radius -= .7;
+            radius -= speed;
             break;
         case SDLK_w:
-            if (radius < 0) radius += .7;
+            if (radius < 0) radius += speed;
             break;
         }
     }

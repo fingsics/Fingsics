@@ -34,31 +34,33 @@ void FreeCamera::eventUpdate(SDL_Event event) {
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {
-            yaw -= event.motion.xrel * 0.4;
-            pitch -= event.motion.yrel * 0.4;
+            float speed = 0.4;
+            yaw -= event.motion.xrel * speed;
+            pitch -= event.motion.yrel * speed;
             if (pitch > 90) pitch = 90;
             else if (pitch < -90) pitch = -90;
         }
         break;
     case SDL_KEYDOWN: {
+        float speed = 0.3;
         switch (event.key.keysym.sym) {
         case SDLK_w:
-            eye = eye + lookingDirection * 0.3;
+            eye = eye + lookingDirection * speed;
             break;
         case SDLK_a:
-            eye = eye - perpendicularLookingDirection * 0.3;
+            eye = eye - perpendicularLookingDirection * speed;
             break;
         case SDLK_s:
-            eye = eye - lookingDirection * 0.3;
+            eye = eye - lookingDirection * speed;
             break;
         case SDLK_d:
-            eye = eye + perpendicularLookingDirection * 0.3;
+            eye = eye + perpendicularLookingDirection * speed;
             break;
         case SDLK_SPACE:
-            eye = eye + Point(0, 1, 0) * 0.3;
+            eye = eye + Point(0, 1, 0) * speed;
             break;
         case SDLK_LSHIFT:
-            eye = eye - Point(0, 1, 0) * 0.3;
+            eye = eye - Point(0, 1, 0) * speed;
             break;
         }
     }

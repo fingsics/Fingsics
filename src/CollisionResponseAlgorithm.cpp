@@ -76,7 +76,7 @@ void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, 
     double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, 99999999999);
+    nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, INF);
 }
 
 void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collisionMap) {

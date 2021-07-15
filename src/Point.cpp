@@ -43,7 +43,7 @@ double Point::getMagnitudeSqr() {
 }
 
 bool Point::isZero() {
-    return fabs(x) < 0.0001 && fabs(y) < 0.0001 && fabs(z) < 0.0001;
+    return fabs(x) < EPSILON && fabs(y) < EPSILON && fabs(z) < EPSILON;
 }
 
 bool Point::isZero(double tolerance) {
@@ -54,9 +54,9 @@ Point Point::addIfComponentNotZero(Point vector, double value) {
     double retX = x;
     double retY = y;
     double retZ = z;
-    if (fabs(vector.getX()) > 0.0001) retX += value;
-    if (fabs(vector.getY()) > 0.0001) retY += value;
-    if (fabs(vector.getZ()) > 0.0001) retZ += value;
+    if (fabs(vector.getX()) > EPSILON) retX += value;
+    if (fabs(vector.getY()) > EPSILON) retY += value;
+    if (fabs(vector.getZ()) > EPSILON) retZ += value;
 
     return Point(retX, retY, retZ);
 }
@@ -85,9 +85,9 @@ Point Point::crossProduct(Point vector2){
 }
 
 Point Point::operator/(Point divisor) {
-    return Point(fabs(divisor.getX()) > 0.0001 ? x / divisor.getX() : 0,
-                 fabs(divisor.getY()) > 0.0001 ? y / divisor.getY() : 0, 
-                 fabs(divisor.getZ()) > 0.0001 ? z / divisor.getZ() : 0);
+    return Point(fabs(divisor.getX()) > EPSILON ? x / divisor.getX() : 0,
+                 fabs(divisor.getY()) > EPSILON ? y / divisor.getY() : 0,
+                 fabs(divisor.getZ()) > EPSILON ? z / divisor.getZ() : 0);
 }
 
 Point Point::operator-(Point vector2){
@@ -119,7 +119,7 @@ double Point::operator[](int i) {
 
 bool Point::equals(Point other) {
     Point diff = *this - other;
-    return diff.getMagnitudeSqr() < 0.00001;
+    return diff.getMagnitudeSqr() < S_EPSILON;
 }
 
 bool Point::equals(Point other, double tolerance) {

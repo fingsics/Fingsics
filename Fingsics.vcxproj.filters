@@ -25,9 +25,6 @@
     <Filter Include="Header Files\Libraries">
       <UniqueIdentifier>{47ff1b76-1112-43ef-97a0-6a87442fa171}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scene">
-      <UniqueIdentifier>{5b031fc2-04fe-4e5e-9a09-63f0db0cf74d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Algorithms">
       <UniqueIdentifier>{0f10d3f6-0b8d-470c-91f7-4e9f3ec6e2f2}</UniqueIdentifier>
     </Filter>
@@ -37,11 +34,20 @@
     <Filter Include="Source Files\Libraries">
       <UniqueIdentifier>{96ef70e7-3e1f-4714-9c95-20ac4d58ca6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scene">
-      <UniqueIdentifier>{48e8177f-ad96-44ee-af96-e47a95a5fc99}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Objects">
       <UniqueIdentifier>{30f2dad7-537f-4c34-ae5f-cc9d456336f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Data Structures">
+      <UniqueIdentifier>{9d1e5c5f-9fb0-406e-b8c3-a371aff06d2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Data Structures">
+      <UniqueIdentifier>{57ebb8cd-3485-4721-8f4b-6088de898973}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Camera">
+      <UniqueIdentifier>{5b031fc2-04fe-4e5e-9a09-63f0db0cf74d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Camera">
+      <UniqueIdentifier>{48e8177f-ad96-44ee-af96-e47a95a5fc99}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -60,12 +66,6 @@
     <ClCompile Include="tinyxml2\tinyxml2.cpp">
       <Filter>Source Files\Libraries</Filter>
     </ClCompile>
-    <ClCompile Include="src\Point.cpp">
-      <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Color.cpp">
-      <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Helpers.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
@@ -73,28 +73,19 @@
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
-      <Filter>Source Files\Scene</Filter>
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
     <ClCompile Include="src\CenteredCamera.cpp">
-      <Filter>Source Files\Scene</Filter>
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
     <ClCompile Include="src\FreeCamera.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ObjectLoader.cpp">
-      <Filter>Source Files\Scene</Filter>
+      <Filter>Source Files\Camera</Filter>
     </ClCompile>
     <ClCompile Include="src\MidPhaseAlgorithms.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\Matrix.cpp">
-      <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
     <ClCompile Include="src\Plane.cpp">
       <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Collision.cpp">
-      <Filter>Source Files\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
@@ -107,6 +98,21 @@
     </ClCompile>
     <ClCompile Include="src\CollisionResponseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Matrix.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Color.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Collision.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Point.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ObjectLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,12 +128,6 @@
     <ClInclude Include="include\Object.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
-    <ClInclude Include="include\Color.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Point.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Helpers.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
@@ -135,28 +135,19 @@
       <Filter>Header Files\Libraries</Filter>
     </ClInclude>
     <ClInclude Include="include\Camera.h">
-      <Filter>Header Files\Scene</Filter>
+      <Filter>Header Files\Camera</Filter>
     </ClInclude>
     <ClInclude Include="include\CenteredCamera.h">
-      <Filter>Header Files\Scene</Filter>
+      <Filter>Header Files\Camera</Filter>
     </ClInclude>
     <ClInclude Include="include\FreeCamera.h">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ObjectLoader.h">
-      <Filter>Header Files\Scene</Filter>
+      <Filter>Header Files\Camera</Filter>
     </ClInclude>
     <ClInclude Include="include\MidPhaseAlgorithms.h">
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="include\Matrix.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
     <ClInclude Include="include\Plane.h">
       <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Collision.h">
-      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="include\NarrowPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
@@ -169,6 +160,24 @@
     </ClInclude>
     <ClInclude Include="include\CollisionResponseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Point.h">
+      <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Matrix.h">
+      <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Color.h">
+      <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Collision.h">
+      <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Constants.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ObjectLoader.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
