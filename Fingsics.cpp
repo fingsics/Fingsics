@@ -4,6 +4,7 @@
 #include "include/SDLHelpers.h";
 #include "include/OpenGlHelpers.h";
 #include "include/ObjectLoader.h"
+#include "include/ConfigLoader.h"
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
@@ -15,12 +16,11 @@
 #include <map>
 
 #define _USE_MATH_DEFINES
-#define FPS 60
 
 using namespace std;
 
-void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
-    double minFrameTime = 1.0 / FPS;
+void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps) {
+    double minFrameTime = 1.0 / fps;
     secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     if (secondsSinceLastFrame < minFrameTime) {
         std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
@@ -31,6 +31,8 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame) {
 
 int main(int argc, char* argv[]) {
     SDL_Window* window = initializeSDL();
+
+    Config config = ConfigLoader().getConfig();
 
     // Camera
     Camera* centeredCamera = new CenteredCamera();
@@ -55,8 +57,7 @@ int main(int argc, char* argv[]) {
 
     // Scene
     string sceneName = "bouncy-things.xml";
-    ObjectLoader scene = ObjectLoader(sceneName);
-    vector<Object*> objectsVector = scene.getObjects();
+    vector<Object*> objectsVector = ObjectLoader(sceneName, config.numLatLongs).getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
@@ -83,14 +84,14 @@ int main(int argc, char* argv[]) {
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
             CollisionResponseAlgorithm::collisionResponse(collisions);
-            CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / FPS, slowMotion);
+            CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
         }
 
         // Process events
         checkForInput(slowMotion, pause, quit, draw, camera, freeCamera, centeredCamera);
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps);
 
         SDL_GL_SwapWindow(window);
     }

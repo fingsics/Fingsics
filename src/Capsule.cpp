@@ -2,9 +2,11 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length, int lats, int longs) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
+    this->lats = lats;
+    this->longs = longs;
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
     double extraLengthFactor = 2.0 / 3.0;
@@ -45,31 +47,31 @@ void Capsule::draw() {
     glMultMatrixd(getOpenGLRotationMatrix());
     glTranslated(0, 0,-length / 2.0);
 
-    double lats = LATS * 2;
-    double longs = LONGS * 2;
-    for (int i = 0; i <= lats; i++) {
-        double lat0 = M_PI * (-0.5 + (double)(i - 1) / lats);
+    double evenLats = (lats % 2 == 0) ? lats: lats + 1;
+    double evenLongs = (longs % 2 == 0) ? longs : longs + 1;
+    for (int i = 0; i <= evenLats; i++) {
+        double lat0 = M_PI * (-0.5 + (double)(i - 1) / evenLats);
         double z0 = sin(lat0);
         double zr0 = cos(lat0);
 
-        double lat1 = M_PI * (-0.5 + (double)i / lats);
+        double lat1 = M_PI * (-0.5 + (double)i / evenLats);
         double z1 = sin(lat1);
         double zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
         glBegin(GL_QUAD_STRIP);
 
-        for (int j = 0; j <= longs; j++)
+        for (int j = 0; j <= evenLongs; j++)
         {
-            if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+            if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
             else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
-            double lng = 2 * M_PI * (double)(j - 1) / longs;
+            double lng = 2 * M_PI * (double)(j - 1) / evenLongs;
             double x = cos(lng);
             double y = sin(lng);
 
-            double s1 = ((double)i) / lats;
-            double s2 = ((double)i + 1) / lats;
-            double t = ((double)j) / longs;
+            double s1 = ((double)i) / evenLats;
+            double s2 = ((double)i + 1) / evenLats;
+            double t = ((double)j) / evenLongs;
 
             glNormal3d(x * zr0, y * zr0, z0);
             glVertex3d(radius * x * zr0, radius * y * zr0, radius * z0);
@@ -79,19 +81,19 @@ void Capsule::draw() {
         }
         glEnd();
 
-        if (i == lats / 2) {
+        if (i == evenLats / 2) {
             glBegin(GL_QUAD_STRIP);
-            for (int j = 0; j <= longs; j++)
+            for (int j = 0; j <= evenLongs; j++)
             {
-                if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+                if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
                 else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
-                double lng = 2 * M_PI * (double)(j - 1) / longs;
+                double lng = 2 * M_PI * (double)(j - 1) / evenLongs;
                 double x = cos(lng);
                 double y = sin(lng);
 
-                double s1 = ((double)i) / lats;
-                double s2 = ((double)i + 1) / lats;
-                double t = ((double)j) / longs;
+                double s1 = ((double)i) / evenLats;
+                double s2 = ((double)i + 1) / evenLats;
+                double t = ((double)j) / evenLongs;
 
                 glNormal3d(x * zr1, y * zr1, z1);
                 glVertex3d(radius * x * zr1, radius * y * zr1, radius * z1);

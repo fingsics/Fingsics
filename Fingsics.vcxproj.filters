@@ -114,6 +114,9 @@
     <ClCompile Include="src\ObjectLoader.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ConfigLoader.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BroadPhaseAlgorithms.h">
@@ -177,6 +180,9 @@
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="include\ObjectLoader.h">
+      <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConfigLoader.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>

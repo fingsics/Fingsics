@@ -9,22 +9,21 @@
 #include "Point.h"
 #include "Object.h"
 
-#define LATS 50
-#define LONGS 50
-
 using namespace std;
 
 class Capsule : public Object {
 private:
     double radius;
     double length;
+    int lats;
+    int longs;
 public:
     Point getAxisDirection();
     double getRadius();
     double getLength();
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
-    Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double);
+    Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double, int, int);
     void draw();
 };
 

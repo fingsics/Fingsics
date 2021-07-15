@@ -28,18 +28,18 @@ struct CommonFields {
 
 class ObjectLoader {
 private:
-	vector<Object*> objects;
+	string scene;
+	int numLatLongs;
+	
     CommonFields parseCommonFields(tinyxml2::XMLElement*);
-	void loadObjects(tinyxml2::XMLElement*);
-	Ball* loadBall(tinyxml2::XMLElement*, string);
-	Capsule* loadCapsule(tinyxml2::XMLElement*, string);
+	Ball* loadBall(tinyxml2::XMLElement*, string, int);
+	Capsule* loadCapsule(tinyxml2::XMLElement*, string, int);
 	Plane* loadPlane(tinyxml2::XMLElement*, string);
 	vector<double> parseTriplet(const char* charPoint);
 	Point parsePoint(const char*);
 	Color parseColor(const char*);
 public:
-	ObjectLoader(string);
-	ObjectLoader();
+	ObjectLoader(string, int);
 	vector<Object*> getObjects();
 };
 

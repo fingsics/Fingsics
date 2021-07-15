@@ -9,17 +9,15 @@
 #include <math.h>
 #include <string>
 
-#define LATS 8
-#define LONGS 8
-
 using namespace std;
 
 class Ball : public Object {
     private:
         double radius;
-
+        int lats;
+        int longs;
     public:
-        Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double);
+        Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, int, int);
         void draw();
         double getRadius();
         Matrix getInertiaTensorInverse();

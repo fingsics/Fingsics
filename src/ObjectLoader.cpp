@@ -12,28 +12,29 @@ CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, doubl
     isStatic = s;
 }
 
-ObjectLoader::ObjectLoader() : ObjectLoader("scene.xml") {}
+ObjectLoader::ObjectLoader(string scene, int numLatLongs) {
+    this->scene = scene;
+    this->numLatLongs = numLatLongs;
+}
 
-ObjectLoader::ObjectLoader(string filename) {
-    string filepath= "scenes/" + filename;
+vector<Object*> ObjectLoader::getObjects() {
+    string filepath = "scenes/" + scene;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLError eResult = xml_doc.LoadFile(filepath.c_str());
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
 
-    this->loadObjects(config);
-}
-
-void ObjectLoader::loadObjects(tinyxml2::XMLElement* config) {
-    objects = vector<Object*>();
+    vector<Object*> objects = vector<Object*>();
     double x, y, z, radius, mass, elasticityCoef, vx, vy, vz;
     int colorR, colorG, colorB;
     tinyxml2::XMLElement* xmlObjects = config->FirstChildElement("objects");
     for (tinyxml2::XMLElement* xmlObject = xmlObjects->FirstChildElement(); xmlObject; xmlObject = xmlObject->NextSiblingElement()) {
         string objectType = string(xmlObject->Name());
-        if (objectType == "sphere") objects.push_back((Object*)loadBall(xmlObject, to_string(objects.size())));
-        else if (objectType == "capsule") objects.push_back((Object*)loadCapsule(xmlObject, to_string(objects.size())));
+        if (objectType == "sphere") objects.push_back((Object*)loadBall(xmlObject, to_string(objects.size()), numLatLongs));
+        else if (objectType == "capsule") objects.push_back((Object*)loadCapsule(xmlObject, to_string(objects.size()), numLatLongs));
         else if (objectType == "plane") objects.push_back((Object*)loadPlane(xmlObject, to_string(objects.size())));
     }
+
+    return objects;
 }
 
 CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
@@ -66,16 +67,16 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     return CommonFields(pos, vel, ang, angVel, acceleration, mass, elasticityCoef, color, isStatic);
 }
 
-Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id) {
+Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     double radius;
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryDoubleAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
-    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius);
+    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, numLatLongs, numLatLongs);
 }
 
-Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
+Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     double radius, length;
     tinyxml2::XMLError parseError;
@@ -83,7 +84,7 @@ Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id) {
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     parseError = xmlObject->QueryDoubleAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
-    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length);
+    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length, numLatLongs, numLatLongs);
 }
 
 Plane* ObjectLoader::loadPlane(tinyxml2::XMLElement* xmlObject, string id) {
@@ -95,10 +96,6 @@ Plane* ObjectLoader::loadPlane(tinyxml2::XMLElement* xmlObject, string id) {
     parseError = xmlObject->QueryDoubleAttribute("drawWidth", &drawWidth);
     drawWidth = (parseError == tinyxml2::XML_SUCCESS) ? drawWidth: 30;
     return new Plane(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, drawLength, drawWidth);
-}
-
-vector<Object*> ObjectLoader::getObjects() {
-    return objects;
 }
 
 vector<double> ObjectLoader::parseTriplet(const char* input) {
