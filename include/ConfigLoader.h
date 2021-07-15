@@ -17,7 +17,6 @@ struct KeyValue {
 struct Config {
 	int fps;
 	int numLatLongs;
-	float objSlowdown;
 	Config(map<string, string>);
 };
 

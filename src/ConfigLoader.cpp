@@ -3,7 +3,6 @@
 Config::Config(map<string, string> config) {
     int fps = 60;
     int numLatLongs = 10;
-    float objSlowdown = 0;
 
     auto it = config.find("FPS");
     if (it != config.end()) {
@@ -15,14 +14,8 @@ Config::Config(map<string, string> config) {
         numLatLongs = stoi(it->second);
     }
 
-    it = config.find("OBJ_SLOWDOWN");
-    if (it != config.end()) {
-        objSlowdown = stof(it->second);
-    }
-
     this->fps = fps;
     this->numLatLongs = numLatLongs;
-    this->objSlowdown = objSlowdown;
 }
 
 KeyValue::KeyValue(string key, string value) {
