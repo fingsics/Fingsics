@@ -170,6 +170,7 @@
     <ClCompile Include="src\Matrix.cpp" />
     <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp" />
+    <ClCompile Include="src\OBB.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\OpenGLHelpers.cpp" />
     <ClCompile Include="src\Plane.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="include\Matrix.h" />
     <ClInclude Include="include\MidPhaseAlgorithms.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithm.h" />
+    <ClInclude Include="include\OBB.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\OpenGLHelpers.h" />
     <ClInclude Include="include\Plane.h" />

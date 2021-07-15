@@ -69,8 +69,13 @@ bool Object::getIsStatic() {
     return isStatic;
 }
 
+OBB Object::getOBB() {
+    return obb;
+}
+
 void Object::setPos(Point pos) {
     this->pos = pos;
+    obb.setPosition(pos);
 }
 
 void Object::setVel(Point vel) {
@@ -81,15 +86,16 @@ void Object::setAngularVelocity(Point angularVelocity) {
     this->angularVelocity = angularVelocity;
 }
 
-void Object::updatePosAndVel(double secondsElapsed) {
-    if (!vel.isZero()) pos = pos + vel * secondsElapsed;
+void Object::setRotation(Matrix rotationMatrix) {
+    this->rotationMatrix = rotationMatrix;
+    invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
+    obb.setRotation(rotationMatrix);
+}
 
-    if (!angularVelocity.isZero()) {
-        rotationMatrix = Matrix(angularVelocity * secondsElapsed) * rotationMatrix;
-        invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
-    }
-    
-    if (!acceleration.isZero()) vel = vel + acceleration * secondsElapsed;
+void Object::updatePosAndVel(double secondsElapsed) {
+    if (!vel.isZero()) setPos(pos + vel * secondsElapsed);
+    if (!angularVelocity.isZero()) setRotation(Matrix(angularVelocity * secondsElapsed) * rotationMatrix);
+    if (!acceleration.isZero()) setVel(vel + acceleration * secondsElapsed);
 }
 
 Matrix Object::getInertiaTensorInverse() {

@@ -2,7 +2,10 @@
 #define MPALG_H
 #include "Object.h"
 #include "Ball.h"
+#include "Point.h"
+#include "Matrix.h"
 #include "Helpers.h"
+#include "OBB.h"
 #include <map>
 #include <string>
 
@@ -19,6 +22,8 @@ public:
 };
 
 class OBBMidPhase : public MidPhaseAlgorithm {
+private:
+    bool OBBOverlapTest(OBB, OBB);
 public:
     map<string, pair<Object*, Object*>> getCollisions(map<string, pair<Object*, Object*>>);
 };

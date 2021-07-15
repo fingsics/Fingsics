@@ -24,6 +24,7 @@ class Point {
         double getMagnitudeSqr();
         Point invert();
         Point normalize();
+        Point abs();
         bool isZero();
         bool isZero(double);
         Point addIfComponentNotZero(Point, double);

@@ -3,6 +3,7 @@
 #include "Color.h"
 #include "Point.h"
 #include "Matrix.h"
+#include "OBB.h"
 #include <string>
 #include <list>
 
@@ -33,9 +34,7 @@ class Object {
         Point velCollisionMassPerAxis;
         Point angVelCollisionMassPerAxis;
         bool isStatic;
-        bool isBall;
-        bool isCapsule;
-        bool isPlane;
+        OBB obb;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -47,13 +46,14 @@ class Object {
         Matrix getRotationMatrix();
         double* getOpenGLRotationMatrix();
         Point getAngularVelocity();
-
         bool getIsStatic();
+        OBB getOBB();
         
         double getElasticity();
         void setPos(Point);
         void setVel(Point);
         void setAngularVelocity(Point);
+        void setRotation(Matrix rotationMatrix);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();

@@ -11,6 +11,7 @@ Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point an
     double v = 2.0 / 5.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(v, 0, 0, 0, v, 0, 0, 0, v);
     this->invertedInertiaTensor = baseInertiaTensor.inverse();
+    this->obb = OBB(pos, Point(radius, radius, radius), rotationMatrix);
 }
 
 double Ball::getRadius(){

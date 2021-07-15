@@ -7,6 +7,7 @@ Plane::Plane(string id, bool isStatic, Point pos, Point vel, Point angle, Point 
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->drawLength = drawLength;
     this->drawWidth = drawWidth;
+    this->obb = OBB(pos, Point(INF, EPSILON, INF), rotationMatrix);
 }
 
 Point Plane::getNormal(){

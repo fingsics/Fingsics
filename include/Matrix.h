@@ -21,12 +21,8 @@ class Matrix {
         Matrix transpose();
         Matrix inverse();
         GLdouble* getOpenGLRotationMatrix();
-        Point row0();
-        Point row1();
-        Point row2();
-        Point col0();
-        Point col1();
-        Point col2();
+        Point col(int);
+        Point row(int);
         Matrix operator*(double);
         Matrix operator/(double);
         Point operator*(Point);

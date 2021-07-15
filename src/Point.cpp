@@ -34,6 +34,10 @@ Point Point::invert() {
     return (*this) * -1;
 }
 
+Point Point::abs() {
+    return Point(fabs(x), fabs(y), fabs(z));
+}
+
 double Point::getMagnitude(){
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }

@@ -102,28 +102,30 @@ Matrix Matrix::inverse() {
                     (values[0][0] * values[1][1] - values[1][0] * values[0][1]) * invdet);
 }
 
-Point Matrix::row0() {
-    return Point(values[0][0], values[0][1], values[0][2]);
+Point Matrix::row(int i) {
+    switch (i) {
+    case 0:
+        return Point(values[0][0], values[0][1], values[0][2]);
+    case 1:
+        return Point(values[1][0], values[1][1], values[1][2]);
+    case 2:
+        return Point(values[2][0], values[2][1], values[2][2]);
+    default:
+        throw "Invalid row index.";
+    }
 }
 
-Point Matrix::row1() {
-    return Point(values[1][0], values[1][1], values[1][2]);
-}
-
-Point Matrix::row2() {
-    return Point(values[2][0], values[2][1], values[2][2]);
-}
-
-Point Matrix::col0() {
-    return Point(values[0][0], values[1][0], values[2][0]);
-}
-
-Point Matrix::col1() {
-    return Point(values[0][1], values[1][1], values[2][1]);
-}
-
-Point Matrix::col2() {
-    return Point(values[0][2], values[1][2], values[2][2]);
+Point Matrix::col(int i) {
+    switch (i) {
+    case 0:
+        return Point(values[0][0], values[1][0], values[2][0]);
+    case 1:
+        return Point(values[0][1], values[1][1], values[2][1]);
+    case 2:
+        return Point(values[0][2], values[1][2], values[2][2]);
+    default:
+        throw "Invalid column index.";
+    }
 }
 
 Matrix Matrix::operator*(double scalar) {
@@ -141,15 +143,15 @@ Matrix Matrix::operator/(double scalar) {
 }
 
 Point Matrix::operator*(Point vector) {
-    return Point(vector.dotProduct(row0()),
-                 vector.dotProduct(row1()), 
-                 vector.dotProduct(row2()));
+    return Point(vector.dotProduct(row(0)),
+                 vector.dotProduct(row(1)), 
+                 vector.dotProduct(row(2)));
 }
 
 Matrix Matrix::operator*(Matrix other) {
-    return Matrix(row0().dotProduct(other.col0()), row0().dotProduct(other.col1()), row0().dotProduct(other.col2()),
-                    row1().dotProduct(other.col0()), row1().dotProduct(other.col1()), row1().dotProduct(other.col2()),
-                    row2().dotProduct(other.col0()), row2().dotProduct(other.col1()), row2().dotProduct(other.col2()));
+    return Matrix(row(0).dotProduct(other.col(0)), row(0).dotProduct(other.col(1)), row(0).dotProduct(other.col(2)),
+                    row(1).dotProduct(other.col(0)), row(1).dotProduct(other.col(1)), row(1).dotProduct(other.col(2)),
+                    row(2).dotProduct(other.col(0)), row(2).dotProduct(other.col(1)), row(2).dotProduct(other.col(2)));
 }
 
 double* Matrix::operator[](int i) {

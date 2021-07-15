@@ -52,11 +52,11 @@ int main(int argc, char* argv[]) {
 
     // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
-    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
+    MidPhaseAlgorithm* midPhaseAlgorithm = new OBBMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "bouncy-things.xml";
+    string sceneName = "lag.xml";
     vector<Object*> objectsVector = ObjectLoader(sceneName, config.numLatLongs).getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
