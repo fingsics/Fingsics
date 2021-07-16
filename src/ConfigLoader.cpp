@@ -3,6 +3,9 @@
 Config::Config(map<string, string> config) {
     int fps = 60;
     int numLatLongs = 10;
+    bool log = false;
+    string sceneName = "";
+    string logOutputFile = "";
 
     auto it = config.find("FPS");
     if (it != config.end()) {
@@ -14,8 +17,26 @@ Config::Config(map<string, string> config) {
         numLatLongs = stoi(it->second);
     }
 
+    it = config.find("LOG");
+    if (it != config.end()) {
+        log = !it->second.compare("true");
+    }
+
+    it = config.find("SCENE_FILE_NAME");
+    if (it != config.end()) {
+        sceneName = it->second;
+    }
+
+    it = config.find("LOG_OUTPUT_FILE_NAME");
+    if (it != config.end()) {
+        logOutputFile = it->second;
+    }
+
     this->fps = fps;
     this->numLatLongs = numLatLongs;
+    this->log = log;
+    this->sceneName = sceneName;
+    this->logOutputFile = logOutputFile;
 }
 
 KeyValue::KeyValue(string key, string value) {

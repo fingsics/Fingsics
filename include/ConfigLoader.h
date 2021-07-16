@@ -17,6 +17,9 @@ struct KeyValue {
 struct Config {
 	int fps;
 	int numLatLongs;
+	bool log;
+	string logOutputFile;
+	string sceneName;
 	Config(map<string, string>);
 };
 

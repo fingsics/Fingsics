@@ -14,6 +14,7 @@
 #include <iostream>
 #include <thread>
 #include <map>
+#include <filesystem>
 
 #define _USE_MATH_DEFINES
 
@@ -56,16 +57,18 @@ int main(int argc, char* argv[]) {
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene
-    string sceneName = "scene.xml";
-    vector<Object*> objectsVector = ObjectLoader(sceneName, config.numLatLongs).getObjects();
+    vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
     std::ofstream outputCSV;
-    outputCSV.open("output.csv");
-    outputCSV << "BPCDCount,BPCDTime,MPCDCount,MPCDTime,NPCDCount,NPCDTime,CRTime,MTime,TTime\n";
+
+    if (config.log) {
+        outputCSV.open("output\\" + config.logOutputFile);
+        outputCSV << "BPCDCount,BPCDTime,MPCDCount,MPCDTime,NPCDCount,NPCDTime,CRTime,MTime,TTime\n";
+    }
 
     initializeOpenGL();
 
@@ -86,39 +89,41 @@ int main(int argc, char* argv[]) {
 
         // Apply physics and movement
         if (!pause) {
-            auto frameStart = std::chrono::system_clock::now();
+            if (config.log) auto frameStart = std::chrono::system_clock::now();
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-            broadEnd = std::chrono::system_clock::now();
+            if (config.log) broadEnd = std::chrono::system_clock::now();
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            midEnd = std::chrono::system_clock::now();
+            if (config.log) midEnd = std::chrono::system_clock::now();
             map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
-            narrowEnd = std::chrono::system_clock::now();
+            if (config.log) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
-            responseEnd = std::chrono::system_clock::now();
+            if (config.log) responseEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
-            moveEnd = std::chrono::system_clock::now();
+            if (config.log) moveEnd = std::chrono::system_clock::now();
 
-            // Log times
-            outputCSV << broadPhaseCollisions.size();
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000;
-            outputCSV << ",";
-            outputCSV << midPhaseCollisions.size();
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000;
-            outputCSV << ",";
-            outputCSV << collisions.size();
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000;
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000;
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000;
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - frameStart).count() / 1000;
-            outputCSV << ",";
-            outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000;
-            outputCSV << "\n";
+            if (config.log) {
+                // Log times
+                outputCSV << broadPhaseCollisions.size();
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000;
+                outputCSV << ",";
+                outputCSV << midPhaseCollisions.size();
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000;
+                outputCSV << ",";
+                outputCSV << collisions.size();
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000;
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000;
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000;
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - frameStart).count() / 1000;
+                outputCSV << ",";
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000;
+                outputCSV << "\n";
+            }
         }
 
         // Process events
@@ -130,6 +135,6 @@ int main(int argc, char* argv[]) {
         SDL_GL_SwapWindow(window);
     }
 
-    outputCSV.close();
+    if (config.log) outputCSV.close();
     return 0;
 }
