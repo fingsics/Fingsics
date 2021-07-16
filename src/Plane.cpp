@@ -31,3 +31,6 @@ void Plane::drawObject() {
 Matrix Plane::getInertiaTensor() {
     return baseInertiaTensor;
 }
+
+void Plane::drawOBB() {
+}

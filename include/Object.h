@@ -35,7 +35,7 @@ class Object {
         Point angVelCollisionMassPerAxis;
         bool isStatic;
         OBB obb;
-        void drawOBB();
+        virtual void drawOBB();
         virtual void drawObject() = 0;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
@@ -55,7 +55,7 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void setAngularVelocity(Point);
-        void setRotation(Matrix rotationMatrix);
+        void setRotation(Matrix);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();

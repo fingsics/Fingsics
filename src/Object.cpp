@@ -139,6 +139,7 @@ void Object::drawOBB() {
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor3ub(220, 220, 0);
+    glDisable(GL_LIGHTING);
 
     glPushMatrix();
 
@@ -174,5 +175,6 @@ void Object::drawOBB() {
     glEnd();
 
     glPopMatrix();
+    glEnable(GL_LIGHTING);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

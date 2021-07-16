@@ -20,6 +20,7 @@ class Plane : public Object {
         void drawObject();
         Point getNormal();
         Matrix getInertiaTensor();
+        void drawOBB();
 };
 
 #endif
