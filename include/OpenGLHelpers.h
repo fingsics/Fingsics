@@ -8,7 +8,7 @@ using namespace std;
 
 void initializeOpenGL();
 void setupFrame();
-void drawObjects(Object**, int);
+void drawObjects(Object**, int, bool);
 void drawAxis();
 void setLighting();
 

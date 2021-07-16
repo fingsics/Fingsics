@@ -127,3 +127,52 @@ void Object::applyImpulse(Point normal, Point tangent) {
     vel = vel + velDiff;
     angularVelocity = angularVelocity + angVelDiff;
 }
+
+void Object::draw(bool drawOBB) {
+    this->drawObject();
+    if (drawOBB) this->drawOBB();
+}
+
+void Object::drawOBB() {
+    Point dimensions = obb.getHalfLengths() * 2;
+    Point pos = obb.getPosition();
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glColor3ub(220, 220, 0);
+
+    glPushMatrix();
+
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixd(getOpenGLRotationMatrix());
+    glTranslatef(-dimensions.getX() / 2.0, -dimensions.getY() / 2.0, -dimensions.getZ() / 2.0);
+
+    glBegin(GL_QUAD_STRIP);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, dimensions.getZ());
+    glVertex3f(0, dimensions.getY(), 0);
+    glVertex3f(0, dimensions.getY(), dimensions.getZ());
+    glVertex3f(dimensions.getX(), dimensions.getY(), 0);
+    glVertex3f(dimensions.getX(), dimensions.getY(), dimensions.getZ());
+    glVertex3f(dimensions.getX(), 0, 0);
+    glVertex3f(dimensions.getX(), 0, dimensions.getZ());
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, 0, dimensions.getZ());
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glVertex3f(0, 0, 0);
+    glVertex3f(0, dimensions.getY(), 0);
+    glVertex3f(dimensions.getX(), dimensions.getY(), 0);
+    glVertex3f(dimensions.getX(), 0, 0);
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glVertex3f(0, 0, dimensions.getZ());
+    glVertex3f(0, dimensions.getY(), dimensions.getZ());
+    glVertex3f(dimensions.getX(), dimensions.getY(), dimensions.getZ());
+    glVertex3f(dimensions.getX(), 0, dimensions.getZ());
+    glEnd();
+
+    glPopMatrix();
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}

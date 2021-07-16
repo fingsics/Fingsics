@@ -17,7 +17,7 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     double z = 1.0 / 2.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
     this->invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
-    this->obb = OBB(pos, Point(radius, radius, length), rotationMatrix);
+    this->obb = OBB(pos, Point(radius, radius, length / 2 + radius), rotationMatrix);
 }
 
 Point Capsule::getAxisDirection() {
@@ -40,7 +40,7 @@ Point Capsule::getCylinderNegativeEnd() {
     return pos - getAxisDirection() * length / 2;
 }
 
-void Capsule::draw() {
+void Capsule::drawObject() {
     Color darkColor = Color(255, 255, 255);
 
     glPushMatrix();

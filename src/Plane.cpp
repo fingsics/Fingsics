@@ -14,7 +14,7 @@ Point Plane::getNormal(){
     return rotationMatrix * Point(0,1,0);
 }
 
-void Plane::draw() {
+void Plane::drawObject() {
     glPushMatrix();
     glTranslated(pos.getX(), pos.getY(), pos.getZ());
     glMultMatrixd(getOpenGLRotationMatrix());

@@ -17,7 +17,7 @@ class Plane : public Object {
         double drawWidth;
     public:
         Plane(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double);
-        void draw();
+        void drawObject();
         Point getNormal();
         Matrix getInertiaTensor();
 };

@@ -18,7 +18,7 @@ double Ball::getRadius(){
     return radius;
 }
 
-void Ball::draw() {
+void Ball::drawObject() {
     Color darkColor = Color(255, 255, 255);
 
     glPushMatrix();

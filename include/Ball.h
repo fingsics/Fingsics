@@ -18,7 +18,7 @@ class Ball : public Object {
         int longs;
     public:
         Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, int, int);
-        void draw();
+        void drawObject();
         double getRadius();
         Matrix getInertiaTensorInverse();
 };

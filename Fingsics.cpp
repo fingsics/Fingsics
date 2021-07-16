@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
     bool pause = true;
     bool draw = true;
     bool slowMotion = false;
-    bool showMenu = false;
+    bool drawOBBs = false;
 
     // FPS management
     clock_t lastFrameTime = clock();
@@ -81,7 +81,7 @@ int main(int argc, char* argv[]) {
         // Draw objects
         if (draw) {
             drawAxis();
-            drawObjects(objects, numObjects);
+            drawObjects(objects, numObjects, drawOBBs);
         }
 
         // Apply physics and movement
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, camera, freeCamera, centeredCamera);
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, camera, freeCamera, centeredCamera);
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps);

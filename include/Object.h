@@ -35,6 +35,8 @@ class Object {
         Point angVelCollisionMassPerAxis;
         bool isStatic;
         OBB obb;
+        void drawOBB();
+        virtual void drawObject() = 0;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
@@ -58,9 +60,7 @@ class Object {
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);
-
-        // Virtual methods
-        virtual void draw() = 0;
+        void draw(bool);
         virtual Matrix getInertiaTensorInverse();
 };
 

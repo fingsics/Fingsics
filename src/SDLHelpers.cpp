@@ -1,6 +1,6 @@
 #include "../include/SDLHelpers.h";
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, Camera*& camera, Camera* freeCamera, Camera* centeredCamera) {
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, Camera*& camera, Camera* freeCamera, Camera* centeredCamera) {
     SDL_Event event;
     int xm, ym;
     SDL_GetMouseState(&xm, &ym);
@@ -26,6 +26,9 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, Camera
                 break;
             case SDLK_f:
                 draw = !draw;
+                break;
+            case SDLK_o:
+                drawOBBs = !drawOBBs;
                 break;
             case SDLK_c:
                 if (camera == centeredCamera) camera = freeCamera;

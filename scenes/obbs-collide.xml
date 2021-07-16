@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<objects>
+		<capsule pos="2,-3,5" mass="1" elasticityCoef="0.8" ang="123,532,-645" color="50,200,200" radius="0.45" length="10"/>
+		<capsule pos="0,3,0" mass="1" elasticityCoef="0.8" ang="60,0,0" color="50,200,200" radius="0.45" length="10"/>
+	</objects>
+</config>

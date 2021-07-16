@@ -50,15 +50,60 @@ bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
     }
 
     // One axis from each obb tests (9)
-    for (int i = 0; i < 3; i++) {
-        for (int k = 0; k < 3; k++) {
-            L = A.row(i).crossProduct(B.row(k));
-            tl = fabs(T.dotProduct(L));
-            ra = fabs((A.row(0) * a[0]).dotProduct(L)) + fabs((A.row(1) * a[1]).dotProduct(L)) + fabs((A.row(2) * a[2]).dotProduct(L));
-            rb = fabs((B.row(0) * b[0]).dotProduct(L)) + fabs((B.row(1) * b[1]).dotProduct(L)) + fabs((B.row(2) * b[2]).dotProduct(L));
-            if (tl > ra + rb) return false;
-        }
-    }
+
+    // L = A0 x B0
+    ra = a[1] * fabs(R[2][0]) + a[2] * fabs(R[1][0]);
+    rb = b[1] * fabs(R[0][2]) + b[2] * fabs(R[0][1]);
+    tl = fabs(T[2] * R[1][0] - T[1] * R[2][0]);
+    if (tl > ra + rb) return false;
+
+    // L = A0 x B1
+    ra = a[1] * fabs(R[2][1]) + a[2] * fabs(R[1][1]);
+    rb = b[0] * fabs(R[0][2]) + b[2] * fabs(R[0][0]);
+    tl = fabs(T[2] * R[1][1] - T[1] * R[2][1]);
+    if (tl > ra + rb) return false;
+
+    // L = A0 x B2
+    ra = a[1] * fabs(R[2][2]) + a[2] * fabs(R[1][2]);
+    rb = b[0] * fabs(R[0][1]) + b[1] * fabs(R[0][0]);
+    tl = fabs(T[2] * R[1][2] - T[1] * R[2][2]);
+    if (tl > ra + rb) return false;
+
+    // L = A1 x B0
+    ra = a[0] * fabs(R[2][0]) + a[2] * fabs(R[0][0]);
+    rb = b[1] * fabs(R[1][2]) + b[2] * fabs(R[1][1]);
+    tl = fabs(T[0] * R[2][0] - T[2] * R[0][0]);
+    if (tl > ra + rb) return false;
+
+    // L = A1 x B1
+    ra = a[0] * fabs(R[2][1]) + a[2] * fabs(R[0][1]);
+    rb = b[0] * fabs(R[1][2]) + b[2] * fabs(R[1][0]);
+    tl = fabs(T[0] * R[2][1] - T[2] * R[0][1]);
+    if (tl > ra + rb) return false;
+
+    // L = A1 x B2
+    ra = a[0] * fabs(R[2][2]) + a[2] * fabs(R[0][2]);
+    rb = b[0] * fabs(R[1][1]) + b[1] * fabs(R[1][0]);
+    tl = fabs(T[0] * R[2][2] - T[2] * R[0][2]);
+    if (tl > ra + rb) return false;
+
+    // L = A2 x B0
+    ra = a[0] * fabs(R[1][0]) + a[1] * fabs(R[0][0]);
+    rb = b[1] * fabs(R[2][2]) + b[2] * fabs(R[2][1]);
+    tl = fabs(T[1] * R[0][0] - T[0] * R[1][0]);
+    if (tl > ra + rb) return false;
+
+    // L = A2 x B1
+    ra = a[0] * fabs(R[1][1]) + a[1] * fabs(R[0][1]);
+    rb = b[0] * fabs(R[2][2]) + b[2] * fabs(R[2][0]);
+    tl = fabs(T[1] * R[0][1] - T[0] * R[1][1]);
+    if (tl > ra + rb) return false;
+
+    // L = A2 x B2
+    ra = a[0] * fabs(R[1][2]) + a[1] * fabs(R[0][2]);
+    rb = b[0] * fabs(R[2][1]) + b[1] * fabs(R[2][0]);
+    tl = fabs(T[1] * R[0][2] - T[0] * R[1][2]);
+    if (tl > ra + rb) return false;
 
     // No separating axis found
     return true;
