@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
 
         // Apply physics and movement
         if (!pause) {
-            if (config.log) auto frameStart = std::chrono::system_clock::now();
+            if (config.log) frameStart = std::chrono::system_clock::now();
             map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             if (config.log) broadEnd = std::chrono::system_clock::now();
             map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
@@ -118,8 +118,6 @@ int main(int argc, char* argv[]) {
                 outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000;
                 outputCSV << ",";
                 outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000;
-                outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - frameStart).count() / 1000;
                 outputCSV << ",";
                 outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000;
                 outputCSV << "\n";
