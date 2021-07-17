@@ -20,11 +20,11 @@ map<string, pair<Object*, Object*>> OBBMidPhase::getCollisions(map<string, pair<
 bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
     Point a = obb1.getHalfLengths();
     Point pos1 = obb1.getPosition();
-    Matrix A = obb1.getRotatedNormals();
+    Matrix A = obb1.getNormals();
 
     Point b = obb2.getHalfLengths();
     Point pos2 = obb2.getPosition();
-    Matrix B = obb2.getRotatedNormals();
+    Matrix B = obb2.getNormals();
 
     Point v = pos2 - pos1; // T in world's coordenates
     Point T = A * v; // To calculate T in ObjectA's the coordenate system, we use the basis change matrix A

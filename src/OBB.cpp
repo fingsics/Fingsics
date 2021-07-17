@@ -7,15 +7,14 @@ OBB::OBB() {}
 OBB::OBB(Point position, Point halfLengths, Matrix rotationMatrix) {
     this->position = position;
     this->halfLengths = halfLengths;
-    this->normals = Matrix(Point(1,0,0), Point(0,1,0), Point(0,0,1));
     setRotation(rotationMatrix);
 }
 
 void OBB::setRotation(Matrix rotationMatrix) {
-    Point rotatedNormal1 = rotationMatrix * normals.row(0);
-    Point rotatedNormal2 = rotationMatrix * normals.row(1);
-    Point rotatedNormal3 = rotationMatrix * normals.row(2);
-    rotatedNormals = Matrix(rotatedNormal1, rotatedNormal2, rotatedNormal3);
+    Point normal1 = rotationMatrix * Point(1, 0, 0);
+    Point normal2 = rotationMatrix * Point(0, 1, 0);
+    Point normal3 = rotationMatrix * Point(0, 0, 1);
+    normals = Matrix(normal1, normal2, normal3);
 }
 
 void OBB::setPosition(Point position) {
@@ -30,6 +29,6 @@ Point OBB::getHalfLengths() {
     return halfLengths;
 }
 
-Matrix OBB::getRotatedNormals() {
-    return rotatedNormals;
+Matrix OBB::getNormals() {
+    return normals;
 }

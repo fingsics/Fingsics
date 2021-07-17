@@ -11,7 +11,6 @@ struct OBB {
         Point position;
         Point halfLengths;
         Matrix normals;
-        Matrix rotatedNormals;
     public:
         OBB();
         OBB(Point, Point, Matrix);
@@ -19,7 +18,7 @@ struct OBB {
         void setPosition(Point);
         Point getPosition();
         Point getHalfLengths();
-        Matrix getRotatedNormals();
+        Matrix getNormals();
 };
 
 #endif
