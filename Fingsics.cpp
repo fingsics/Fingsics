@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 
     if (config.log) {
         outputCSV.open("output\\" + config.logOutputFile);
-        outputCSV << "BPCDCount,BPCDTime,MPCDCount,MPCDTime,NPCDCount,NPCDTime,CRTime,MTime,TTime\n";
+        outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
     }
 
     initializeOpenGL();
@@ -103,23 +103,23 @@ int main(int argc, char* argv[]) {
 
             if (config.log) {
                 // Log times
+                outputCSV << (float)(chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count()) / 1000.0;
+                outputCSV << ",";
                 outputCSV << broadPhaseCollisions.size();
                 outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000;
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000.0;
                 outputCSV << ",";
                 outputCSV << midPhaseCollisions.size();
                 outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000;
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000.0;
                 outputCSV << ",";
                 outputCSV << collisions.size();
                 outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000;
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000.0;
                 outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000;
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000.0;
                 outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000;
-                outputCSV << ",";
-                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000;
+                outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000.0;
                 outputCSV << "\n";
             }
         }
