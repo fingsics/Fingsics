@@ -64,3 +64,43 @@ void Ball::drawObject() {
 Matrix Ball::getInertiaTensorInverse() {
     return invertedInertiaTensor;
 }
+
+double* Ball::getMins() {
+    double* aabbMin = new double[3];
+    aabbMin[0] = getMinX();
+    aabbMin[1] = getMinY();
+    aabbMin[2] = getMinZ();
+    return aabbMin;
+}
+
+double* Ball::getMaxes() {
+    double* aabbMax = new double[3];
+    aabbMax[0] = getMaxX();
+    aabbMax[1] = getMaxY();
+    aabbMax[2] = getMaxZ();
+    return aabbMax;
+}
+
+double Ball::getMinX() {
+    return pos.getX() - radius;
+}
+
+double Ball::getMinY() {
+    return pos.getY() - radius;
+}
+
+double Ball::getMinZ() {
+    return pos.getZ() - radius;
+}
+
+double Ball::getMaxX() {
+    return pos.getX() + radius;
+}
+
+double Ball::getMaxY() {
+    return pos.getY() + radius;
+}
+
+double Ball::getMaxZ() {
+    return pos.getZ() + radius;
+}

@@ -73,8 +73,8 @@ int main(int argc, char* argv[]) {
     float timeSinceLastFrame = 0;
 
     // Collision detection algorithms
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
-    MidPhaseAlgorithm* midPhaseAlgorithm = new OBBMidPhase();
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBroadPhase();
+    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Scene

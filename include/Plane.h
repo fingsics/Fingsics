@@ -21,6 +21,14 @@ class Plane : public Object {
         Point getNormal();
         Matrix getInertiaTensor();
         void drawOBB();
+        double* getMins();
+        double* getMaxes();
+        double getMinX();
+        double getMinY();
+        double getMinZ();
+        double getMaxX();
+        double getMaxY();
+        double getMaxZ();
 };
 
 #endif

@@ -34,3 +34,36 @@ Matrix Plane::getInertiaTensor() {
 
 void Plane::drawOBB() {
 }
+
+
+double* Plane::getMins() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double* Plane::getMaxes() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMinX() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMinY() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMinZ() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMaxX() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMaxY() {
+    throw "Plane AABBs aren't supported.";
+}
+
+double Plane::getMaxZ() {
+    throw "Plane AABBs aren't supported.";
+}

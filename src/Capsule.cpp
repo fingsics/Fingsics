@@ -108,3 +108,55 @@ void Capsule::drawObject() {
     }
     glPopMatrix();
 }
+
+double* Capsule::getMins() {
+    double* aabbMin = new double[3];
+    aabbMin[0] = getMinX();
+    aabbMin[1] = getMinY();
+    aabbMin[2] = getMinZ();
+    return aabbMin;
+}
+
+double* Capsule::getMaxes() {
+    double* aabbMax = new double[3];
+    aabbMax[0] = getMaxX();
+    aabbMax[1] = getMaxY();
+    aabbMax[2] = getMaxZ();
+    return aabbMax;
+}
+
+double Capsule::getMinX() {
+    double x1 = getCylinderPositiveEnd().getX();
+    double x2 = getCylinderNegativeEnd().getX();
+    return (x1 < x2 ? x1 : x2) - radius;
+}
+
+double Capsule::getMinY() {
+    double y1 = getCylinderPositiveEnd().getY();
+    double y2 = getCylinderNegativeEnd().getY();
+    return (y1 < y2 ? y1 : y2) - radius;
+}
+
+double Capsule::getMinZ() {
+    double z1 = getCylinderPositiveEnd().getZ();
+    double z2 = getCylinderNegativeEnd().getZ();
+    return (z1 < z2 ? z1 : z2) - radius;
+}
+
+double Capsule::getMaxX() {
+    double x1 = getCylinderPositiveEnd().getX();
+    double x2 = getCylinderNegativeEnd().getX();
+    return (x1 > x2 ? x1 : x2) + radius;
+}
+
+double Capsule::getMaxY() {
+    double y1 = getCylinderPositiveEnd().getY();
+    double y2 = getCylinderNegativeEnd().getY();
+    return (y1 > y2 ? y1 : y2) + radius;
+}
+
+double Capsule::getMaxZ() {
+    double z1 = getCylinderPositiveEnd().getZ();
+    double z2 = getCylinderNegativeEnd().getZ();
+    return (z1 > z2 ? z1 : z2) + radius;
+}

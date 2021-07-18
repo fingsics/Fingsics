@@ -120,6 +120,9 @@
     <ClCompile Include="src\OBB.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="src\AABB.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BroadPhaseAlgorithms.h">
@@ -189,6 +192,9 @@
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="include\OBB.h">
+      <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AABB.h">
       <Filter>Header Files\Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
