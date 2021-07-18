@@ -4,6 +4,7 @@
 #include "Point.h"
 #include "Matrix.h"
 #include "OBB.h"
+#include "AABB.h"
 #include <string>
 #include <list>
 
@@ -35,6 +36,7 @@ class Object {
         Point angVelCollisionMassPerAxis;
         bool isStatic;
         OBB obb;
+        AABB* aabb;
         virtual void drawOBB();
         virtual void drawObject() = 0;
     public:
@@ -50,6 +52,7 @@ class Object {
         Point getAngularVelocity();
         bool getIsStatic();
         OBB getOBB();
+        AABB* getAABB();
         
         double getElasticity();
         void setPos(Point);

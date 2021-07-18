@@ -23,6 +23,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->queuedImpulses = list<Impulse>();
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
+    this->aabb = NULL;
 }
 
 bool Object::isMoving(){
@@ -71,6 +72,10 @@ bool Object::getIsStatic() {
 
 OBB Object::getOBB() {
     return obb;
+}
+
+AABB* Object::getAABB() {
+    return aabb;
 }
 
 void Object::setPos(Point pos) {
