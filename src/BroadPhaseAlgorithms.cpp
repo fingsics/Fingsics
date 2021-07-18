@@ -40,8 +40,44 @@ map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object**
     return collisionMap;
 }
 
-// TODO: implement
+void SweepAndPruneBroadPhase::insertAABBPoints(Object* object, int insertedCount) {
+    // TODO
+}
+
+SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObjects) {
+    this->pointsPerAxis = 2 * numObjects;
+    this->xPoints = new AABBPoint[2 * pointsPerAxis];
+    this->yPoints = new AABBPoint[2 * pointsPerAxis];
+    this->zPoints = new AABBPoint[2 * pointsPerAxis];
+    for (int i = 0; i < numObjects; i++) insertAABBPoints(objects[i], i);
+}
+
 map<string, pair<Object*, Object*>> SweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {
-    map<string, pair<Object*, Object*>> collisionMap;
-    return collisionMap;
+    return collisionPairs;
+}
+
+void updateObject(Object* object) {
+    AABB* aabb = object->getAABB();
+    int index;
+    
+    double oldMinX = aabb->minX->value;
+    double newMinX = object->getMinX();
+    aabb->minX->value = newMinX;
+    index = aabb->minX->index;
+    if (oldMinX > newMinX) {
+        while ()
+    } else {
+
+    }
+        
+    aabb->maxX->value = object->getMaxX();
+    // TODO: Move in array
+    aabb->minY->value = object->getMinY();
+    // TODO: Move in array
+    aabb->maxY->value = object->getMaxY();
+    // TODO: Move in array
+    aabb->minZ->value = object->getMinZ();
+    // TODO: Move in array
+    aabb->maxZ->value = object->getMaxZ();
+    // TODO: Move in array
 }
