@@ -1,7 +1,5 @@
 #include "../include/Matrix.h"
 
-using namespace std;
-
 Matrix::Matrix(double* row0, double* row1, double* row2) {
     this->values[0][0] = row0[0];
     this->values[0][1] = row0[1];

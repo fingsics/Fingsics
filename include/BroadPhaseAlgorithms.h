@@ -3,6 +3,8 @@
 #include "Object.h"
 #include "Ball.h"
 #include "Helpers.h"
+#include "AABB.h"
+#include "Plane.h"
 #include <map>
 #include <string>
 
@@ -19,6 +21,8 @@ public:
 };
 
 class BruteForceBroadPhase : public BroadPhaseAlgorithm {
+private:
+    bool AABBOverlapTest(Object*, Object*);
 public:
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);
 };

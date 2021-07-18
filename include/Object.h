@@ -62,6 +62,14 @@ class Object {
         void applyImpulse(Point, Point);
         void draw(bool);
         virtual Matrix getInertiaTensorInverse();
+        virtual double* getMins() = 0;
+        virtual double* getMaxes() = 0;
+        virtual double getMinX() = 0;
+        virtual double getMinY() = 0;
+        virtual double getMinZ() = 0;
+        virtual double getMaxX() = 0;
+        virtual double getMaxY() = 0;
+        virtual double getMaxZ() = 0;
 };
 
 #endif

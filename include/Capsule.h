@@ -25,6 +25,14 @@ public:
     Point getCylinderNegativeEnd();
     Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double, int, int);
     void drawObject();
+    double* getMins();
+    double* getMaxes();
+    double getMinX();
+    double getMinY();
+    double getMinZ();
+    double getMaxX();
+    double getMaxY();
+    double getMaxZ();
 };
 
 #endif

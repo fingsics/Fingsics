@@ -21,6 +21,14 @@ class Ball : public Object {
         void drawObject();
         double getRadius();
         Matrix getInertiaTensorInverse();
+        double* getMins();
+        double* getMaxes();
+        double getMinX();
+        double getMinY();
+        double getMinZ();
+        double getMaxX();
+        double getMaxY();
+        double getMaxZ();
 };
 
 #endif

@@ -20,8 +20,7 @@ private:
     Collision* ballPlane(Point, double, Point, Point);
     Collision* ballBall(Point, double, Point, double);
     Collision* ballCylinder(Point, double, Point, double, double, Point);
-    Collision* cylinderCylinder(Point, double, double, Point, Point, double, double, Point);
-    Collision* ballCapsule(Point ballPos, double ballRadius, Point capsulePos, double capsuleRadius, double capsuleLength, Point capsuleAxisDirection, Point capsulePositiveEnd, Point capsuleNegativeEnd);
+    Collision* ballCapsule(Point, double, Point, double, double, Point, Point, Point);
     Collision* ballBall(Ball*, Ball*);
     Collision* ballPlane(Ball*, Plane*);
     Collision* ballCapsule(Ball*, Capsule*);
