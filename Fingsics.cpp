@@ -72,15 +72,15 @@ int main(int argc, char* argv[]) {
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
 
-    // Collision detection algorithms
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase();
-    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
-    NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
-
     // Scene
     vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
+
+    // Collision detection algorithms
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
+    NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;

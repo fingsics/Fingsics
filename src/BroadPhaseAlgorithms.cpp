@@ -132,27 +132,27 @@ void SweepAndPruneBroadPhase::updateObject(Object* object) {
     aabb->minX.index = updateAABBPoint(object, aabb->minX, oldValue, xPoints);
 
     // Update maxX
-    double oldValue = aabb->maxX.value;
+    oldValue = aabb->maxX.value;
     aabb->maxX.value = object->getMaxX();
     aabb->maxX.index = updateAABBPoint(object, aabb->maxX, oldValue, xPoints);
 
     // Update minY
-    double oldValue = aabb->minY.value;
+    oldValue = aabb->minY.value;
     aabb->minY.value = object->getMinY();
     aabb->minY.index = updateAABBPoint(object, aabb->minY, oldValue, yPoints);
 
     // Update maxY
-    double oldValue = aabb->maxY.value;
+    oldValue = aabb->maxY.value;
     aabb->maxY.value = object->getMaxY();
     aabb->maxY.index = updateAABBPoint(object, aabb->maxY, oldValue, yPoints);
 
     // Update minZ
-    double oldValue = aabb->minZ.value;
+    oldValue = aabb->minZ.value;
     aabb->minZ.value = object->getMinZ();
     aabb->minZ.index = updateAABBPoint(object, aabb->minZ, oldValue, zPoints);
 
     // Update maxZ
-    double oldValue = aabb->maxZ.value;
+    oldValue = aabb->maxZ.value;
     aabb->maxZ.value = object->getMaxZ();
     aabb->maxZ.index = updateAABBPoint(object, aabb->maxZ, oldValue, zPoints);
 }

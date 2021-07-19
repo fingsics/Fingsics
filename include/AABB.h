@@ -2,10 +2,11 @@
 #define AABB_H
 
 #define _USE_MATH_DEFINES
-#include "Object.h"
 #include <math.h>
 
 using namespace std;
+
+class Object;
 
 struct AABBPoint {
     Object* object;
@@ -28,4 +29,6 @@ struct AABB {
     AABB(Object*);
 };
 
+
+#include "Object.h"
 #endif
