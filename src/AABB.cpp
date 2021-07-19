@@ -14,12 +14,12 @@ AABBPoint::AABBPoint() {
 
 AABB::AABB(Object* object) {
     this->object = object;
-    this->minX = AABBPoint(object, object->getMinX(), true);
-    this->minY = AABBPoint(object, object->getMinY(), true);
-    this->minZ = AABBPoint(object, object->getMinZ(), true);
-    this->maxX = AABBPoint(object, object->getMaxX(), true);
-    this->maxY = AABBPoint(object, object->getMaxY(), true);
-    this->maxZ = AABBPoint(object, object->getMaxZ(), true);
+    this->minX = AABBPoint(object, INF, true);
+    this->minY = AABBPoint(object, INF, true);
+    this->minZ = AABBPoint(object, INF, true);
+    this->maxX = AABBPoint(object, INF, false);
+    this->maxY = AABBPoint(object, INF, false);
+    this->maxZ = AABBPoint(object, INF, false);
 }
 
 AABB::AABB() {

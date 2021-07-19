@@ -59,6 +59,7 @@ class Object {
         void setVel(Point);
         void setAngularVelocity(Point);
         void setRotation(Matrix);
+        void setAABB(AABB*);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();

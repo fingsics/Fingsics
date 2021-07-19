@@ -97,6 +97,11 @@ void Object::setRotation(Matrix rotationMatrix) {
     obb.setRotation(rotationMatrix);
 }
 
+void Object::setAABB(AABB* aabb) {
+    this->aabb = aabb;
+}
+
+
 void Object::updatePosAndVel(double secondsElapsed) {
     if (!vel.isZero()) setPos(pos + vel * secondsElapsed);
     if (!angularVelocity.isZero()) setRotation(Matrix(angularVelocity * secondsElapsed) * rotationMatrix);

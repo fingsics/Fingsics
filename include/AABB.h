@@ -17,12 +17,12 @@ struct AABBPoint {
 };
 
 struct AABB {
-    AABBPoint* minX;
-    AABBPoint* minY;
-    AABBPoint* minZ;
-    AABBPoint* maxX;
-    AABBPoint* maxY;
-    AABBPoint* maxZ;
+    AABBPoint minX;
+    AABBPoint minY;
+    AABBPoint minZ;
+    AABBPoint maxX;
+    AABBPoint maxY;
+    AABBPoint maxZ;
     Object* object;
     AABB();
     AABB(Object*);

@@ -30,16 +30,20 @@ public:
 
 class SweepAndPruneBroadPhase : public BroadPhaseAlgorithm {
 private:
+    bool AABBOverlapTest(AABB*, AABB*);
     map<string, pair<Object*, Object*>> collisionPairs;
+    void addCollision(Object*, Object*);
+    void removeCollision(Object*, Object*);
     int pointsPerAxis;
     AABBPoint* xPoints;
     AABBPoint* yPoints;
     AABBPoint* zPoints;
     void insertAABBPoints(Object*, int);
+    int updateAABBPoint(Object*, AABBPoint, double, AABBPoint*);
 public:
     SweepAndPruneBroadPhase(Object**, int);
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);
-    void updateObject(AABB*);
+    void updateObject(Object*);
 };
 
 #endif
