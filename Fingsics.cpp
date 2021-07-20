@@ -73,9 +73,24 @@ int main(int argc, char* argv[]) {
     float timeSinceLastFrame = 0;
 
     // Collision detection algorithms
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBroadPhase();
-    MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
+
+    MidPhaseAlgorithm* midPhaseAlgorithm;
+    if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
+    else midPhaseAlgorithm = new NoMidPhase();
+
+    BroadPhaseAlgorithm* broadPhaseAlgorithm;
+    switch (config.bpAlgorithm) {
+    case BPAlgorithmChoice::none:
+        broadPhaseAlgorithm = new NoBroadPhase();
+        break;
+    case BPAlgorithmChoice::bruteForce:
+        broadPhaseAlgorithm = new BruteForceBroadPhase();
+        break;
+    default:
+        broadPhaseAlgorithm = new SweepAndPruneBroadPhase();
+        break;
+    }
 
     // Scene
     vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
