@@ -38,6 +38,7 @@ class Object {
         OBB obb;
         AABB* aabb;
         virtual void drawOBB();
+        virtual void drawAABB();
         virtual void drawObject() = 0;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
@@ -64,7 +65,7 @@ class Object {
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);
-        void draw(bool);
+        void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual double* getMins() = 0;
         virtual double* getMaxes() = 0;

@@ -13,8 +13,8 @@ void setupFrame() {
     glLoadIdentity();
 }
 
-void drawObjects(Object** objects, int numObjects, bool drawOBBs) {
-    for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs);
+void drawObjects(Object** objects, int numObjects, bool drawOBBs, bool drawAABBs) {
+    for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs);
 }
 
 void drawAxis() {
