@@ -49,30 +49,20 @@ map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object**
 
 void SweepAndPruneBroadPhase::insertAABBPoints(Object* object, int insertedCount) {
     AABB* newAABB = new AABB(object);
+    newAABB->minX.index = insertedCount;
+    newAABB->maxX.index = insertedCount + 1;
+    newAABB->minY.index = insertedCount;
+    newAABB->maxY.index = insertedCount + 1;
+    newAABB->minZ.index = insertedCount;
+    newAABB->maxZ.index = insertedCount + 1;
+    xPoints[insertedCount] = newAABB->minX;
+    xPoints[insertedCount + 1] = newAABB->maxX;
+    yPoints[insertedCount] = newAABB->minY;
+    yPoints[insertedCount + 1] = newAABB->maxY;
+    zPoints[insertedCount] = newAABB->minZ;
+    zPoints[insertedCount + 1] = newAABB->maxZ;
     object->setAABB(newAABB);
-    xPoints[insertedCount * 2] = newAABB->minX;
-    xPoints[insertedCount * 2 + 1] = newAABB->maxX;
-    yPoints[insertedCount * 2] = newAABB->minY;
-    yPoints[insertedCount * 2 + 1] = newAABB->maxY;
-    zPoints[insertedCount * 2] = newAABB->minZ;
-    zPoints[insertedCount * 2 + 1] = newAABB->maxZ;
     updateObject(object);
-}
-
-SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObjects) {
-    this->xPoints = new AABBPoint[2 * numObjects];
-    this->yPoints = new AABBPoint[2 * numObjects];
-    this->zPoints = new AABBPoint[2 * numObjects];
-    this->pointsPerAxis = 0;
-    for (int i = 0; i < numObjects; i++) {
-        insertAABBPoints(objects[i], i);
-        this->pointsPerAxis += 2;
-    }
-}
-
-map<string, pair<Object*, Object*>> SweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {
-    for (int i = 0; i < numObjects; i++) updateObject(objects[i]);
-    return collisionPairs;
 }
 
 void SweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2) {
@@ -83,8 +73,38 @@ void SweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2) {
     }
 }
 
-void SweepAndPruneBroadPhase::removeCollision(Object* object1, Object* object2) { 
+void SweepAndPruneBroadPhase::removeCollision(Object* object1, Object* object2) {
     collisionPairs.erase(getObjectPairId(make_pair(object1, object2)));
+}
+
+SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObjects) {
+    // Count Planes and add all their collisions to the list (these won't be discarded by SAP)
+    int nonPlaneObjects = numObjects;
+    for (int i = 0; i < numObjects; i++) {
+        if (dynamic_cast<Plane*>(objects[i])) {
+            nonPlaneObjects--;
+            // Plane-Plane collisions are ignored by NarrowPhase, they are added for consistency with NoBroadPhase and BruteForceBroadPhase
+            for (int j = 0; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j]);
+        }
+    }
+
+    this->xPoints = new AABBPoint[2 * nonPlaneObjects];
+    this->yPoints = new AABBPoint[2 * nonPlaneObjects];
+    this->zPoints = new AABBPoint[2 * nonPlaneObjects];
+    
+    // Add non-Planes to the SAP arrays
+    this->pointsPerAxis = 0;
+    for (int i = 0; i < numObjects; i++) {
+        if (!dynamic_cast<Plane*>(objects[i])) {
+            insertAABBPoints(objects[i], this->pointsPerAxis);
+            this->pointsPerAxis += 2;
+        }
+    }
+}
+
+map<string, pair<Object*, Object*>> SweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {
+    for (int i = 0; i < numObjects; i++) updateObject(objects[i]);
+    return collisionPairs;
 }
 
 int SweepAndPruneBroadPhase::updateAABBPoint(Object* object, AABBPoint point, double oldValue, AABBPoint* pointArray) {
@@ -95,10 +115,10 @@ int SweepAndPruneBroadPhase::updateAABBPoint(Object* object, AABBPoint point, do
             if (previous.value <= point.value) break;
 
             if (point.isMin && !previous.isMin && AABBOverlapTest(object->getAABB(), previous.object->getAABB())) {
-                // PairManager.addCollision(object, previous.object)
+                addCollision(object, previous.object);
             }
             else if (!point.isMin && previous.isMin) {
-                // PairManager.removeCollision(object, previous.object)
+                removeCollision(object, previous.object);
             }
             pointArray[index] = previous;
             index--;
@@ -109,10 +129,10 @@ int SweepAndPruneBroadPhase::updateAABBPoint(Object* object, AABBPoint point, do
             if (next.value >= point.value) break;
 
             if (point.isMin && !next.isMin) {
-                // PairManager.removeCollision(object, next.object)
+                removeCollision(object, next.object);
             }
             else if (!point.isMin && next.isMin && AABBOverlapTest(object->getAABB(), next.object->getAABB())) {
-                // PairManager.addCollision(object, next.object)
+                addCollision(object, next.object);
             }
             pointArray[index] = next;
             index++;
@@ -124,6 +144,9 @@ int SweepAndPruneBroadPhase::updateAABBPoint(Object* object, AABBPoint point, do
 }
 
 void SweepAndPruneBroadPhase::updateObject(Object* object) {
+    // Ignore Planes in updates, since they're already in collisionPairs
+    if (dynamic_cast<Plane*>(object)) return;
+    
     AABB* aabb = object->getAABB();
 
     // Update minX

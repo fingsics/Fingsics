@@ -9,10 +9,10 @@ using namespace std;
 class Object;
 
 struct AABBPoint {
-    Object* object;
     double value;
     bool isMin;
     int index;
+    Object* object;
     AABBPoint(Object*, double, bool);
     AABBPoint();
 };
