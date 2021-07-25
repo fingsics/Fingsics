@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
     <objects>
-		<sphere pos="0,0,0" radius="0.5" mass="1" elasticityCoef="1" vel="1,0,0" color="200,200,200" acceleration="0,0,0" />		
-		<sphere pos="0.5,0,0" radius="0.5" mass="1" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,0,0" />
+		<sphere pos="-2,0,0" radius="0.5" mass="1" elasticityCoef="1" vel="1,0,0" color="200,200,200" acceleration="0,0,0" />
+		<sphere pos="0,0,0" radius="0.5" mass="1" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,0,0" />
     </objects>
 </config>

@@ -7,6 +7,7 @@
 #include "Plane.h"
 #include <map>
 #include <string>
+#include <assert.h>
 #include <unordered_set>
 
 using namespace std;
@@ -38,8 +39,9 @@ private:
     AABBPoint* xPoints;
     AABBPoint* yPoints;
     AABBPoint* zPoints;
-    void insertAABBPoints(Object*, int);
-    int updateAABBPoint(Object*, AABBPoint, double, AABBPoint*);
+    void updateAABBPointer(int, AABBPoint*);
+    void insertAABBPoints(Object*);
+    void updateAABBPoint(AABBPoint*, AABBPoint*);
 public:
     SweepAndPruneBroadPhase(Object**, int);
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);

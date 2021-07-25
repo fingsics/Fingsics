@@ -8,22 +8,21 @@ using namespace std;
 
 class Object;
 
+struct AABB;
+
 struct AABBPoint {
     double value;
     bool isMin;
-    int index;
-    Object* object;
-    AABBPoint(Object*, double, bool);
-    AABBPoint();
+    AABB* aabb;
 };
 
 struct AABB {
-    AABBPoint minX;
-    AABBPoint minY;
-    AABBPoint minZ;
-    AABBPoint maxX;
-    AABBPoint maxY;
-    AABBPoint maxZ;
+    AABBPoint* minX;
+    AABBPoint* maxX;
+    AABBPoint* minY;
+    AABBPoint* maxY;
+    AABBPoint* minZ;
+    AABBPoint* maxZ;
     Object* object;
     AABB();
     AABB(Object*);

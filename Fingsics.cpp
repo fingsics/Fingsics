@@ -72,6 +72,7 @@ int main(int argc, char* argv[]) {
     // FPS management
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
+    int frame = 0;
 
     // Scene
     vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
@@ -81,6 +82,7 @@ int main(int argc, char* argv[]) {
     // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
     //BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBroadPhase();
+    //BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
@@ -126,6 +128,7 @@ int main(int argc, char* argv[]) {
                 moveEnd = std::chrono::system_clock::now();
                 log(outputCSV, broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
+            frame++;
         }
 
         // Process events
