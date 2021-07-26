@@ -8,28 +8,13 @@ map<string, pair<Object*, Object*>> NoBroadPhase::getCollisions(Object** objects
     for (int i = 0; i < numObjects; i++) {
         for (int j = i + 1; j < numObjects; j++) {
             if (objects[i]->getIsStatic() && objects[j]->getIsStatic()) continue;
-            pair<Object*, Object*> objectPair = make_pair(objects[i], objects[j]);
-            string objectPairId = getObjectPairId(objectPair);
-            if (collisionMap.find(objectPairId) == collisionMap.end()) {
-                collisionMap.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
+            pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(objects[i], objects[j]);
+            if (collisionMap.find(objectPair.first) == collisionMap.end()) {
+                collisionMap.insert(objectPair);
             }
         }
     }
     return collisionMap;
-}
-
-bool BruteForceBroadPhase::AABBOverlapTest(Object* object1, Object* object2) {
-    if (object1->getMinX() > object2->getMaxX() || object2->getMinX() > object1->getMaxX()) return false;
-    if (object1->getMinY() > object2->getMaxY() || object2->getMinY() > object1->getMaxY()) return false;
-    if (object1->getMinZ() > object2->getMaxZ() || object2->getMinZ() > object1->getMaxZ()) return false;
-    return true;
-}
-
-bool SweepAndPruneBroadPhase::AABBOverlapTest(AABB* aabb1, AABB* aabb2) {
-    if (aabb1->minX->value > aabb2->maxX->value || aabb2->minX->value > aabb1->maxX->value) return false;
-    if (aabb1->minY->value > aabb2->maxY->value || aabb2->minY->value > aabb1->maxY->value) return false;
-    if (aabb1->minZ->value > aabb2->maxZ->value || aabb2->minZ->value > aabb1->maxZ->value) return false;
-    return true;
 }
 
 map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object** objects, int numObjects) {
@@ -37,10 +22,9 @@ map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object**
     for (int i = 0; i < numObjects; i++) {
         for (int j = i + 1; j < numObjects; j++) {
             if (objects[i]->getIsStatic() && objects[j]->getIsStatic()) continue;
-            pair<Object*, Object*> objectPair = make_pair(objects[i], objects[j]);
-            string objectPairId = getObjectPairId(objectPair);
-            if (collisionMap.find(objectPairId) == collisionMap.end() && (dynamic_cast<Plane*>(objects[i]) || dynamic_cast<Plane*>(objects[j]) || AABBOverlapTest(objects[i], objects[j]))) {
-                collisionMap.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
+            pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(objects[i], objects[j]);
+            if (collisionMap.find(objectPair.first) == collisionMap.end() && (dynamic_cast<Plane*>(objects[i]) || dynamic_cast<Plane*>(objects[j]) || AABBOverlapTest(objects[i], objects[j]))) {
+                collisionMap.insert(objectPair);
             }
         }
     }
@@ -209,19 +193,32 @@ void SweepAndPruneBroadPhase::updateAABBPointer(int index, AABBPoint* pointArray
     }
 }
 
+bool BruteForceBroadPhase::AABBOverlapTest(Object* object1, Object* object2) {
+    if (object1->getMinX() > object2->getMaxX() || object2->getMinX() > object1->getMaxX()) return false;
+    if (object1->getMinY() > object2->getMaxY() || object2->getMinY() > object1->getMaxY()) return false;
+    if (object1->getMinZ() > object2->getMaxZ() || object2->getMinZ() > object1->getMaxZ()) return false;
+    return true;
+}
+
+bool SweepAndPruneBroadPhase::AABBOverlapTest(AABB* aabb1, AABB* aabb2) {
+    if (aabb1->minX->value > aabb2->maxX->value || aabb2->minX->value > aabb1->maxX->value) return false;
+    if (aabb1->minY->value > aabb2->maxY->value || aabb2->minY->value > aabb1->maxY->value) return false;
+    if (aabb1->minZ->value > aabb2->maxZ->value || aabb2->minZ->value > aabb1->maxZ->value) return false;
+    return true;
+}
+
 // SAP "Pair manager"
 
 void SweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2) {
     if (object1 == object2) return; // TODO: Prevent these collisions from being detected in the first place
-    pair<Object*, Object*> objectPair = make_pair(object1, object2);
-    string objectPairId = getObjectPairId(objectPair);
-    if (collisionPairs.find(objectPairId) == collisionPairs.end()) {
-        collisionPairs.insert(pair<string, pair<Object*, Object*>>(objectPairId, objectPair));
+    pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(object1, object2);
+    if (collisionPairs.find(objectPair.first) == collisionPairs.end()) {
+        collisionPairs.insert(objectPair);
     }
 }
 
 void SweepAndPruneBroadPhase::removeCollision(Object* object1, Object* object2) {
-    collisionPairs.erase(getObjectPairId(make_pair(object1, object2)));
+    collisionPairs.erase(getObjectPairWithId(object1, object2).first);
 }
 
 map<string, pair<Object*, Object*>> SweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {

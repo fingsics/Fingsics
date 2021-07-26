@@ -179,17 +179,17 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         }
 
         if (collision) {
-            string objectPairId = getObjectPairId(make_pair(object1, object2));
-            collision->setObjects(object1, object2);
+            pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(object1, object2);
+            collision->setObjects(objectPair.second);
 
-            auto it = lastFrameCollisions.find(objectPairId);
+            auto it = lastFrameCollisions.find(objectPair.first);
             if (it != lastFrameCollisions.end()) {
                 Collision lastFrameCollision = it->second;
                 collision->setLastPenetrationDepth(lastFrameCollision.getPenetrationDepth());
             }
 
-            if (collisions.find(objectPairId) == collisions.end()) {
-                collisions.insert(pair<string, Collision>(objectPairId, *collision));
+            if (collisions.find(objectPair.first) == collisions.end()) {
+                collisions.insert(pair<string, Collision>(objectPair.first, *collision));
             }
 
             delete collision;

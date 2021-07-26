@@ -1,9 +1,9 @@
 #include "../include/Helpers.h"
 
-string getObjectPairId(pair<Object*, Object*> objectPair) {
-    return objectPair.first->getId() < objectPair.second->getId()
-        ? objectPair.first->getId() + "-" + objectPair.second->getId()
-        : objectPair.second->getId() + "-" + objectPair.first->getId();
+pair<string,pair<Object*,Object*>> getObjectPairWithId(Object * object1, Object * object2) {
+    return object1->getId() < object2->getId()
+        ? make_pair(object1->getId() + "-" + object2->getId(), make_pair(object1, object2))
+        : make_pair(object2->getId() + "-" + object1->getId(), make_pair(object2, object1));
 }
 
 double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {

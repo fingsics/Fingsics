@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
     bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = true;
-    bool drawAABBs = false;
+    bool drawAABBs = true;
 
     // FPS management
     clock_t lastFrameTime = clock();
@@ -80,9 +80,9 @@ int main(int argc, char* argv[]) {
     int numObjects = objectsVector.size();
 
     // Collision detection algorithms
-    //BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
     //BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBroadPhase();
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
+    //BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
