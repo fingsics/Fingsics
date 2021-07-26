@@ -80,9 +80,9 @@ int main(int argc, char* argv[]) {
     int numObjects = objectsVector.size();
 
     // Collision detection algorithms
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+    //BroadPhaseAlgorithm* broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
     //BroadPhaseAlgorithm* broadPhaseAlgorithm = new BruteForceBroadPhase();
-    //BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new NoBroadPhase();
     MidPhaseAlgorithm* midPhaseAlgorithm = new NoMidPhase();
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
 
@@ -96,6 +96,10 @@ int main(int argc, char* argv[]) {
     }
 
     initializeOpenGL();
+
+    // Collision collections
+    map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
+    map<string, Collision> collisions;
 
     while (!quit) {
         setupFrame();
@@ -115,11 +119,11 @@ int main(int argc, char* argv[]) {
         // Apply physics and movement
         if (!pause) {
             if (config.log) frameStart = std::chrono::system_clock::now();
-            map<string, pair<Object*, Object*>> broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
+            broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
             if (config.log) broadEnd = std::chrono::system_clock::now();
-            map<string, pair<Object*, Object*>> midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+            midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             if (config.log) midEnd = std::chrono::system_clock::now();
-            map<string, Collision> collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
+            collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
             if (config.log) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
             if (config.log) responseEnd = std::chrono::system_clock::now();

@@ -14,6 +14,8 @@ struct AABBPoint {
     double value;
     bool isMin;
     AABB* aabb;
+    AABBPoint();
+    AABBPoint(AABBPoint*);
 };
 
 struct AABB {
