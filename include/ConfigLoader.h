@@ -14,12 +14,16 @@ struct KeyValue {
 	KeyValue(string, string);
 };
 
+enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune };
+
 struct Config {
+	string sceneName;
 	int fps;
 	int numLatLongs;
+	bool useMidPhase;
+	BPAlgorithmChoice bpAlgorithm;
 	bool log;
 	string logOutputFile;
-	string sceneName;
 	Config(map<string, string>);
 };
 

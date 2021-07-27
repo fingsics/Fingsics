@@ -1,5 +1,13 @@
 SCENE_FILE_NAME=missile2
 FPS=60
+
+# Number of latitudes and longitudes used to draw the triangles of balls and capsules
 NUM_LAT_LONGS=20
+
+# Algorithms (BROAD_PHASE options are NONE, BF or SAP)
+BROAD_PHASE=BF
+USE_MID_PHASE=false
+
+# Logging
 LOG=true
 LOG_OUTPUT_FILE_NAME=output3.csv
