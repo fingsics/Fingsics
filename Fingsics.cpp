@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
         config.log = true;
         SDL_Window* window = initializeSDL();
         list<string> sceneNames = list<string> {"bouncy-things", "capsule-static-floor", "many-balls",
-            "missile", "missile2", "obbs-collide", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions"};
+            "missile", "missile2", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions"};
 
         for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
             config.sceneName = *scene;

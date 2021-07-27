@@ -1,11 +1,11 @@
-SCENE_FILE_NAME=missile2
+SCENE_FILE_NAME=obbs-collide
 FPS=60
 
 # Number of latitudes and longitudes used to draw the triangles of balls and capsules
 NUM_LAT_LONGS=20
 
 # Algorithms (BROAD_PHASE options are NONE, BF or SAP)
-BROAD_PHASE=BF
+BROAD_PHASE=SAP
 USE_MID_PHASE=false
 
 # Logging

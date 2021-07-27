@@ -1,10 +1,15 @@
 import csv
 import pathlib
+import sys
 
 folder= str(pathlib.Path().resolve()) + "\\output\\"
-file1="output3.csv"
-file2="output.csv"
 
+if len(sys.argv) > 1:
+    file1 = sys.argv[0]
+    file2 = sys.argv[1]
+else:
+    file1 = "output.csv"
+    file1 = "output.csv"
 
 def get_csv_values(file):
     bpcd_times = []
