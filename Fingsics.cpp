@@ -66,8 +66,8 @@ int main(int argc, char* argv[]) {
     bool pause = true;
     bool draw = true;
     bool slowMotion = false;
-    bool drawOBBs = true;
-    bool drawAABBs = true;
+    bool drawOBBs = false;
+    bool drawAABBs = false;
 
     // FPS management
     clock_t lastFrameTime = clock();
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, camera, freeCamera, centeredCamera);
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps);
