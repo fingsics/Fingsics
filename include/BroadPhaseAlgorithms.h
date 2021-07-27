@@ -31,7 +31,7 @@ public:
 
 class SweepAndPruneBroadPhase : public BroadPhaseAlgorithm {
 private:
-    bool AABBOverlapTest(AABB*, AABB*);
+    bool AABBOverlapTest(AABB*, AABB*, AABBPoint*);
     map<string, pair<Object*, Object*>> collisionPairs;
     void addCollision(Object*, Object*);
     void removeCollision(Object*, Object*);

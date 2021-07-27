@@ -40,7 +40,7 @@ SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObject
         if (dynamic_cast<Plane*>(objects[i])) {
             nonPlaneObjects--;
             // Plane-Plane collisions are ignored by NarrowPhase, they are added for consistency with NoBroadPhase and BruteForceBroadPhase
-            for (int j = 0; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j]);
+            for (int j = i + 1; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j]);
         }
     }
 
@@ -138,10 +138,10 @@ void SweepAndPruneBroadPhase::updateAABBPoint(AABBPoint* pointPointer, AABBPoint
     AABBPoint point = AABBPoint(pointPointer);
 
     // Shift other points to the right (updated point is smaller and moving to the left)
-    while (index > 0 && point.value <= pointArray[index - 1].value) {
+    while (index > 0 && point.value < pointArray[index - 1].value) {
         if (!point.isMin && pointArray[index - 1].isMin) {
             removeCollision(point.aabb->object, pointArray[index - 1].aabb->object);
-        } else if (point.isMin && !pointArray[index - 1].isMin && AABBOverlapTest(point.aabb, pointArray[index - 1].aabb)) {
+        } else if (point.isMin && !pointArray[index - 1].isMin && AABBOverlapTest(point.aabb, pointArray[index - 1].aabb, pointArray)) {
             addCollision(point.aabb->object, pointArray[index - 1].aabb->object);
         }
 
@@ -153,22 +153,20 @@ void SweepAndPruneBroadPhase::updateAABBPoint(AABBPoint* pointPointer, AABBPoint
         index--;
     }
     
-    if (index == pointPointer - pointArray) { // If the AABBPoint didn't move left
-        // Shift other points to the left (updated point is bigger and moving to the right)
-        while (index < pointsPerAxis - 1 && point.value >= pointArray[index + 1].value) {
-            if (point.isMin && !pointArray[index + 1].isMin) {
-                removeCollision(point.aabb->object, pointArray[index + 1].aabb->object);
-            } else if (!point.isMin && pointArray[index + 1].isMin && AABBOverlapTest(point.aabb, pointArray[index + 1].aabb)) {
-                addCollision(point.aabb->object, pointArray[index + 1].aabb->object);
-            }
-
-            pointArray[index].value = pointArray[index + 1].value;
-            pointArray[index].isMin = pointArray[index + 1].isMin;
-            pointArray[index].aabb = pointArray[index + 1].aabb;
-            updateAABBPointer(index, pointArray);
-
-            index++;
+    // Shift other points to the left (updated point is bigger and moving to the right)
+    while (index < pointsPerAxis - 1 && point.value > pointArray[index + 1].value) {
+        if (point.isMin && !pointArray[index + 1].isMin) {
+            removeCollision(point.aabb->object, pointArray[index + 1].aabb->object);
+        } else if (!point.isMin && pointArray[index + 1].isMin && AABBOverlapTest(point.aabb, pointArray[index + 1].aabb, pointArray)) {
+            addCollision(point.aabb->object, pointArray[index + 1].aabb->object);
         }
+
+        pointArray[index].value = pointArray[index + 1].value;
+        pointArray[index].isMin = pointArray[index + 1].isMin;
+        pointArray[index].aabb = pointArray[index + 1].aabb;
+        updateAABBPointer(index, pointArray);
+
+        index++;
     }
     
     // Place point in final position
@@ -200,17 +198,17 @@ bool BruteForceBroadPhase::AABBOverlapTest(Object* object1, Object* object2) {
     return true;
 }
 
-bool SweepAndPruneBroadPhase::AABBOverlapTest(AABB* aabb1, AABB* aabb2) {
-    if (aabb1->minX->value > aabb2->maxX->value || aabb2->minX->value > aabb1->maxX->value) return false;
-    if (aabb1->minY->value > aabb2->maxY->value || aabb2->minY->value > aabb1->maxY->value) return false;
-    if (aabb1->minZ->value > aabb2->maxZ->value || aabb2->minZ->value > aabb1->maxZ->value) return false;
+bool SweepAndPruneBroadPhase::AABBOverlapTest(AABB* aabb1, AABB* aabb2, AABBPoint* pointArray) {
+    if (pointArray != xPoints && (aabb1->minX > aabb2->maxX || aabb2->minX > aabb1->maxX)) return false;
+    if (pointArray != yPoints && (aabb1->minY > aabb2->maxY || aabb2->minY > aabb1->maxY)) return false;
+    if (pointArray != zPoints && (aabb1->minZ > aabb2->maxZ || aabb2->minZ > aabb1->maxZ)) return false;
     return true;
 }
 
 // SAP "Pair manager"
 
 void SweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2) {
-    if (object1 == object2) return; // TODO: Prevent these collisions from being detected in the first place
+    if (object1 == object2 || (object1->getIsStatic() && object2->getIsStatic())) return;
     pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(object1, object2);
     if (collisionPairs.find(objectPair.first) == collisionPairs.end()) {
         collisionPairs.insert(objectPair);

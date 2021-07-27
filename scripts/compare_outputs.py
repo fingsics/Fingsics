@@ -4,12 +4,8 @@ import sys
 
 folder= str(pathlib.Path().resolve()) + "\\output\\"
 
-if len(sys.argv) > 1:
-    file1 = sys.argv[0]
-    file2 = sys.argv[1]
-else:
-    file1 = "output.csv"
-    file1 = "output.csv"
+file1 = "bfscene.csv"
+file2 = "scene.csv"
 
 def get_csv_values(file):
     bpcd_times = []
@@ -43,6 +39,7 @@ def get_csv_values(file):
 bpcd_times_1, mpcd_tests_1, mpcd_times_1, npcd_tests_1, npcd_times_1, collisions_1, total_times_1 = get_csv_values(folder + file1)
 bpcd_times_2, mpcd_tests_2, mpcd_times_2, npcd_tests_2, npcd_times_2, collisions_2, total_times_2 = get_csv_values(folder + file2)
 
+first_difference = -1
 equal_mpcd_tests = True
 equal_npcd_tests = True
 equal_collisions = True
@@ -60,10 +57,16 @@ total_time_2 = 0
 
 for i in range(0, min(len(bpcd_times_1), len(bpcd_times_2))):
     if mpcd_tests_1[i] != mpcd_tests_2[i]:
+        if first_difference < 0:
+            first_difference = i
         equal_mpcd_tests = False
     if npcd_tests_1[i] != npcd_tests_2[i]:
+        if first_difference < 0:
+            first_difference = i
         equal_npcd_tests = False
     if collisions_1[i] != collisions_2[i]:
+        if first_difference < 0:
+            first_difference = i
         equal_collisions = False
         
     bpcd_time_1 += bpcd_times_1[i]
@@ -90,3 +93,7 @@ print("BPCD time 2: " + str(bpcd_time_2))
 print("MPCD time 2: " + str(mpcd_time_2))
 print("NPCD time 2: " + str(npcd_time_2))
 print("Total time 2: " + str(total_time_2))
+
+if first_difference >= 0:
+    print()
+    print("First different frame: " + str(first_difference))
