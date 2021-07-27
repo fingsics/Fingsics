@@ -52,8 +52,6 @@ void log(std::ofstream& outputCSV, int numBroadPhaseCollisions, int numMidPhaseC
 }
 
 int runSimulation(Config config, int stopFrame, SDL_Window* window) {
-    window = window ? window : initializeSDL();
-
     // Camera
     Camera* centeredCamera = new CenteredCamera();
     Camera* freeCamera = new FreeCamera();
@@ -178,5 +176,5 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    return runSimulation(config, -1, NULL);
+    return runSimulation(config, -1, initializeSDL());
 }
