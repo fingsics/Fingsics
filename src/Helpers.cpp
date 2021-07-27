@@ -1,9 +1,9 @@
 #include "../include/Helpers.h"
 
-string getObjectPairId(pair<Object*, Object*> objectPair) {
-    string firstKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.first->getId() : objectPair.second->getId();
-    string secondKey = objectPair.first->getId() < objectPair.second->getId() ? objectPair.second->getId() : objectPair.first->getId();
-    return firstKey + "-" + secondKey;
+pair<string,pair<Object*,Object*>> getObjectPairWithId(Object * object1, Object * object2) {
+    return object1->getId() < object2->getId()
+        ? make_pair(object1->getId() + "-" + object2->getId(), make_pair(object1, object2))
+        : make_pair(object2->getId() + "-" + object1->getId(), make_pair(object2, object1));
 }
 
 double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
@@ -41,14 +41,14 @@ tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
     while (h < m && k < n) {
         // Find the k-th pivot
         int i_max = h;
-        int val_max = abs(A[h][k]);
+        double val_max = abs(A[h][k]);
         for (int g = h + 1; g < m; g++) {
             if (abs(A[g][k]) > val_max) {
                 i_max = g;
                 val_max = abs(A[g][k]);
             }
         }
-        if (A[i_max][k] == 0) {
+        if (abs(A[i_max][k]) < S_EPSILON) {
             k++; // No pivot in this column, pass to next column
         }
         else {

@@ -23,6 +23,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->queuedImpulses = list<Impulse>();
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
+    this->aabb = NULL;
 }
 
 bool Object::isMoving(){
@@ -73,6 +74,10 @@ OBB Object::getOBB() {
     return obb;
 }
 
+AABB* Object::getAABB() {
+    return aabb;
+}
+
 void Object::setPos(Point pos) {
     this->pos = pos;
     obb.setPosition(pos);
@@ -91,6 +96,11 @@ void Object::setRotation(Matrix rotationMatrix) {
     invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
     obb.setRotation(rotationMatrix);
 }
+
+void Object::setAABB(AABB* aabb) {
+    this->aabb = aabb;
+}
+
 
 void Object::updatePosAndVel(double secondsElapsed) {
     if (!vel.isZero()) setPos(pos + vel * secondsElapsed);
@@ -128,9 +138,10 @@ void Object::applyImpulse(Point normal, Point tangent) {
     angularVelocity = angularVelocity + angVelDiff;
 }
 
-void Object::draw(bool drawOBB) {
+void Object::draw(bool drawOBB, bool drawAABB) {
     this->drawObject();
     if (drawOBB) this->drawOBB();
+    if (drawAABB) this->drawAABB();
 }
 
 void Object::drawOBB() {
@@ -160,21 +171,29 @@ void Object::drawOBB() {
     glVertex3f(0, 0, dimensions.getZ());
     glEnd();
 
-    glBegin(GL_QUADS);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, dimensions.getY(), 0);
-    glVertex3f(dimensions.getX(), dimensions.getY(), 0);
-    glVertex3f(dimensions.getX(), 0, 0);
-    glEnd();
-
-    glBegin(GL_QUADS);
-    glVertex3f(0, 0, dimensions.getZ());
-    glVertex3f(0, dimensions.getY(), dimensions.getZ());
-    glVertex3f(dimensions.getX(), dimensions.getY(), dimensions.getZ());
-    glVertex3f(dimensions.getX(), 0, dimensions.getZ());
-    glEnd();
-
     glPopMatrix();
+    glEnable(GL_LIGHTING);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Object::drawAABB() {
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glColor3ub(220, 0, 220);
+    glDisable(GL_LIGHTING);
+
+    glBegin(GL_QUAD_STRIP);
+    glVertex3f(getMinX(), getMinY(), getMinZ());
+    glVertex3f(getMaxX(), getMinY(), getMinZ());
+    glVertex3f(getMinX(), getMaxY(), getMinZ());
+    glVertex3f(getMaxX(), getMaxY(), getMinZ());
+    glVertex3f(getMinX(), getMaxY(), getMaxZ());
+    glVertex3f(getMaxX(), getMaxY(), getMaxZ());
+    glVertex3f(getMinX(), getMinY(), getMaxZ());
+    glVertex3f(getMaxX(), getMinY(), getMaxZ());
+    glVertex3f(getMinX(), getMinY(), getMinZ());
+    glVertex3f(getMaxX(), getMinY(), getMinZ());
+    glEnd();
+
     glEnable(GL_LIGHTING);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

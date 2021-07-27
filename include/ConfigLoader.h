@@ -23,6 +23,7 @@ struct Config {
 	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;
+	bool runInTestMode;
 	string logOutputFile;
 	Config(map<string, string>);
 };

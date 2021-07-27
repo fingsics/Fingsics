@@ -1,27 +1,33 @@
 #include "../include/AABB.h"
 
-AABBPoint::AABBPoint(Object* object, double value, bool isMin) {
-    this->object = object;
-    this->value = value;
-    this->isMin = isMin;
+AABBPoint::AABBPoint() {
+    this->aabb = NULL;
+    this->value = INF;
+    this->isMin = false;
 }
 
-AABBPoint::AABBPoint() {
-    this->object = NULL;
-    this->value = 0;
-    this->isMin = false;
+AABBPoint::AABBPoint(AABBPoint* point) {
+    this->aabb = point->aabb;
+    this->value = point->value;
+    this->isMin = point->isMin;
 }
 
 AABB::AABB(Object* object) {
     this->object = object;
-    this->minX = AABBPoint(object, object->getMinX(), true);
-    this->minY = AABBPoint(object, object->getMinY(), true);
-    this->minZ = AABBPoint(object, object->getMinZ(), true);
-    this->maxX = AABBPoint(object, object->getMaxX(), true);
-    this->maxY = AABBPoint(object, object->getMaxY(), true);
-    this->maxZ = AABBPoint(object, object->getMaxZ(), true);
+    this->minX = NULL;
+    this->minY = NULL;
+    this->minZ = NULL;
+    this->maxX = NULL;
+    this->maxY = NULL;
+    this->maxZ = NULL;
 }
 
 AABB::AABB() {
     this->object = NULL;
+    this->minX = NULL;
+    this->minY = NULL;
+    this->minZ = NULL;
+    this->maxX = NULL;
+    this->maxY = NULL;
+    this->maxZ = NULL;
 }

@@ -2,29 +2,34 @@
 #define AABB_H
 
 #define _USE_MATH_DEFINES
-#include "Object.h"
 #include <math.h>
 
 using namespace std;
 
+class Object;
+
+struct AABB;
+
 struct AABBPoint {
-    Object* object;
     double value;
     bool isMin;
-    AABBPoint(Object*, double, bool);
+    AABB* aabb;
     AABBPoint();
+    AABBPoint(AABBPoint*);
 };
 
 struct AABB {
-    AABBPoint minX;
-    AABBPoint minY;
-    AABBPoint minZ;
-    AABBPoint maxX;
-    AABBPoint maxY;
-    AABBPoint maxZ;
+    AABBPoint* minX;
+    AABBPoint* maxX;
+    AABBPoint* minY;
+    AABBPoint* maxY;
+    AABBPoint* minZ;
+    AABBPoint* maxZ;
     Object* object;
     AABB();
     AABB(Object*);
 };
 
+
+#include "Object.h"
 #endif

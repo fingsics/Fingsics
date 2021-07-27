@@ -4,6 +4,7 @@
 #include "Point.h"
 #include "Matrix.h"
 #include "OBB.h"
+#include "AABB.h"
 #include <string>
 #include <list>
 
@@ -35,7 +36,9 @@ class Object {
         Point angVelCollisionMassPerAxis;
         bool isStatic;
         OBB obb;
+        AABB* aabb;
         virtual void drawOBB();
+        virtual void drawAABB();
         virtual void drawObject() = 0;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
@@ -50,17 +53,19 @@ class Object {
         Point getAngularVelocity();
         bool getIsStatic();
         OBB getOBB();
+        AABB* getAABB();
         
         double getElasticity();
         void setPos(Point);
         void setVel(Point);
         void setAngularVelocity(Point);
         void setRotation(Matrix);
+        void setAABB(AABB*);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);
-        void draw(bool);
+        void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual double* getMins() = 0;
         virtual double* getMaxes() = 0;

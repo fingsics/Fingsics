@@ -7,6 +7,8 @@
 #include "Plane.h"
 #include <map>
 #include <string>
+#include <assert.h>
+#include <unordered_set>
 
 using namespace std;
 
@@ -28,8 +30,22 @@ public:
 };
 
 class SweepAndPruneBroadPhase : public BroadPhaseAlgorithm {
+private:
+    bool AABBOverlapTest(AABB*, AABB*, AABBPoint*);
+    map<string, pair<Object*, Object*>> collisionPairs;
+    void addCollision(Object*, Object*);
+    void removeCollision(Object*, Object*);
+    int pointsPerAxis;
+    AABBPoint* xPoints;
+    AABBPoint* yPoints;
+    AABBPoint* zPoints;
+    void updateAABBPointer(int, AABBPoint*);
+    void insertAABBPoints(Object*);
+    void updateAABBPoint(AABBPoint*, AABBPoint*);
 public:
+    SweepAndPruneBroadPhase(Object**, int);
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+    void updateObject(Object*);
 };
 
 #endif

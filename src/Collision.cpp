@@ -48,9 +48,9 @@ void Collision::invertNormal() {
     normal = normal * -1;
 }
 
-void Collision::setObjects(Object* object1, Object* object2) {
-    this->object1 = object1;
-    this->object2 = object2;
+void Collision::setObjects(pair<Object*, Object*> objects) {
+    this->object1 = objects.first;
+    this->object2 = objects.second;
 }
 
 void Collision::setLastPenetrationDepth(double lastPenetrationDepth) {

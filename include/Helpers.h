@@ -8,7 +8,8 @@
 
 using namespace std;
 
-string getObjectPairId(pair<Object*, Object*> objectPair);
+pair<string,pair<Object*, Object*>> getObjectPairWithId(Object*, Object*);
+
 double** getMatrixForGausianElimination(Matrix, Point);
 tuple<double, double, double> solveLinearSystem(Matrix, Point);
 
