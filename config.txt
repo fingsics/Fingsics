@@ -11,3 +11,6 @@ USE_MID_PHASE=false
 # Logging
 LOG=true
 LOG_OUTPUT_FILE_NAME=output3.csv
+
+# Testing
+RUN_IN_TEST_MODE=true

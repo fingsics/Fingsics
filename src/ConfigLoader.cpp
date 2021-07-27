@@ -4,6 +4,7 @@ Config::Config(map<string, string> config) {
     fps = 60;
     numLatLongs = 10;
     log = false;
+    runInTestMode = false;
     useMidPhase = false;
     bpAlgorithm = BPAlgorithmChoice::sweepAndPrune;
     sceneName = "";
@@ -34,6 +35,11 @@ Config::Config(map<string, string> config) {
     it = config.find("LOG");
     if (it != config.end()) {
         log = !it->second.compare("true");
+    }
+
+    it = config.find("RUN_IN_TEST_MODE");
+    if (it != config.end()) {
+        runInTestMode = !it->second.compare("true");
     }
 
     it = config.find("SCENE_FILE_NAME");

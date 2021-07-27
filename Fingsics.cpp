@@ -20,10 +20,10 @@
 
 using namespace std;
 
-void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps) {
+void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
     double minFrameTime = 1.0 / fps;
     secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
-    if (secondsSinceLastFrame < minFrameTime) {
+    if (secondsSinceLastFrame < minFrameTime && shouldSleep) {
         std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
         secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     }
@@ -51,10 +51,8 @@ void log(std::ofstream& outputCSV, int numBroadPhaseCollisions, int numMidPhaseC
     outputCSV << "\n";
 }
 
-int main(int argc, char* argv[]) {
-    SDL_Window* window = initializeSDL();
-
-    Config config = ConfigLoader().getConfig();
+int runSimulation(Config config, int stopFrame, SDL_Window* window) {
+    window = window ? window : initializeSDL();
 
     // Camera
     Camera* centeredCamera = new CenteredCamera();
@@ -63,8 +61,8 @@ int main(int argc, char* argv[]) {
 
     // Program options
     bool quit = false;
-    bool pause = true;
-    bool draw = true;
+    bool pause = !config.runInTestMode;
+    bool draw = !config.runInTestMode;
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
@@ -103,7 +101,8 @@ int main(int argc, char* argv[]) {
     std::ofstream outputCSV;
 
     if (config.log) {
-        outputCSV.open("output\\" + config.logOutputFile);
+        string folder = config.runInTestMode ? "testing\\results\\" : "output\\";
+        outputCSV.open(folder + config.logOutputFile);
         outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
     }
 
@@ -113,17 +112,15 @@ int main(int argc, char* argv[]) {
     map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
     map<string, Collision> collisions;
 
-    while (!quit) {
-        setupFrame();
-
-        // Set camera position
-        camera->lookAt();
-
-        // Set light
-        setLighting();
+    while (!quit && (stopFrame == -1 || frame < stopFrame)) {
+        if (!config.runInTestMode) {
+            setupFrame();
+            camera->lookAt(); // Set camera position
+            setLighting(); // Set light
+        }
 
         // Draw objects
-        if (draw) {
+        if (draw && !config.runInTestMode) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs);
         }
@@ -148,14 +145,38 @@ int main(int argc, char* argv[]) {
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
+        if (!config.runInTestMode) {
+            checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
+        }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, !config.runInTestMode);
 
         SDL_GL_SwapWindow(window);
     }
 
     if (config.log) outputCSV.close();
     return 0;
+}
+
+
+int main(int argc, char* argv[]) {
+    Config config = ConfigLoader().getConfig();
+    if (config.runInTestMode) {
+        config.log = true;
+        SDL_Window* window = initializeSDL();
+        list<string> sceneNames = list<string> {"bouncy-things", "capsule-static-floor", "many-balls",
+            "missile", "missile2", "obbs-collide", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions"};
+
+        for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
+            config.sceneName = *scene;
+            config.logOutputFile = *scene + "_test.csv";
+            
+            runSimulation(config, 300, window);
+        }
+
+        return 0;
+    }
+
+    return runSimulation(config, -1, NULL);
 }
