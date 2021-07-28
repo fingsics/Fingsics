@@ -16,8 +16,6 @@ class Color {
         int getR();
         int getG();
         int getB();
-        Color darken(double);
-        Color lighten(double);
 };
 
 #endif

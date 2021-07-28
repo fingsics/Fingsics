@@ -168,6 +168,7 @@
     <ClCompile Include="src\ConfigLoader.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Helpers.cpp" />
+    <ClCompile Include="src\Impulse.cpp" />
     <ClCompile Include="src\Matrix.cpp" />
     <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="include\Constants.h" />
     <ClInclude Include="include\FreeCamera.h" />
     <ClInclude Include="include\Helpers.h" />
+    <ClInclude Include="include\Impulse.h" />
     <ClInclude Include="include\Matrix.h" />
     <ClInclude Include="include\MidPhaseAlgorithms.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithm.h" />

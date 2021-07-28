@@ -5,18 +5,11 @@
 #include "Matrix.h"
 #include "OBB.h"
 #include "AABB.h"
+#include "Impulse.h"
 #include <string>
 #include <list>
 
 using namespace std;
-
-struct Impulse {
-    Point normal;
-    Point tangent;
-    double magnitude;
-    double mass;
-    Impulse(Point, Point, double, double);
-};
 
 class Object {
     protected:
@@ -43,7 +36,6 @@ class Object {
     public:
         Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
         double getMass();
-        bool isMoving();
         string getId();
         Point getPos();
         Point getVel();
@@ -59,7 +51,7 @@ class Object {
         void setPos(Point);
         void setVel(Point);
         void setAngularVelocity(Point);
-        void setRotation(Matrix);
+        virtual void setRotation(Matrix);
         void setAABB(AABB*);
         void updatePosAndVel(double);
         void queueImpulse(Point, Point, double, double);
@@ -67,8 +59,6 @@ class Object {
         void applyImpulse(Point, Point);
         void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
-        virtual double* getMins() = 0;
-        virtual double* getMaxes() = 0;
         virtual double getMinX() = 0;
         virtual double getMinY() = 0;
         virtual double getMinZ() = 0;

@@ -17,45 +17,48 @@ void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Ob
     double mb = object2->getMass();
     Matrix iaInverse = object1->getInertiaTensorInverse();
     Matrix ibInverse = object2->getInertiaTensorInverse();
+    Point rxb = rb.crossProduct(normal);
+    Point rxa = ra.crossProduct(normal);
 
     double top = -(1 + e) * (vbi - vai).dotProduct(normal);
-    double bottom = 1 / ma + 1 / mb + ((iaInverse * ra.crossProduct(normal)).crossProduct(ra)
-        + (ibInverse * rb.crossProduct(normal)).crossProduct(rb)).dotProduct(normal);
+    double bottom = 1 / ma + 1 / mb + ((iaInverse * rxa).crossProduct(ra)
+        + (ibInverse * rxb).crossProduct(rb)).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    object1->queueImpulse(normal, ra.crossProduct(normal), -jr, mb);
-    object2->queueImpulse(normal, rb.crossProduct(normal), jr, ma);
+    object1->queueImpulse(normal, rxa, -jr, mb);
+    object2->queueImpulse(normal, rxb, jr, ma);
 }
 
 bool CollisionResponseAlgorithm::handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
     Plane* plane = dynamic_cast<Plane*>(staticObject);
-    if (plane && normal.hasSameDirection(Point(0, 1, 0), 0.01)) {
-        Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
-        Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
-        if (ball) {
-            Point vn = normal * normal.dotProduct(vi);
-            Point vsn = normal * normal.dotProduct(vsi);
-            if ((vn - vsn).getMagnitude() < 1) {
+    if (!plane || !normal.hasSameDirection(Point(0, 1, 0), 0.01)) return false;
+
+    Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
+    Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
+    if (ball) {
+        Point vn = normal * normal.dotProduct(vi);
+        Point vsn = normal * normal.dotProduct(vsi);
+        if ((vn - vsn).getMagnitude() < 1) {
+            nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+            return true;
+        };
+    }
+    else if (capsule) {
+        Point vn = normal * normal.dotProduct(vi);
+        Point vsn = normal * normal.dotProduct(vsi);
+        if ((vn - vsn).getMagnitude() < 1) {
+            if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
+                nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
                 nonStaticObject->setVel(nonStaticObject->getVel() - vn);
                 return true;
-            };
-        }
-        else if (capsule) {
-            Point vn = normal * normal.dotProduct(vi);
-            Point vsn = normal * normal.dotProduct(vsi);
-            if ((vn - vsn).getMagnitude() < 1) {
-                if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
-                    nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
-                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                    return true;
-                }
-                else if (abs(normal.dotProduct(capsule->getAxisDirection())) > 0.9) {
-                    nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                    return true;
-                }
-            };
-        }
+            }
+            else if (abs(normal.dotProduct(capsule->getAxisDirection())) > 0.9) {
+                nonStaticObject->setVel(nonStaticObject->getVel() - vn);
+                return true;
+            }
+        };
     }
+
     return false;
 }
 
@@ -71,22 +74,24 @@ void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, 
     double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     double m = nonStaticObject->getMass();
     Matrix iInverse = nonStaticObject->getInertiaTensorInverse();
+    Point rxn = r.crossProduct(normal);
 
     double top = -(1 + e) * (vi - vsi).dotProduct(normal);
-    double bottom = 1 / m + (iInverse * r.crossProduct(normal)).crossProduct(r).dotProduct(normal);
+    double bottom = 1 / m + (iInverse * rxn).crossProduct(r).dotProduct(normal);
     double jr = abs(top / bottom);
 
-    nonStaticObject->queueImpulse(normal, r.crossProduct(normal), jr, INF);
+    nonStaticObject->queueImpulse(normal, rxn, jr, INF);
 }
 
 void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collisionMap) {
     // Calculate per-collision impulses
     for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
-        Object* object1 = mapEntry.second.getObject1();
-        Object* object2 = mapEntry.second.getObject2();
-        Point collisionPoint = mapEntry.second.getPoint();
-        Point collisionNormal = mapEntry.second.getNormal();
+        Collision collision = mapEntry.second;
+        if (collision.getLastPenetrationDepth() != -1 && collision.getPenetrationDepth() < collision.getLastPenetrationDepth()) continue;
+        Object* object1 = collision.getObject1();
+        Object* object2 = collision.getObject2();
+        Point collisionPoint = collision.getPoint();
+        Point collisionNormal = collision.getNormal();
         if (object1->getIsStatic()) calculateStaticCollision(object1, object2, collisionPoint, collisionNormal);
         else if (object2->getIsStatic()) calculateStaticCollision(object2, object1, collisionPoint, collisionNormal * -1);
         else calculateNonStaticCollision(object1, object2, collisionPoint, collisionNormal);
@@ -94,10 +99,9 @@ void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collis
 
     // Calculate net impulse and apply it
     for (auto mapEntry : collisionMap) {
-        if (mapEntry.second.getLastPenetrationDepth() != -1 && mapEntry.second.getPenetrationDepth() < mapEntry.second.getLastPenetrationDepth()) continue;
-        Object* object1 = mapEntry.second.getObject1();
-        Object* object2 = mapEntry.second.getObject2();
-        object1->applyQueuedImpulses();
-        object2->applyQueuedImpulses();
+        Collision collision = mapEntry.second;
+        if (collision.getLastPenetrationDepth() != -1 && collision.getPenetrationDepth() < collision.getLastPenetrationDepth()) continue;
+        collision.getObject1()->applyQueuedImpulses();
+        collision.getObject2()->applyQueuedImpulses();
     }
 }

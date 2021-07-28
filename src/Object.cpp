@@ -2,13 +2,6 @@
 
 using namespace std;
 
-Impulse::Impulse(Point normal, Point tangent, double magnitude, double mass) {
-    this->normal = normal;
-    this->tangent = tangent;
-    this->magnitude = magnitude;
-    this->mass = mass;
-}
-
 Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, double mass, double elasticityCoef, Color color) {
     this->isStatic = isStatic;
     this->pos = pos;
@@ -26,11 +19,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->aabb = NULL;
 }
 
-bool Object::isMoving(){
-    return vel.isZero();
-}
-
-double Object::getMass(){
+double Object::getMass() {
     return mass;
 }
 
@@ -50,11 +39,11 @@ Point Object::getAngularVelocity() {
     return angularVelocity;
 }
 
-Point Object::getPos(){
+Point Object::getPos() {
     return pos;
 }
 
-Point Object::getVel(){
+Point Object::getVel() {
     return vel;
 }
 

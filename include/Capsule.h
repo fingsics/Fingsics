@@ -17,6 +17,7 @@ private:
     double length;
     int lats;
     int longs;
+    Point axisDirection;
 public:
     Point getAxisDirection();
     double getRadius();
@@ -25,14 +26,13 @@ public:
     Point getCylinderNegativeEnd();
     Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double, int, int);
     void drawObject();
-    double* getMins();
-    double* getMaxes();
     double getMinX();
     double getMinY();
     double getMinZ();
     double getMaxX();
     double getMaxY();
     double getMaxZ();
+    void setRotation(Matrix);
 };
 
 #endif

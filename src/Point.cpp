@@ -38,7 +38,7 @@ Point Point::abs() {
     return Point(fabs(x), fabs(y), fabs(z));
 }
 
-double Point::getMagnitude(){
+double Point::getMagnitude() {
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
@@ -76,11 +76,11 @@ Point Point::rotate(Point angleInDegrees) {
     return Point(temp2.getX() * cos(angle.getY()) + temp2.getZ() * sin(angle.getY()), temp2.getY(), -temp2.getX() * sin(angle.getY()) + temp2.getZ() * cos(angle.getY())); 
 }
 
-double Point::dotProduct(Point vector2){
+double Point::dotProduct(Point vector2) {
     return (x * vector2.getX()) + (y * vector2.getY()) + (z * vector2.getZ());
 }
 
-Point Point::crossProduct(Point vector2){
+Point Point::crossProduct(Point vector2) {
     return Point(
         y * vector2.getZ() - z * vector2.getY(),
         z * vector2.getX() - x * vector2.getZ(),
@@ -94,19 +94,19 @@ Point Point::operator/(Point divisor) {
                  fabs(divisor.getZ()) > EPSILON ? z / divisor.getZ() : 0);
 }
 
-Point Point::operator-(Point vector2){
+Point Point::operator-(Point vector2) {
     return Point(x - vector2.getX(), y - vector2.getY(), z - vector2.getZ());
 }
 
-Point Point::operator+(Point vector2){
+Point Point::operator+(Point vector2) {
     return Point(x + vector2.getX(), y + vector2.getY(), z + vector2.getZ());
 }
 
-Point Point::operator/(double divisor){
+Point Point::operator/(double divisor) {
     return Point(x / divisor, y / divisor, z / divisor);
 }
 
-Point Point::operator*(double divisor){
+Point Point::operator*(double divisor) {
     return Point(x * divisor, y * divisor, z * divisor);
 }
 

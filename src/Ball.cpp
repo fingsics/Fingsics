@@ -14,7 +14,7 @@ Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point an
     this->obb = OBB(pos, Point(radius, radius, radius), rotationMatrix);
 }
 
-double Ball::getRadius(){
+double Ball::getRadius() {
     return radius;
 }
 
@@ -50,10 +50,10 @@ void Ball::drawObject() {
             t = ((double) j) / longs;
 
             glNormal3d(x * zr0, y * zr0, z0);
-            glVertex3d(radius *x * zr0, radius *y * zr0, radius *z0);
+            glVertex3d(radius * x * zr0, radius * y * zr0, radius * z0);
 
             glNormal3d(x * zr1, y * zr1, z1);
-            glVertex3d(radius *x * zr1, radius * y * zr1, radius *z1);
+            glVertex3d(radius * x * zr1, radius * y * zr1, radius * z1);
         }
         glEnd();
 
@@ -63,22 +63,6 @@ void Ball::drawObject() {
 
 Matrix Ball::getInertiaTensorInverse() {
     return invertedInertiaTensor;
-}
-
-double* Ball::getMins() {
-    double* aabbMin = new double[3];
-    aabbMin[0] = getMinX();
-    aabbMin[1] = getMinY();
-    aabbMin[2] = getMinZ();
-    return aabbMin;
-}
-
-double* Ball::getMaxes() {
-    double* aabbMax = new double[3];
-    aabbMax[0] = getMaxX();
-    aabbMax[1] = getMaxY();
-    aabbMax[2] = getMaxZ();
-    return aabbMax;
 }
 
 double Ball::getMinX() {

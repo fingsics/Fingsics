@@ -16,7 +16,8 @@ map<string, pair<Object*, Object*>> OBBMidPhase::getCollisions(map<string, pair<
     return obbCollisions;
 }
 
-// http://gamma.cs.unc.edu/SSV/obb.pdf
+// Ideas from: http://gamma.cs.unc.edu/SSV/obb.pdf
+// Code from: https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=5
 bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
     Point a = obb1.getHalfLengths();
     Point pos1 = obb1.getPosition();
@@ -30,7 +31,6 @@ bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
     Point T = A * v; // To calculate T in ObjectA's the coordenate system, we use the basis change matrix A
     Matrix R = A * B.transpose(); // ObjectB's rotation relative to ObjectA
 
-    Point L;
     float ra, rb, tl;
 
     // A faces tests (3)

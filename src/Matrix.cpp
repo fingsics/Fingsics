@@ -82,22 +82,22 @@ double Matrix::det() {
 
 Matrix Matrix::transpose() {
     return Matrix(values[0][0], values[1][0], values[2][0],
-                    values[0][1], values[1][1], values[2][1],
-                    values[0][2], values[1][2], values[2][2]);
+                  values[0][1], values[1][1], values[2][1],
+                  values[0][2], values[1][2], values[2][2]);
 }
 
 Matrix Matrix::inverse() {
     double invdet = 1 / det();
 
     return Matrix((values[1][1] * values[2][2] - values[2][1] * values[1][2]) * invdet,
-                    (values[0][2] * values[2][1] - values[0][1] * values[2][2]) * invdet,
-                    (values[0][1] * values[1][2] - values[0][2] * values[1][1]) * invdet,
-                    (values[1][2] * values[2][0] - values[1][0] * values[2][2]) * invdet,
-                    (values[0][0] * values[2][2] - values[0][2] * values[2][0]) * invdet,
-                    (values[1][0] * values[0][2] - values[0][0] * values[1][2]) * invdet,
-                    (values[1][0] * values[2][1] - values[2][0] * values[1][1]) * invdet,
-                    (values[2][0] * values[0][1] - values[0][0] * values[2][1]) * invdet,
-                    (values[0][0] * values[1][1] - values[1][0] * values[0][1]) * invdet);
+                  (values[0][2] * values[2][1] - values[0][1] * values[2][2]) * invdet,
+                  (values[0][1] * values[1][2] - values[0][2] * values[1][1]) * invdet,
+                  (values[1][2] * values[2][0] - values[1][0] * values[2][2]) * invdet,
+                  (values[0][0] * values[2][2] - values[0][2] * values[2][0]) * invdet,
+                  (values[1][0] * values[0][2] - values[0][0] * values[1][2]) * invdet,
+                  (values[1][0] * values[2][1] - values[2][0] * values[1][1]) * invdet,
+                  (values[2][0] * values[0][1] - values[0][0] * values[2][1]) * invdet,
+                  (values[0][0] * values[1][1] - values[1][0] * values[0][1]) * invdet);
 }
 
 Point Matrix::row(int i) {

@@ -7,6 +7,7 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     this->radius = radius;
     this->lats = lats;
     this->longs = longs;
+    this->axisDirection = rotationMatrix * Point(0, 0, 1);
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
     double extraLengthFactor = 2.0 / 3.0;
@@ -20,8 +21,15 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     this->obb = OBB(pos, Point(radius, radius, length / 2 + radius), rotationMatrix);
 }
 
+void Capsule::setRotation(Matrix rotationMatrix) {
+    this->rotationMatrix = rotationMatrix;
+    invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
+    obb.setRotation(rotationMatrix);
+    axisDirection = rotationMatrix * Point(0, 0, 1);
+}
+
 Point Capsule::getAxisDirection() {
-    return rotationMatrix * Point(0,0,1);
+    return axisDirection;
 }
 
 double Capsule::getRadius() {
@@ -33,11 +41,11 @@ double Capsule::getLength() {
 }
 
 Point Capsule::getCylinderPositiveEnd() {
-    return pos + getAxisDirection() * length / 2;
+    return pos + axisDirection * length / 2;
 }
 
 Point Capsule::getCylinderNegativeEnd() {
-    return pos - getAxisDirection() * length / 2;
+    return pos - axisDirection * length / 2;
 }
 
 void Capsule::drawObject() {
@@ -48,7 +56,7 @@ void Capsule::drawObject() {
     glMultMatrixd(getOpenGLRotationMatrix());
     glTranslated(0, 0,-length / 2.0);
 
-    double evenLats = (lats % 2 == 0) ? lats: lats + 1;
+    double evenLats = (lats % 2 == 0) ? lats : lats + 1;
     double evenLongs = (longs % 2 == 0) ? longs : longs + 1;
     for (int i = 0; i <= evenLats; i++) {
         double lat0 = M_PI * (-0.5 + (double)(i - 1) / evenLats);
@@ -107,22 +115,6 @@ void Capsule::drawObject() {
         }
     }
     glPopMatrix();
-}
-
-double* Capsule::getMins() {
-    double* aabbMin = new double[3];
-    aabbMin[0] = getMinX();
-    aabbMin[1] = getMinY();
-    aabbMin[2] = getMinZ();
-    return aabbMin;
-}
-
-double* Capsule::getMaxes() {
-    double* aabbMax = new double[3];
-    aabbMax[0] = getMaxX();
-    aabbMax[1] = getMaxY();
-    aabbMax[2] = getMaxZ();
-    return aabbMax;
 }
 
 double Capsule::getMinX() {
