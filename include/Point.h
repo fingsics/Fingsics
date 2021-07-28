@@ -9,36 +9,36 @@ using namespace std;
 
 class Point {
     private:
-        double x;
-        double y;
-        double z;
+        float x;
+        float y;
+        float z;
     public:
-        Point(double, double, double);
+        Point(float, float, float);
         Point();
-        double getX();
-        double getY();
-        double getZ();
-        double dotProduct(Point);
+        float getX();
+        float getY();
+        float getZ();
+        float dotProduct(Point);
         Point crossProduct(Point);
-        double getMagnitude();
-        double getMagnitudeSqr();
+        float getMagnitude();
+        float getMagnitudeSqr();
         Point invert();
         Point normalize();
         Point abs();
         bool isZero();
-        bool isZero(double);
-        Point addIfComponentNotZero(Point, double);
+        bool isZero(float);
+        Point addIfComponentNotZero(Point, float);
         Point rotate(Point);
         Point operator/(Point);
         Point operator-(Point);
         Point operator+(Point);
-        Point operator/(double);
-        Point operator*(double);
+        Point operator/(float);
+        Point operator*(float);
         Point operator*(Point);
-        double operator[](int i);
+        float operator[](int i);
         bool equals(Point);
-        bool equals(Point, double);
-        bool hasSameDirection(Point, double);
+        bool equals(Point, float);
+        bool hasSameDirection(Point, float);
 };
 
 #endif

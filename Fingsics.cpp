@@ -21,11 +21,11 @@
 using namespace std;
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
-    double minFrameTime = 1.0 / fps;
-    secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
+    float minFrameTime = 1.0 / fps;
+    secondsSinceLastFrame = (float)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     if (secondsSinceLastFrame < minFrameTime && shouldSleep) {
         std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
-        secondsSinceLastFrame = (double)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
+        secondsSinceLastFrame = (float)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     }
     lastFrameTime = clock();
 }

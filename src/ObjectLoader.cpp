@@ -1,6 +1,6 @@
 #include "../include/ObjectLoader.h"
 
-CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, double m, double ec, Color c, bool s) {
+CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float m, float ec, Color c, bool s) {
     pos = p;
     vel = v;
     ang = a;
@@ -24,7 +24,7 @@ vector<Object*> ObjectLoader::getObjects() {
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
 
     vector<Object*> objects = vector<Object*>();
-    double x, y, z, radius, mass, elasticityCoef, vx, vy, vz;
+    float x, y, z, radius, mass, elasticityCoef, vx, vy, vz;
     int colorR, colorG, colorB;
     tinyxml2::XMLElement* xmlObjects = config->FirstChildElement("objects");
     for (tinyxml2::XMLElement* xmlObject = xmlObjects->FirstChildElement(); xmlObject; xmlObject = xmlObject->NextSiblingElement()) {
@@ -42,7 +42,7 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     Point pos, vel, ang, angVel, acceleration;
     Color color;
     bool isStatic;
-    double radius, mass, elasticityCoef;
+    float radius, mass, elasticityCoef;
     tinyxml2::XMLError parseError;
 
     parseError = xmlObject->QueryStringAttribute("pos", &posChar);
@@ -55,9 +55,9 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) * M_PI / 180 : Point(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("acceleration", &accelerationChar);
     acceleration = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(accelerationChar) : Point(0, 0, 0);
-    parseError = xmlObject->QueryDoubleAttribute("mass", &mass);
+    parseError = xmlObject->QueryFloatAttribute("mass", &mass);
     mass = (parseError == tinyxml2::XML_SUCCESS) ? mass : 1;
-    parseError = xmlObject->QueryDoubleAttribute("elasticityCoef", &elasticityCoef);
+    parseError = xmlObject->QueryFloatAttribute("elasticityCoef", &elasticityCoef);
     elasticityCoef = (parseError == tinyxml2::XML_SUCCESS) ? elasticityCoef : 1;
     parseError = xmlObject->QueryStringAttribute("color", &colorChar);
     color = (parseError == tinyxml2::XML_SUCCESS) ? parseColor(colorChar) : Color(200, 200, 200);
@@ -69,40 +69,40 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
 
 Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
-    double radius;
+    float radius;
     tinyxml2::XMLError parseError;
-    parseError = xmlObject->QueryDoubleAttribute("radius", &radius);
+    parseError = xmlObject->QueryFloatAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, numLatLongs, numLatLongs);
 }
 
 Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
-    double radius, length;
+    float radius, length;
     tinyxml2::XMLError parseError;
-    parseError = xmlObject->QueryDoubleAttribute("radius", &radius);
+    parseError = xmlObject->QueryFloatAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
-    parseError = xmlObject->QueryDoubleAttribute("length", &length);
+    parseError = xmlObject->QueryFloatAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
     return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length, numLatLongs, numLatLongs);
 }
 
 Plane* ObjectLoader::loadPlane(tinyxml2::XMLElement* xmlObject, string id) {
     CommonFields commonFields = parseCommonFields(xmlObject);
-    double drawLength, drawWidth;
+    float drawLength, drawWidth;
     tinyxml2::XMLError parseError;
-    parseError = xmlObject->QueryDoubleAttribute("drawLength", &drawLength);
+    parseError = xmlObject->QueryFloatAttribute("drawLength", &drawLength);
     drawLength = (parseError == tinyxml2::XML_SUCCESS) ? drawLength : 30;
-    parseError = xmlObject->QueryDoubleAttribute("drawWidth", &drawWidth);
+    parseError = xmlObject->QueryFloatAttribute("drawWidth", &drawWidth);
     drawWidth = (parseError == tinyxml2::XML_SUCCESS) ? drawWidth: 30;
     return new Plane(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, drawLength, drawWidth);
 }
 
-vector<double> ObjectLoader::parseTriplet(const char* input) {
+vector<float> ObjectLoader::parseTriplet(const char* input) {
     string stringInput = string(input);
     stringInput.erase(remove_if(stringInput.begin(), stringInput.end(), isspace), stringInput.end());
     stringstream ss(stringInput);
-    vector<double> values;
+    vector<float> values;
     while (ss.good()) {
         string substr;
         getline(ss, substr, ',');
@@ -112,11 +112,11 @@ vector<double> ObjectLoader::parseTriplet(const char* input) {
 }
 
 Point ObjectLoader::parsePoint(const char* charPoint) {
-    vector<double> values = parseTriplet(charPoint);
+    vector<float> values = parseTriplet(charPoint);
     return Point(values[0], values[1], values[2]);
 }
 
 Color ObjectLoader::parseColor(const char* charColor) {
-    vector<double> values = parseTriplet(charColor);
+    vector<float> values = parseTriplet(charColor);
     return Color(values[0], values[1], values[2]);
 }

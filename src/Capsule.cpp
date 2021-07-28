@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double radius, double length, int lats, int longs) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, float length, int lats, int longs) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
     this->lats = lats;
@@ -10,12 +10,12 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     this->axisDirection = rotationMatrix * Point(0, 0, 1);
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
-    double extraLengthFactor = 2.0 / 3.0;
-    double extraLength = (radius * 2.0) * extraLengthFactor;
+    float extraLengthFactor = 2.0 / 3.0;
+    float extraLength = (radius * 2.0) * extraLengthFactor;
 
-    double cylinderLength = length + extraLength;
-    double x = 1.0 / 12.0 * mass * (3.0 * radius * radius + cylinderLength * cylinderLength);
-    double z = 1.0 / 2.0 * mass * radius * radius;
+    float cylinderLength = length + extraLength;
+    float x = 1.0 / 12.0 * mass * (3.0 * radius * radius + cylinderLength * cylinderLength);
+    float z = 1.0 / 2.0 * mass * radius * radius;
     this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
     this->invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
     this->obb = OBB(pos, Point(radius, radius, length / 2 + radius), rotationMatrix);
@@ -32,11 +32,11 @@ Point Capsule::getAxisDirection() {
     return axisDirection;
 }
 
-double Capsule::getRadius() {
+float Capsule::getRadius() {
     return radius;
 }
 
-double Capsule::getLength() {
+float Capsule::getLength() {
     return length;
 }
 
@@ -52,20 +52,20 @@ void Capsule::drawObject() {
     Color darkColor = Color(255, 255, 255);
 
     glPushMatrix();
-    glTranslated(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixd(getOpenGLRotationMatrix());
-    glTranslated(0, 0,-length / 2.0);
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixf(getOpenGLRotationMatrix());
+    glTranslatef(0, 0,-length / 2.0);
 
-    double evenLats = (lats % 2 == 0) ? lats : lats + 1;
-    double evenLongs = (longs % 2 == 0) ? longs : longs + 1;
+    float evenLats = (lats % 2 == 0) ? lats : lats + 1;
+    float evenLongs = (longs % 2 == 0) ? longs : longs + 1;
     for (int i = 0; i <= evenLats; i++) {
-        double lat0 = M_PI * (-0.5 + (double)(i - 1) / evenLats);
-        double z0 = sin(lat0);
-        double zr0 = cos(lat0);
+        float lat0 = M_PI * (-0.5 + (float)(i - 1) / evenLats);
+        float z0 = sin(lat0);
+        float zr0 = cos(lat0);
 
-        double lat1 = M_PI * (-0.5 + (double)i / evenLats);
-        double z1 = sin(lat1);
-        double zr1 = cos(lat1);
+        float lat1 = M_PI * (-0.5 + (float)i / evenLats);
+        float z1 = sin(lat1);
+        float zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
         glBegin(GL_QUAD_STRIP);
@@ -74,13 +74,13 @@ void Capsule::drawObject() {
         {
             if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
             else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
-            double lng = 2 * M_PI * (double)(j - 1) / evenLongs;
-            double x = cos(lng);
-            double y = sin(lng);
+            float lng = 2 * M_PI * (float)(j - 1) / evenLongs;
+            float x = cos(lng);
+            float y = sin(lng);
 
-            double s1 = ((double)i) / evenLats;
-            double s2 = ((double)i + 1) / evenLats;
-            double t = ((double)j) / evenLongs;
+            float s1 = ((float)i) / evenLats;
+            float s2 = ((float)i + 1) / evenLats;
+            float t = ((float)j) / evenLongs;
 
             glNormal3d(x * zr0, y * zr0, z0);
             glVertex3d(radius * x * zr0, radius * y * zr0, radius * z0);
@@ -96,13 +96,13 @@ void Capsule::drawObject() {
             {
                 if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
                 else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
-                double lng = 2 * M_PI * (double)(j - 1) / evenLongs;
-                double x = cos(lng);
-                double y = sin(lng);
+                float lng = 2 * M_PI * (float)(j - 1) / evenLongs;
+                float x = cos(lng);
+                float y = sin(lng);
 
-                double s1 = ((double)i) / evenLats;
-                double s2 = ((double)i + 1) / evenLats;
-                double t = ((double)j) / evenLongs;
+                float s1 = ((float)i) / evenLats;
+                float s2 = ((float)i + 1) / evenLats;
+                float t = ((float)j) / evenLongs;
 
                 glNormal3d(x * zr1, y * zr1, z1);
                 glVertex3d(radius * x * zr1, radius * y * zr1, radius * z1);
@@ -117,38 +117,38 @@ void Capsule::drawObject() {
     glPopMatrix();
 }
 
-double Capsule::getMinX() {
-    double x1 = getCylinderPositiveEnd().getX();
-    double x2 = getCylinderNegativeEnd().getX();
+float Capsule::getMinX() {
+    float x1 = getCylinderPositiveEnd().getX();
+    float x2 = getCylinderNegativeEnd().getX();
     return (x1 < x2 ? x1 : x2) - radius;
 }
 
-double Capsule::getMinY() {
-    double y1 = getCylinderPositiveEnd().getY();
-    double y2 = getCylinderNegativeEnd().getY();
+float Capsule::getMinY() {
+    float y1 = getCylinderPositiveEnd().getY();
+    float y2 = getCylinderNegativeEnd().getY();
     return (y1 < y2 ? y1 : y2) - radius;
 }
 
-double Capsule::getMinZ() {
-    double z1 = getCylinderPositiveEnd().getZ();
-    double z2 = getCylinderNegativeEnd().getZ();
+float Capsule::getMinZ() {
+    float z1 = getCylinderPositiveEnd().getZ();
+    float z2 = getCylinderNegativeEnd().getZ();
     return (z1 < z2 ? z1 : z2) - radius;
 }
 
-double Capsule::getMaxX() {
-    double x1 = getCylinderPositiveEnd().getX();
-    double x2 = getCylinderNegativeEnd().getX();
+float Capsule::getMaxX() {
+    float x1 = getCylinderPositiveEnd().getX();
+    float x2 = getCylinderNegativeEnd().getX();
     return (x1 > x2 ? x1 : x2) + radius;
 }
 
-double Capsule::getMaxY() {
-    double y1 = getCylinderPositiveEnd().getY();
-    double y2 = getCylinderNegativeEnd().getY();
+float Capsule::getMaxY() {
+    float y1 = getCylinderPositiveEnd().getY();
+    float y2 = getCylinderNegativeEnd().getY();
     return (y1 > y2 ? y1 : y2) + radius;
 }
 
-double Capsule::getMaxZ() {
-    double z1 = getCylinderPositiveEnd().getZ();
-    double z2 = getCylinderNegativeEnd().getZ();
+float Capsule::getMaxZ() {
+    float z1 = getCylinderPositiveEnd().getZ();
+    float z2 = getCylinderNegativeEnd().getZ();
     return (z1 > z2 ? z1 : z2) + radius;
 }

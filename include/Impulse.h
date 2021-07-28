@@ -8,9 +8,9 @@ using namespace std;
 struct Impulse {
     Point normal;
     Point tangent;
-    double magnitude;
-    double mass;
-    Impulse(Point, Point, double, double);
+    float magnitude;
+    float mass;
+    Impulse(Point, Point, float, float);
 };
 
 #endif

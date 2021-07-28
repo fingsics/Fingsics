@@ -1,6 +1,6 @@
 #include "../include/FreeCamera.h"
 
-FreeCamera::FreeCamera(Point eye, double pitch, double yaw): Camera() {
+FreeCamera::FreeCamera(Point eye, float pitch, float yaw): Camera() {
     this->eye = eye;
     this->pitch = pitch;
     this->yaw = yaw;
@@ -17,13 +17,13 @@ Point FreeCamera::getCenter() {
 }
 
 void FreeCamera::lookAt() {
-    double eyeX = eye.getX();
-    double eyeY = eye.getY();
-    double eyeZ = eye.getZ();
+    float eyeX = eye.getX();
+    float eyeY = eye.getY();
+    float eyeZ = eye.getZ();
     Point center = getCenter();
-    double upX = 0;
-    double upY = 1;
-    double upZ = 0;
+    float upX = 0;
+    float upY = 1;
+    float upZ = 0;
     gluLookAt(eyeX,eyeY,eyeZ,center.getX(),center.getY(),center.getZ(),upX,upY,upZ);
 }
 

@@ -12,11 +12,11 @@ using namespace std;
 class FreeCamera: public Camera {
 private:
     Point eye;
-    double pitch;
-    double yaw;
+    float pitch;
+    float yaw;
     Point getCenter();
 public:
-    FreeCamera(Point, double, double);
+    FreeCamera(Point, float, float);
     FreeCamera();
     void lookAt();
     void eventUpdate(SDL_Event);

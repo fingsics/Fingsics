@@ -1,20 +1,8 @@
 #include "../include/Matrix.h"
 
-Matrix::Matrix(double* row0, double* row1, double* row2) {
-    this->values[0][0] = row0[0];
-    this->values[0][1] = row0[1];
-    this->values[0][2] = row0[2];
-    this->values[1][0] = row1[0];
-    this->values[1][1] = row1[1];
-    this->values[1][2] = row1[2];
-    this->values[2][0] = row2[0];
-    this->values[2][1] = row2[1];
-    this->values[2][2] = row2[2];
-}
-
 Matrix::Matrix(Point row0, Point row1, Point row2) : Matrix::Matrix(row0.getX(), row0.getY(), row0.getZ(), row1.getX(), row1.getY(), row1.getZ(), row2.getX(), row2.getY(), row2.getZ()) {}
 
-Matrix::Matrix(double v00, double v01, double v02, double v10, double v11, double v12, double v20, double v21, double v22) {
+Matrix::Matrix(float v00, float v01, float v02, float v10, float v11, float v12, float v20, float v21, float v22) {
     this->values[0][0] = v00;
     this->values[0][1] = v01;
     this->values[0][2] = v02;
@@ -64,8 +52,8 @@ Matrix::Matrix(Point angles) {
     this->values[2][2] = res[2][2];
 }
 
-GLdouble* Matrix::getOpenGLRotationMatrix() {
-    GLdouble ret[16] = { values[0][0], values[1][0], values[2][0], 0,
+GLfloat* Matrix::getOpenGLRotationMatrix() {
+    GLfloat ret[16] = { values[0][0], values[1][0], values[2][0], 0,
                          values[0][1], values[1][1], values[2][1], 0,
                          values[0][2], values[1][2], values[2][2], 0,
                          0, 0, 0, 1 };
@@ -73,7 +61,7 @@ GLdouble* Matrix::getOpenGLRotationMatrix() {
 
 }
 
-double Matrix::det() {
+float Matrix::det() {
     return values[0][0] * (values[1][1] * values[2][2] - values[2][1] * values[1][2]) -
            values[0][1] * (values[1][0] * values[2][2] - values[1][2] * values[2][0]) +
            values[0][2] * (values[1][0] * values[2][1] - values[1][1] * values[2][0]);
@@ -87,7 +75,7 @@ Matrix Matrix::transpose() {
 }
 
 Matrix Matrix::inverse() {
-    double invdet = 1 / det();
+    float invdet = 1 / det();
 
     return Matrix((values[1][1] * values[2][2] - values[2][1] * values[1][2]) * invdet,
                   (values[0][2] * values[2][1] - values[0][1] * values[2][2]) * invdet,
@@ -126,14 +114,14 @@ Point Matrix::col(int i) {
     }
 }
 
-Matrix Matrix::operator*(double scalar) {
+Matrix Matrix::operator*(float scalar) {
     return Matrix(values[0][0] * scalar, values[0][1] * scalar, values[0][2] * scalar,
                   values[1][0] * scalar, values[1][1] * scalar, values[1][2] * scalar,
                   values[2][0] * scalar, values[2][1] * scalar, values[2][2] * scalar);
                   
 }
 
-Matrix Matrix::operator/(double scalar) {
+Matrix Matrix::operator/(float scalar) {
     return Matrix(values[0][0] / scalar, values[0][1] / scalar, values[0][2] / scalar,
                   values[1][0] / scalar, values[1][1] / scalar, values[1][2] / scalar,
                   values[2][0] / scalar, values[2][1] / scalar, values[2][2] / scalar);
@@ -152,6 +140,6 @@ Matrix Matrix::operator*(Matrix other) {
                     row(2).dotProduct(other.col(0)), row(2).dotProduct(other.col(1)), row(2).dotProduct(other.col(2)));
 }
 
-double* Matrix::operator[](int i) {
+float* Matrix::operator[](int i) {
     return values[i];
 }

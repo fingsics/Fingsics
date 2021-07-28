@@ -13,21 +13,21 @@ using namespace std;
 
 class Plane : public Object {
     private:
-        double drawLength;
-        double drawWidth;
+        float drawLength;
+        float drawWidth;
     public:
-        Plane(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double);
+        Plane(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float);
         void drawObject();
         Point getNormal();
         Matrix getInertiaTensor();
         void drawOBB();
         void drawAABB();
-        double getMinX();
-        double getMinY();
-        double getMinZ();
-        double getMaxX();
-        double getMaxY();
-        double getMaxZ();
+        float getMinX();
+        float getMinY();
+        float getMinZ();
+        float getMaxX();
+        float getMaxY();
+        float getMaxZ();
 };
 
 #endif

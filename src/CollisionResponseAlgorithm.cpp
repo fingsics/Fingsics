@@ -12,18 +12,18 @@ void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Ob
     Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
     Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
 
-    double e = (object1->getElasticity() + object2->getElasticity()) / 2;
-    double ma = object1->getMass();
-    double mb = object2->getMass();
+    float e = (object1->getElasticity() + object2->getElasticity()) / 2;
+    float ma = object1->getMass();
+    float mb = object2->getMass();
     Matrix iaInverse = object1->getInertiaTensorInverse();
     Matrix ibInverse = object2->getInertiaTensorInverse();
     Point rxb = rb.crossProduct(normal);
     Point rxa = ra.crossProduct(normal);
 
-    double top = -(1 + e) * (vbi - vai).dotProduct(normal);
-    double bottom = 1 / ma + 1 / mb + ((iaInverse * rxa).crossProduct(ra)
+    float top = -(1 + e) * (vbi - vai).dotProduct(normal);
+    float bottom = 1 / ma + 1 / mb + ((iaInverse * rxa).crossProduct(ra)
         + (ibInverse * rxb).crossProduct(rb)).dotProduct(normal);
-    double jr = abs(top / bottom);
+    float jr = abs(top / bottom);
 
     object1->queueImpulse(normal, rxa, -jr, mb);
     object2->queueImpulse(normal, rxb, jr, ma);
@@ -71,14 +71,14 @@ void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, 
 
     if (handleContact(staticObject, nonStaticObject, normal, vi, vsi)) return;
 
-    double e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
-    double m = nonStaticObject->getMass();
+    float e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
+    float m = nonStaticObject->getMass();
     Matrix iInverse = nonStaticObject->getInertiaTensorInverse();
     Point rxn = r.crossProduct(normal);
 
-    double top = -(1 + e) * (vi - vsi).dotProduct(normal);
-    double bottom = 1 / m + (iInverse * rxn).crossProduct(r).dotProduct(normal);
-    double jr = abs(top / bottom);
+    float top = -(1 + e) * (vi - vsi).dotProduct(normal);
+    float bottom = 1 / m + (iInverse * rxn).crossProduct(r).dotProduct(normal);
+    float jr = abs(top / bottom);
 
     nonStaticObject->queueImpulse(normal, rxn, jr, INF);
 }

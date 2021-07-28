@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Point::Point(double x, double y, double z) {
+Point::Point(float x, float y, float z) {
     this->x = x;
     this->y = y;
     this->z = z;
@@ -14,15 +14,15 @@ Point::Point() {
     this->z = 0;
 }
 
-double Point::getX() {
+float Point::getX() {
   return x;
 }
 
-double Point::getY() {
+float Point::getY() {
   return y;
 }
 
-double Point::getZ() {
+float Point::getZ() {
   return z;
 }
 
@@ -38,11 +38,11 @@ Point Point::abs() {
     return Point(fabs(x), fabs(y), fabs(z));
 }
 
-double Point::getMagnitude() {
+float Point::getMagnitude() {
     return sqrt(pow(x,2) + pow(y,2) + pow(z,2));
 }
 
-double Point::getMagnitudeSqr() {
+float Point::getMagnitudeSqr() {
     return pow(x, 2) + pow(y, 2) + pow(z, 2);
 }
 
@@ -50,14 +50,14 @@ bool Point::isZero() {
     return fabs(x) < EPSILON && fabs(y) < EPSILON && fabs(z) < EPSILON;
 }
 
-bool Point::isZero(double tolerance) {
+bool Point::isZero(float tolerance) {
     return fabs(x) < tolerance && fabs(y) < tolerance && fabs(z) < tolerance;
 }
 
-Point Point::addIfComponentNotZero(Point vector, double value) {
-    double retX = x;
-    double retY = y;
-    double retZ = z;
+Point Point::addIfComponentNotZero(Point vector, float value) {
+    float retX = x;
+    float retY = y;
+    float retZ = z;
     if (fabs(vector.getX()) > EPSILON) retX += value;
     if (fabs(vector.getY()) > EPSILON) retY += value;
     if (fabs(vector.getZ()) > EPSILON) retZ += value;
@@ -76,7 +76,7 @@ Point Point::rotate(Point angleInDegrees) {
     return Point(temp2.getX() * cos(angle.getY()) + temp2.getZ() * sin(angle.getY()), temp2.getY(), -temp2.getX() * sin(angle.getY()) + temp2.getZ() * cos(angle.getY())); 
 }
 
-double Point::dotProduct(Point vector2) {
+float Point::dotProduct(Point vector2) {
     return (x * vector2.getX()) + (y * vector2.getY()) + (z * vector2.getZ());
 }
 
@@ -102,11 +102,11 @@ Point Point::operator+(Point vector2) {
     return Point(x + vector2.getX(), y + vector2.getY(), z + vector2.getZ());
 }
 
-Point Point::operator/(double divisor) {
+Point Point::operator/(float divisor) {
     return Point(x / divisor, y / divisor, z / divisor);
 }
 
-Point Point::operator*(double divisor) {
+Point Point::operator*(float divisor) {
     return Point(x * divisor, y * divisor, z * divisor);
 }
 
@@ -114,7 +114,7 @@ Point Point::operator*(Point other) {
     return Point(x * other.getX(), y * other.getY(), z * other.getZ());
 }
 
-double Point::operator[](int i) {
+float Point::operator[](int i) {
     if (i == 0) return x;
     else if (i == 1) return y;
     else if (i == 2) return z;
@@ -126,13 +126,13 @@ bool Point::equals(Point other) {
     return diff.getMagnitudeSqr() < S_EPSILON;
 }
 
-bool Point::equals(Point other, double tolerance) {
+bool Point::equals(Point other, float tolerance) {
     Point diff = *this - other;
     return diff.getMagnitudeSqr() < tolerance;
 }
 
-bool Point::hasSameDirection(Point other, double tolerance) {
-    double coef;
+bool Point::hasSameDirection(Point other, float tolerance) {
+    float coef;
     if (fabs(x) > tolerance) {
         coef = other.getX() / x;
     } else if (fabs(y) > tolerance) {

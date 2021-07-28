@@ -2,9 +2,9 @@
 
 using namespace std;
 
-Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, double ballRadius, Point planePoint, Point planeNormal) {
-    double d = planeNormal.dotProduct(ballCenter - planePoint);
-    double absD= abs(d);
+Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, Point planePoint, Point planeNormal) {
+    float d = planeNormal.dotProduct(ballCenter - planePoint);
+    float absD= abs(d);
     if (absD < ballRadius) {
         Point normal = (d > 0) ? planeNormal : planeNormal * -1;
         Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
@@ -26,19 +26,19 @@ Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
 }
 
 
-Collision* NarrowPhaseAlgorithm::ballBall(Point center1, double radius1, Point center2, double radius2) {
+Collision* NarrowPhaseAlgorithm::ballBall(Point center1, float radius1, Point center2, float radius2) {
     Point normalVector = center2 - center1;
-    double normalMagnitude = normalVector.getMagnitude();
-    double radiusSum = radius1 + radius2;
+    float normalMagnitude = normalVector.getMagnitude();
+    float radiusSum = radius1 + radius2;
     if (normalMagnitude < radiusSum) {
-        double radiusRatio = radius2 / radiusSum;
+        float radiusRatio = radius2 / radiusSum;
         Point collisionPoint = center1 + normalVector * radiusRatio;
         return new Collision(collisionPoint, normalVector / normalMagnitude, radiusSum - normalMagnitude);
     }
     return NULL;
 }
 
-Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, double ballRadius, Point cylinderCenter, double cylinderRadius, double cylinderLength, Point cylinderAxisDirection) {
+Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, float ballRadius, Point cylinderCenter, float cylinderRadius, float cylinderLength, Point cylinderAxisDirection) {
     // https://gamedev.stackexchange.com/questions/72528/how-can-i-project-a-3d-point-onto-a-3d-line
     Point AB = cylinderAxisDirection;
     Point AP = ballCenter - cylinderCenter;
@@ -47,8 +47,8 @@ Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, double ballRadiu
     if (displacementFromA.getMagnitudeSqr() < pow(cylinderLength / 2, 2)) {
         Point projection = cylinderCenter + displacementFromA;
         Point projectionToCenter = ballCenter - projection;
-        double distance = projectionToCenter.getMagnitude();
-        double radiusSum = ballRadius + cylinderRadius;
+        float distance = projectionToCenter.getMagnitude();
+        float radiusSum = ballRadius + cylinderRadius;
         if (distance < radiusSum) {
             Point collisionNormal = projectionToCenter.invert().normalize();
             Point collisionPoint = projection + collisionNormal * cylinderRadius;
@@ -62,7 +62,7 @@ Collision* NarrowPhaseAlgorithm::ballBall(Ball* ball1, Ball* ball2) {
     return ballBall(ball1->getPos(), ball1->getRadius(), ball2->getPos(), ball2->getRadius());
 }
 
-Collision* NarrowPhaseAlgorithm::ballCapsule(Point ballPos, double ballRadius, Point capsulePos, double capsuleRadius, double capsuleLength, Point capsuleAxisDirection, Point capsulePositiveEnd, Point capsuleNegativeEnd) {
+Collision* NarrowPhaseAlgorithm::ballCapsule(Point ballPos, float ballRadius, Point capsulePos, float capsuleRadius, float capsuleLength, Point capsuleAxisDirection, Point capsulePositiveEnd, Point capsuleNegativeEnd) {
     Collision* cylinderCollision = ballCylinder(ballPos, ballRadius, capsulePos, capsuleRadius, capsuleLength, capsuleAxisDirection);
     if (cylinderCollision) return cylinderCollision;
     Collision* positiveEndCollision = ballBall(ballPos, ballRadius, capsulePositiveEnd, capsuleRadius);
@@ -111,19 +111,19 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
     Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
 
     // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
-    tuple<double, double, double> solution = solveLinearSystem(LHS, RHS);
-    double distanceInAxis1 = get<0>(solution);
-    double distanceInAxis2 = get<1>(solution);
+    tuple<float, float, float> solution = solveLinearSystem(LHS, RHS);
+    float distanceInAxis1 = get<0>(solution);
+    float distanceInAxis2 = get<1>(solution);
     Point axis1Point = UA * distanceInAxis1 + capsule1->getPos();
     Point axis2Point = UB * distanceInAxis2 + capsule2->getPos();
-    double distance = abs(get<2>(solution));
-    double radiusSum = capsule1->getRadius() + capsule2->getRadius();
+    float distance = abs(get<2>(solution));
+    float radiusSum = capsule1->getRadius() + capsule2->getRadius();
 
     if (distance < radiusSum) {
         // Check collision between cylinders
         if (abs(distanceInAxis1) < capsule1->getLength() / 2 && abs(distanceInAxis2) < capsule2->getLength() / 2) {
             Point normalVector = axis2Point - axis1Point;
-            double radiusRatio = capsule2->getRadius() / radiusSum;
+            float radiusRatio = capsule2->getRadius() / radiusSum;
             Point collisionPoint = axis1Point + normalVector * radiusRatio;
             return new Collision(collisionPoint, normalVector.normalize(), radiusSum - distance);
         }

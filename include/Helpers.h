@@ -10,7 +10,7 @@ using namespace std;
 
 pair<string,pair<Object*, Object*>> getObjectPairWithId(Object*, Object*);
 
-double** getMatrixForGausianElimination(Matrix, Point);
-tuple<double, double, double> solveLinearSystem(Matrix, Point);
+float** getMatrixForGausianElimination(Matrix, Point);
+tuple<float, float, float> solveLinearSystem(Matrix, Point);
 
 #endif

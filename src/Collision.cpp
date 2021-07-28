@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Collision::Collision(Object* object1, Object* object2, Point point, Point normal, double penetrationDepth, double lastPenetrationDepth) {
+Collision::Collision(Object* object1, Object* object2, Point point, Point normal, float penetrationDepth, float lastPenetrationDepth) {
     this->object1 = object1;
     this->object2 = object2;
     this->point = point;
@@ -11,7 +11,7 @@ Collision::Collision(Object* object1, Object* object2, Point point, Point normal
     this->lastPenetrationDepth = lastPenetrationDepth;
 }
 
-Collision::Collision(Point point, Point normal, double penetrationDepth) {
+Collision::Collision(Point point, Point normal, float penetrationDepth) {
     this->object1 = NULL;
     this->object2 = NULL;
     this->point = point;
@@ -36,11 +36,11 @@ Point Collision::getNormal() {
     return normal;
 }
 
-double Collision::getPenetrationDepth() {
+float Collision::getPenetrationDepth() {
     return penetrationDepth;
 }
 
-double Collision::getLastPenetrationDepth() {
+float Collision::getLastPenetrationDepth() {
     return lastPenetrationDepth;
 }
 
@@ -53,6 +53,6 @@ void Collision::setObjects(pair<Object*, Object*> objects) {
     this->object2 = objects.second;
 }
 
-void Collision::setLastPenetrationDepth(double lastPenetrationDepth) {
+void Collision::setLastPenetrationDepth(float lastPenetrationDepth) {
     this->lastPenetrationDepth = lastPenetrationDepth;
 }

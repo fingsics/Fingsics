@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, double mass, double elasticityCoef, Color color) {
+Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color) {
     this->isStatic = isStatic;
     this->pos = pos;
     this->mass = mass;
@@ -19,7 +19,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->aabb = NULL;
 }
 
-double Object::getMass() {
+float Object::getMass() {
     return mass;
 }
 
@@ -31,7 +31,7 @@ Matrix Object::getRotationMatrix() {
     return rotationMatrix;
 }
 
-double* Object::getOpenGLRotationMatrix() {
+float* Object::getOpenGLRotationMatrix() {
     return rotationMatrix.getOpenGLRotationMatrix();
 }
 
@@ -51,7 +51,7 @@ Point Object::getAcceleration() {
     return acceleration;
 }
 
-double Object::getElasticity() {
+float Object::getElasticity() {
     return elasticityCoef;
 }
 
@@ -91,7 +91,7 @@ void Object::setAABB(AABB* aabb) {
 }
 
 
-void Object::updatePosAndVel(double secondsElapsed) {
+void Object::updatePosAndVel(float secondsElapsed) {
     if (!vel.isZero()) setPos(pos + vel * secondsElapsed);
     if (!angularVelocity.isZero()) setRotation(Matrix(angularVelocity * secondsElapsed) * rotationMatrix);
     if (!acceleration.isZero()) setVel(vel + acceleration * secondsElapsed);
@@ -101,7 +101,7 @@ Matrix Object::getInertiaTensorInverse() {
     return invertedInertiaTensor;
 }
 
-void Object::queueImpulse(Point normal, Point tangent, double magnitude, double mass) {
+void Object::queueImpulse(Point normal, Point tangent, float magnitude, float mass) {
     queuedImpulses.insert(queuedImpulses.begin(), Impulse(normal, tangent, magnitude, mass));
     velCollisionMassPerAxis = velCollisionMassPerAxis.addIfComponentNotZero(normal, mass);
     angVelCollisionMassPerAxis = angVelCollisionMassPerAxis.addIfComponentNotZero(tangent, mass);
@@ -144,7 +144,7 @@ void Object::drawOBB() {
     glPushMatrix();
 
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixd(getOpenGLRotationMatrix());
+    glMultMatrixf(getOpenGLRotationMatrix());
     glTranslatef(-dimensions.getX() / 2.0, -dimensions.getY() / 2.0, -dimensions.getZ() / 2.0);
 
     glBegin(GL_QUAD_STRIP);

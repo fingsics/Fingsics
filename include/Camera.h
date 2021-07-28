@@ -9,7 +9,7 @@ using namespace std;
 
 class Camera {
 protected:
-    double move;
+    float move;
 public:
     Camera();
     virtual void lookAt() = 0;

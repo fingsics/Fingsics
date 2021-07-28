@@ -13,20 +13,20 @@ using namespace std;
 
 class Ball : public Object {
     private:
-        double radius;
+        float radius;
         int lats;
         int longs;
     public:
-        Ball(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, int, int);
+        Ball(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, int, int);
         void drawObject();
-        double getRadius();
+        float getRadius();
         Matrix getInertiaTensorInverse();
-        double getMinX();
-        double getMinY();
-        double getMinZ();
-        double getMaxX();
-        double getMaxY();
-        double getMaxZ();
+        float getMinX();
+        float getMinY();
+        float getMinZ();
+        float getMaxX();
+        float getMaxY();
+        float getMaxZ();
 };
 
 #endif

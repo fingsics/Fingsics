@@ -6,11 +6,11 @@ pair<string,pair<Object*,Object*>> getObjectPairWithId(Object * object1, Object 
         : make_pair(object2->getId() + "-" + object1->getId(), make_pair(object2, object1));
 }
 
-double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
-        double* row0 = new double[4];
-        double* row1 = new double[4];
-        double* row2 = new double[4];
-        double** ret = new double* [3];
+float** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
+        float* row0 = new float[4];
+        float* row1 = new float[4];
+        float* row2 = new float[4];
+        float** ret = new float* [3];
         row0[0] = LHS[0][0];
         row0[1] = LHS[0][1];
         row0[2] = LHS[0][2];
@@ -30,8 +30,8 @@ double** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
 }
 
 // Works only if the system has a SINGLE solution
-tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
-    double** A = getMatrixForGausianElimination(LHS, RHS);
+tuple<float, float, float> solveLinearSystem(Matrix LHS, Point RHS) {
+    float** A = getMatrixForGausianElimination(LHS, RHS);
     int h = 0;
     int k = 0;
     int m = 3;
@@ -41,7 +41,7 @@ tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
     while (h < m && k < n) {
         // Find the k-th pivot
         int i_max = h;
-        double val_max = abs(A[h][k]);
+        float val_max = abs(A[h][k]);
         for (int g = h + 1; g < m; g++) {
             if (abs(A[g][k]) > val_max) {
                 i_max = g;
@@ -53,12 +53,12 @@ tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
         }
         else {
             // Swap rows
-            double* temp = A[h];
+            float* temp = A[h];
             A[h] = A[i_max];
             A[i_max] = temp;
             // Do for all rows below pivot
             for (int i = h + 1; i < m; i++) {
-                double f = A[i][k] / A[h][k];
+                float f = A[i][k] / A[h][k];
                 A[i][k] = 0; // Fill with zeros the lower part of pivot column
                 for (int j = k + 1; j < n; j++) A[i][j] -= A[h][j] * f; // Do for all remaining elements in current row
             }
@@ -74,7 +74,7 @@ tuple<double, double, double> solveLinearSystem(Matrix LHS, Point RHS) {
         A[i][n - 1] /= A[i][i];
     }
 
-    tuple<double, double, double> ret = tuple<double, double, double>(A[0][3], A[1][3], A[2][3]);
+    tuple<float, float, float> ret = tuple<float, float, float>(A[0][3], A[1][3], A[2][3]);
 
     // Free memory
     for (int i = 0; i < m; i++) delete[] A[i];

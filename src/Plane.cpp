@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Plane::Plane(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, double mass, double elasticityCoef, Color color, double drawLength, double drawWidth) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Plane::Plane(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float drawLength, float drawWidth) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->drawLength = drawLength / 2.0;
@@ -16,8 +16,8 @@ Point Plane::getNormal(){
 
 void Plane::drawObject() {
     glPushMatrix();
-    glTranslated(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixd(getOpenGLRotationMatrix());
+    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
+    glMultMatrixf(getOpenGLRotationMatrix());
     glColor3ub(color.getR(), color.getG(), color.getB());
     glBegin(GL_QUADS);
     glVertex3d(-drawLength, 0, drawWidth);
@@ -38,26 +38,26 @@ void Plane::drawOBB() {
 void Plane::drawAABB() {
 }
 
-double Plane::getMinX() {
+float Plane::getMinX() {
     throw "Plane AABBs aren't supported.";
 }
 
-double Plane::getMinY() {
+float Plane::getMinY() {
     throw "Plane AABBs aren't supported.";
 }
 
-double Plane::getMinZ() {
+float Plane::getMinZ() {
     throw "Plane AABBs aren't supported.";
 }
 
-double Plane::getMaxX() {
+float Plane::getMaxX() {
     throw "Plane AABBs aren't supported.";
 }
 
-double Plane::getMaxY() {
+float Plane::getMaxY() {
     throw "Plane AABBs aren't supported.";
 }
 
-double Plane::getMaxZ() {
+float Plane::getMaxZ() {
     throw "Plane AABBs aren't supported.";
 }

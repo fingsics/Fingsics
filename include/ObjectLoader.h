@@ -19,11 +19,11 @@ struct CommonFields {
 	Point ang;
 	Point angVel;
 	Point acceleration;
-	double mass;
-	double elasticityCoef;
+	float mass;
+	float elasticityCoef;
 	Color color;
 	bool isStatic;
-	CommonFields(Point, Point, Point, Point, Point, double, double, Color, bool);
+	CommonFields(Point, Point, Point, Point, Point, float, float, Color, bool);
 };
 
 class ObjectLoader {
@@ -35,7 +35,7 @@ private:
 	Ball* loadBall(tinyxml2::XMLElement*, string, int);
 	Capsule* loadCapsule(tinyxml2::XMLElement*, string, int);
 	Plane* loadPlane(tinyxml2::XMLElement*, string);
-	vector<double> parseTriplet(const char* charPoint);
+	vector<float> parseTriplet(const char* charPoint);
 	Point parsePoint(const char*);
 	Color parseColor(const char*);
 public:

@@ -1,4 +1,4 @@
-SCENE_FILE_NAME=many-balls
+SCENE_FILE_NAME=scene
 FPS=60
 
 # Number of latitudes and longitudes used to draw the triangles of balls and capsules

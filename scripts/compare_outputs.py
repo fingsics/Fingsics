@@ -4,8 +4,8 @@ import sys
 
 folder= str(pathlib.Path().resolve()) + "\\output\\"
 
-file1 = "bfscene.csv"
-file2 = "scene.csv"
+file1 = "output1.csv"
+file2 = "output2.csv"
 
 def get_csv_values(file):
     bpcd_times = []

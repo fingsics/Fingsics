@@ -10,25 +10,23 @@ using namespace std;
 
 class Matrix {
     private:
-        double values[3][3];
+        float values[3][3];
     public:
-        Matrix(double, double, double, double, double, double, double, double, double);
-        Matrix(double[], double[], double[]);
+        Matrix(float, float, float, float, float, float, float, float, float);
         Matrix(Point, Point, Point);
         Matrix(Point);
         Matrix();
-        double det();
+        float det();
         Matrix transpose();
         Matrix inverse();
-        GLdouble* getOpenGLRotationMatrix();
+        GLfloat* getOpenGLRotationMatrix();
         Point col(int);
         Point row(int);
-        Matrix operator*(double);
-        Matrix operator/(double);
+        Matrix operator*(float);
+        Matrix operator/(float);
         Point operator*(Point);
         Matrix operator*(Matrix);
-        double* operator[](int);
-        double** toArrays();
+        float* operator[](int);
 };
 
 #endif

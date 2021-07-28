@@ -11,7 +11,7 @@ class Object;
 struct AABB;
 
 struct AABBPoint {
-    double value;
+    float value;
     bool isMin;
     AABB* aabb;
     AABBPoint();

@@ -17,10 +17,10 @@ public:
     map<string, Collision> getCollisions(map<string, pair<Object*, Object*>>);
 private:
     map<string, Collision> lastFrameCollisions;
-    Collision* ballPlane(Point, double, Point, Point);
-    Collision* ballBall(Point, double, Point, double);
-    Collision* ballCylinder(Point, double, Point, double, double, Point);
-    Collision* ballCapsule(Point, double, Point, double, double, Point, Point, Point);
+    Collision* ballPlane(Point, float, Point, Point);
+    Collision* ballBall(Point, float, Point, float);
+    Collision* ballCylinder(Point, float, Point, float, float, Point);
+    Collision* ballCapsule(Point, float, Point, float, float, Point, Point, Point);
     Collision* ballBall(Ball*, Ball*);
     Collision* ballPlane(Ball*, Plane*);
     Collision* ballCapsule(Ball*, Capsule*);

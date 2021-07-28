@@ -19,9 +19,9 @@ class Object {
         Point acceleration;
         Matrix rotationMatrix;
         Point angularVelocity;
-        double mass;
+        float mass;
         Color color;
-        double elasticityCoef;
+        float elasticityCoef;
         Matrix baseInertiaTensor;
         Matrix invertedInertiaTensor;
         list<Impulse> queuedImpulses;
@@ -34,37 +34,37 @@ class Object {
         virtual void drawAABB();
         virtual void drawObject() = 0;
     public:
-        Object(string, bool, Point, Point, Point, Point, Point, double, double, Color);
-        double getMass();
+        Object(string, bool, Point, Point, Point, Point, Point, float, float, Color);
+        float getMass();
         string getId();
         Point getPos();
         Point getVel();
         Point getAcceleration();
         Matrix getRotationMatrix();
-        double* getOpenGLRotationMatrix();
+        float* getOpenGLRotationMatrix();
         Point getAngularVelocity();
         bool getIsStatic();
         OBB getOBB();
         AABB* getAABB();
         
-        double getElasticity();
+        float getElasticity();
         void setPos(Point);
         void setVel(Point);
         void setAngularVelocity(Point);
         virtual void setRotation(Matrix);
         void setAABB(AABB*);
-        void updatePosAndVel(double);
-        void queueImpulse(Point, Point, double, double);
+        void updatePosAndVel(float);
+        void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);
         void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
-        virtual double getMinX() = 0;
-        virtual double getMinY() = 0;
-        virtual double getMinZ() = 0;
-        virtual double getMaxX() = 0;
-        virtual double getMaxY() = 0;
-        virtual double getMaxZ() = 0;
+        virtual float getMinX() = 0;
+        virtual float getMinY() = 0;
+        virtual float getMinZ() = 0;
+        virtual float getMaxX() = 0;
+        virtual float getMaxY() = 0;
+        virtual float getMaxZ() = 0;
 };
 
 #endif

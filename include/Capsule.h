@@ -13,25 +13,25 @@ using namespace std;
 
 class Capsule : public Object {
 private:
-    double radius;
-    double length;
+    float radius;
+    float length;
     int lats;
     int longs;
     Point axisDirection;
 public:
     Point getAxisDirection();
-    double getRadius();
-    double getLength();
+    float getRadius();
+    float getLength();
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
-    Capsule(string, bool, Point, Point, Point, Point, Point, double, double, Color, double, double, int, int);
+    Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, int, int);
     void drawObject();
-    double getMinX();
-    double getMinY();
-    double getMinZ();
-    double getMaxX();
-    double getMaxY();
-    double getMaxZ();
+    float getMinX();
+    float getMinY();
+    float getMinZ();
+    float getMaxX();
+    float getMaxY();
+    float getMaxZ();
     void setRotation(Matrix);
 };
 
