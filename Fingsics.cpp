@@ -59,8 +59,8 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
 
     // Program options
     bool quit = false;
-    bool pause = !config.runInTestMode;
-    bool draw = !config.runInTestMode;
+    bool pause = true;
+    bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
@@ -98,7 +98,7 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
     std::ofstream outputCSV;
 
-    if (config.log) {
+    if (config.log || config.runInTestMode) {
         string folder = config.runInTestMode ? "testing\\results\\" : "output\\";
         outputCSV.open(folder + config.logOutputFile);
         outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
@@ -124,18 +124,18 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
         }
 
         // Apply physics and movement
-        if (!pause) {
-            if (config.log) frameStart = std::chrono::system_clock::now();
+        if (!pause || config.runInTestMode) {
+            if (config.log || config.runInTestMode) frameStart = std::chrono::system_clock::now();
             broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-            if (config.log) broadEnd = std::chrono::system_clock::now();
+            if (config.log || config.runInTestMode) broadEnd = std::chrono::system_clock::now();
             midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            if (config.log) midEnd = std::chrono::system_clock::now();
+            if (config.log || config.runInTestMode) midEnd = std::chrono::system_clock::now();
             collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
-            if (config.log) narrowEnd = std::chrono::system_clock::now();
+            if (config.log || config.runInTestMode) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
-            if (config.log) responseEnd = std::chrono::system_clock::now();
+            if (config.log || config.runInTestMode) responseEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
-            if (config.log) {
+            if (config.log || config.runInTestMode) {
                 moveEnd = std::chrono::system_clock::now();
                 log(outputCSV, broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
@@ -153,28 +153,27 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.log) outputCSV.close();
+    if (config.log || config.runInTestMode) outputCSV.close();
+    return 0;
+}
+
+int runAllScenes(Config config) {
+    list<string> sceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
+        "missile", "missile2", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions" };
+
+    SDL_Window* window = initializeSDL();
+    for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
+        config.sceneName = *scene;
+        config.logOutputFile = *scene + "_test.csv";
+        runSimulation(config, 300, window);
+    }
+
     return 0;
 }
 
 
 int main(int argc, char* argv[]) {
     Config config = ConfigLoader().getConfig();
-    if (config.runInTestMode) {
-        config.log = true;
-        SDL_Window* window = initializeSDL();
-        list<string> sceneNames = list<string> {"bouncy-things", "capsule-static-floor", "many-balls",
-            "missile", "missile2", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions"};
-
-        for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
-            config.sceneName = *scene;
-            config.logOutputFile = *scene + "_test.csv";
-            
-            runSimulation(config, 300, window);
-        }
-
-        return 0;
-    }
-
+    if (config.runInTestMode) return runAllScenes(config);
     return runSimulation(config, -1, initializeSDL());
 }
