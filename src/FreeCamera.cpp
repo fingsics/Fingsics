@@ -37,8 +37,8 @@ void FreeCamera::eventUpdate(SDL_Event event) {
             float speed = 0.4;
             yaw -= event.motion.xrel * speed;
             pitch -= event.motion.yrel * speed;
-            if (pitch > 90) pitch = 90;
-            else if (pitch < -90) pitch = -90;
+            if (pitch > 89) pitch = 89;
+            else if (pitch < -89) pitch = -89;
         }
         break;
     case SDL_KEYDOWN: {

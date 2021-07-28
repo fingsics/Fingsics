@@ -32,8 +32,8 @@ void CenteredCamera::eventUpdate(SDL_Event event) {
             yaw -= event.motion.xrel * speed;
             pitch -= event.motion.yrel * speed;
             // Avoid camera flipping
-            if (pitch > 90) pitch = 90;
-            else if (pitch < -90) pitch = -90;
+            if (pitch > 89) pitch = 89;
+            else if (pitch < -89) pitch = -89;
         }
         break;
     case SDL_KEYDOWN: {
