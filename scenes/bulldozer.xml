@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <objects>
+		<plane pos="0,0,0" static="true" elasticityCoef="0.5" color="200,200,200" />
+
+		<sphere pos="-15,-1,0" mass="3" static="true" elasticityCoef="0.5" vel="10,0,0" color="50,200,200" radius="2" acceleration="0,0,0" />
+
+		<capsule pos="-11,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="-9,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="-7,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="-5,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+
+
+		<capsule pos="-3,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="-1,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="1,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="3,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+
+
+		<capsule pos="5,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="7,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="9,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="11,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+
+
+		<capsule pos="13,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="15,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="17,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="19,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+ 
+		<capsule pos="21,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="23,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="25,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="27,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+ 
+		<capsule pos="29,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="31,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="33,1,1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+		<capsule pos="35,1,-1" mass="1" elasticityCoef="0.5" vel="0,0,0" color="50,200,200" radius="0.9" length="8" acceleration="0,-9.8,0" />
+
+    </objects>
+</config>
