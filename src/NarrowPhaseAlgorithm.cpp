@@ -123,6 +123,7 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
         // Check collision between cylinders
         if (abs(distanceInAxis1) < capsule1->getLength() / 2 && abs(distanceInAxis2) < capsule2->getLength() / 2) {
             Point normalVector = axis2Point - axis1Point;
+            if (normalVector.isZero()) normalVector = UC;
             float radiusRatio = capsule2->getRadius() / radiusSum;
             Point collisionPoint = axis1Point + normalVector * radiusRatio;
             return new Collision(collisionPoint, normalVector.normalize(), radiusSum - distance);

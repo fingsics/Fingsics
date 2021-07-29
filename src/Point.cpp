@@ -27,7 +27,9 @@ float Point::getZ() {
 }
 
 Point Point::normalize() {
-    return (*this) / getMagnitude();
+    float magnitude = getMagnitude();
+    if (magnitude == 0) throw "Can't normalize a null vector";
+    return (*this) / magnitude;
 }
 
 Point Point::invert() {
