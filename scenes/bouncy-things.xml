@@ -1,25 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<plane pos="0,0,0" mass="1" elasticityCoef="0.9" ang="0,0,0" color="220,220,220" static="true" drawLength="16" drawWidth="16" />
+		<plane pos="0,0,0" mass="1" elasticityCoef="0.9" ang="0,0,0" color="240,240,240" static="true" drawLength="16" drawWidth="16" />
 		<plane pos="8,4,0" mass="1" elasticityCoef="0.9" ang="0,0,90" color="220,0,0" static="true" drawLength="8" drawWidth="16" />
 		<plane pos="0,4,-8" mass="1" elasticityCoef="0.9" ang="90,0,0" color="0,220,0" static="true" drawLength="16" drawWidth="8" />
 		<plane pos="0,4,8" mass="1" elasticityCoef="0.9" ang="-90,0,0" color="0,0,220" static="true" drawLength="16" drawWidth="8" />
 		<plane pos="-8,4,0" mass="1" elasticityCoef="0.9" ang="0,0,-90" color="220,0,0" static="true" drawLength="0" drawWidth="0" />
 		
-		<sphere pos="0,2,0" radius="0.5" mass="1" elasticityCoef="0.9" vel="5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
-		<capsule pos="-4,4,0" mass="1" elasticityCoef="0.9" vel="-5,0,2" ang="23,414,52" angVel="20,0,0" color="50,200,200" radius="0.5" length="4" acceleration="0,-9.8,0" />
+		<sphere pos="0,2,0" radius="0.5" mass="1" elasticityCoef="0.9" vel="5,0,2" color="70,70,70" acceleration="0,-9.8,0" />
+		<capsule pos="-4,4,0" mass="1" elasticityCoef="0.9" vel="-5,0,2" ang="23,414,52" angVel="20,0,0" color="70,70,70" radius="0.5" length="4" acceleration="0,-9.8,0" />
 		
-		<sphere pos="2,3,2" radius="0.7" mass="1" elasticityCoef="0.9" vel="5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
-		<capsule pos="4,4,-1" mass="1" elasticityCoef="0.9" vel="2,0,-2" ang="23,14,-52" angVel="0,50,10" color="50,200,200" radius="0.3" length="2" acceleration="0,-9.8,0" />
+		<sphere pos="2,3,2" radius="0.7" mass="1" elasticityCoef="0.9" vel="5,0,2" color="70,70,70" acceleration="0,-9.8,0" />
+		<capsule pos="4,4,-1" mass="1" elasticityCoef="0.9" vel="2,0,-2" ang="23,14,-52" angVel="0,50,10" color="70,70,70" radius="0.3" length="2" acceleration="0,-9.8,0" />
 		
-		<sphere pos="-2,3,5" radius="0.6" mass="1" elasticityCoef="0.9" vel="-5,0,2" color="200,200,200" acceleration="0,-9.8,0" />
-		<capsule pos="-4,5,6" mass="1" elasticityCoef="0.9" vel="6,0,-1" ang="23,14,-52" angVel="20,5,10" color="50,200,200" radius="0.3" length="2" acceleration="0,-9.8,0" />
+		<sphere pos="-2,3,5" radius="0.6" mass="1" elasticityCoef="0.9" vel="-5,0,2" color="70,70,70" acceleration="0,-9.8,0" />
+		<capsule pos="-4,5,6" mass="1" elasticityCoef="0.9" vel="6,0,-1" ang="23,14,-52" angVel="20,5,10" color="70,70,70" radius="0.3" length="2" acceleration="0,-9.8,0" />
 		
-		<sphere pos="-3,4,-5" radius="0.6" mass="1" elasticityCoef="0.9" vel="0,0,2" color="200,200,200" acceleration="0,-9.8,0" />
-		<capsule pos="-2,3,-6" mass="2" elasticityCoef="0.9" vel="3,1,1" ang="23,14,-52" angVel="20,20,20" color="50,200,200" radius="0.7" length="3" acceleration="0,-9.8,0" />
+		<sphere pos="-3,4,-5" radius="0.6" mass="1" elasticityCoef="0.9" vel="0,0,2" color="70,70,70" acceleration="0,-9.8,0" />
+		<capsule pos="-2,3,-6" mass="2" elasticityCoef="0.9" vel="3,1,1" ang="23,14,-52" angVel="20,20,20" color="70,70,70" radius="0.7" length="3" acceleration="0,-9.8,0" />
 		
-		<capsule pos="6,3,6" mass="2" elasticityCoef="0.9" vel="1,0,1" ang="23,14,-52" angVel="90,0,0" color="50,200,200" radius="0.8" length="2" acceleration="0,-9.8,0" />
+		<capsule pos="6,3,6" mass="2" elasticityCoef="0.9" vel="1,0,1" ang="23,14,-52" angVel="90,0,0" color="70,70,70" radius="0.8" length="2" acceleration="0,-9.8,0" />
 
 	</objects>
 </config>
