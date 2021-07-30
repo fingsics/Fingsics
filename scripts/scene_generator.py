@@ -2,19 +2,21 @@ import pathlib
 import os
 
 
-def create_capsule(pos, mass, rad, length, vel):
-    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"90,0,0\" color=\"50,220,50\" radius=\"{rad}\" length=\"{length}\" />\n"
+def create_capsule(pos, mass, rad, length, vel, color):
+    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"90,0,0\" color=\"{color}\" radius=\"{rad}\" length=\"{length}\" />\n"
     
-def create_ball(pos, mass, rad, vel):
-    return f"\t\t<sphere pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"0,0,0\" color=\"200,200,200\" radius=\"{rad}\" />\n"
+def create_ball(pos, mass, rad, vel, color):
+    return f"\t\t<sphere pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"0,0,0\" color=\"{color}\" radius=\"{rad}\" />\n"
     
 objects = ""
-objects += create_ball("0,0,20", "1000", "4", "0,0,-20")
+#objects += create_ball("0,0,20", "1000", "4", "0,0,-20")
 
 for i in range(0,12):
     for j in range(0,5):
         for k in range(0,12):
-            objects += create_capsule(f"{-12 + 2 * i},{-15 + 6 * j},{-12 + 2 * k}", "1", "0.5", "4", "0,0,0")
+            objects += create_capsule(f"{-12 + 3 * i},{-15 + 6 * j},{-12 + 3 * k}", "1", "0.5", "4", "0,0,0", "0,220,0")
+            objects += create_capsule(f"{-13.5 + 3 * i},{-15 + 6 * j},{30 + 3 * k}", "1", "0.5", "4", "0,0,-9", "220,0,0")
+            objects += create_capsule(f"{28.5 + 3 * i},{-15 + 6 * j},{-13.5 + 3 * k}", "1", "0.5", "4", "-9,0,0", "0,0,220")
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
