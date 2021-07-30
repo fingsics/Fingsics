@@ -48,8 +48,9 @@ Point Capsule::getCylinderNegativeEnd() {
     return pos - axisDirection * length / 2;
 }
 
-void Capsule::drawObject() {
-    Color darkColor = Color(255, 255, 255);
+void Capsule::drawObject(bool drawHalfWhite) {
+    Color white = Color(255, 255, 255);
+    glColor3ub(color.getR(), color.getG(), color.getB());
 
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
@@ -72,8 +73,11 @@ void Capsule::drawObject() {
 
         for (int j = 0; j <= evenLongs; j++)
         {
-            if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
-            else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
+            if (drawHalfWhite) {
+                if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+                else glColor3ub(white.getR(), white.getG(), white.getB());
+            }
+            
             float lng = 2 * M_PI * (float)(j - 1) / evenLongs;
             float x = cos(lng);
             float y = sin(lng);
@@ -94,8 +98,11 @@ void Capsule::drawObject() {
             glBegin(GL_QUAD_STRIP);
             for (int j = 0; j <= evenLongs; j++)
             {
-                if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
-                else glColor3ub(darkColor.getR(), darkColor.getG(), darkColor.getB());
+                if (drawHalfWhite) {
+                    if (j > evenLongs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
+                    else glColor3ub(white.getR(), white.getG(), white.getB());
+                }
+
                 float lng = 2 * M_PI * (float)(j - 1) / evenLongs;
                 float x = cos(lng);
                 float y = sin(lng);

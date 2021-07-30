@@ -1,8 +1,9 @@
 SCENE_FILE_NAME=scene
 FPS=60
 
-# Number of latitudes and longitudes used to draw the triangles of balls and capsules
+# Object drawing
 NUM_LAT_LONGS=20
+DRAW_HALF_WHITE=false
 
 # Algorithms (BROAD_PHASE options are NONE, BF or SAP)
 BROAD_PHASE=SAP

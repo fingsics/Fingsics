@@ -120,7 +120,7 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
         // Draw objects
         if (draw && !config.runInTestMode) {
             drawAxis();
-            drawObjects(objects, numObjects, drawOBBs, drawAABBs);
+            drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
         }
 
         // Apply physics and movement

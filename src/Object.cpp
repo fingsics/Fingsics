@@ -127,8 +127,8 @@ void Object::applyImpulse(Point normal, Point tangent) {
     angularVelocity = angularVelocity + angVelDiff;
 }
 
-void Object::draw(bool drawOBB, bool drawAABB) {
-    this->drawObject();
+void Object::draw(bool drawOBB, bool drawAABB, bool drawHalfWhite) {
+    this->drawObject(drawHalfWhite);
     if (drawOBB) this->drawOBB();
     if (drawAABB) this->drawAABB();
 }
