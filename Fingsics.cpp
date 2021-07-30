@@ -159,7 +159,7 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
 
 int runAllScenes(Config config) {
     list<string> sceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
-        "missile", "missile2", "objects-resting", "one-ball-many-capsules", "ramp", "two-simultaneous-collisions" };
+        "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
 
     SDL_Window* window = initializeSDL();
     for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
