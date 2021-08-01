@@ -87,48 +87,48 @@ void MultithreadSweepAndPruneBroadPhase::insertObject(Object* object) {
 void MultithreadSweepAndPruneBroadPhase::updateXAxis(Object** objects, int numObjects) {
     AABB* aabb = NULL;
     for (int i = 0; i < numObjects; i++) {
-        if (dynamic_cast<Plane*>(objects[i])) return;
+        if (dynamic_cast<Plane*>(objects[i])) continue;
         aabb = objects[i]->getAABB();
 
         // MinX
         aabb->minX->value = objects[i]->getMinX();
-        updateAABBPoint(aabb->minX, xPoints);
+        updateAABBPointInAxis(aabb->minX, xPoints);
 
         // MaxX
         aabb->maxX->value = objects[i]->getMaxX();
-        updateAABBPoint(aabb->maxX, xPoints);
+        updateAABBPointInAxis(aabb->maxX, xPoints);
     }
 }
 
 void MultithreadSweepAndPruneBroadPhase::updateYAxis(Object** objects, int numObjects) {
     AABB* aabb = NULL;
     for (int i = 0; i < numObjects; i++) {
-        if (dynamic_cast<Plane*>(objects[i])) return;
+        if (dynamic_cast<Plane*>(objects[i])) continue;
         aabb = objects[i]->getAABB();
 
         // MinY
         aabb->minY->value = objects[i]->getMinY();
-        updateAABBPoint(aabb->minY, yPoints);
+        updateAABBPointInAxis(aabb->minY, yPoints);
 
         // MaxY
         aabb->maxY->value = objects[i]->getMaxY();
-        updateAABBPoint(aabb->maxY, yPoints);
+        updateAABBPointInAxis(aabb->maxY, yPoints);
     }
 }
 
 void MultithreadSweepAndPruneBroadPhase::updateZAxis(Object** objects, int numObjects) {
     AABB* aabb = NULL;
     for (int i = 0; i < numObjects; i++) {
-        if (dynamic_cast<Plane*>(objects[i])) return;
+        if (dynamic_cast<Plane*>(objects[i])) continue;
         aabb = objects[i]->getAABB();
 
         // MinZ
         aabb->minZ->value = objects[i]->getMinZ();
-        updateAABBPoint(aabb->minZ, zPoints);
+        updateAABBPointInAxis(aabb->minZ, zPoints);
 
         // MaxZ
         aabb->maxZ->value = objects[i]->getMaxZ();
-        updateAABBPoint(aabb->maxZ, zPoints);
+        updateAABBPointInAxis(aabb->maxZ, zPoints);
     }
 }
 
@@ -174,7 +174,6 @@ void MultithreadSweepAndPruneBroadPhase::updateAABBPointInAxis(AABBPoint* pointP
     // Shift other points to the right (updated point is smaller and moving to the left)
     while (index > 0 && point.value < pointArray[index - 1].value) {
         if ((!point.isMin && pointArray[index - 1].isMin) || (point.isMin && !pointArray[index - 1].isMin)) {
-
             addCollision(point.aabb->object, pointArray[index - 1].aabb->object, true);
         }
 
