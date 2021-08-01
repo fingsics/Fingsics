@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<capsule pos="2,-3,5" mass="1" elasticityCoef="0.8" ang="123,532,-645" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="-2,-2,0" mass="1" elasticityCoef="0.8" ang="13,53,-45" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="3,2,3" mass="1" elasticityCoef="0.8" ang="132,-53,200" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="3,-3,-3" mass="1" elasticityCoef="0.8" ang="0,333,20" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="-3,-3,-5" mass="1" elasticityCoef="0.8" ang="0,33,20" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="3,3,-5" mass="1" elasticityCoef="0.8" ang="233,231,462" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="0,3,0" mass="1" elasticityCoef="0.8" ang="60,0,0" color="50,200,200" radius="0.45" length="10"/>
-		<capsule pos="-4,2,-1" mass="1" elasticityCoef="0.8" ang="0,100,0" color="50,200,200" radius="0.45" length="10"/>
+		<capsule pos="2,-3,5" mass="1" elasticityCoef="0.8" ang="123,532,-645" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="-2,-2,0" mass="1" elasticityCoef="0.8" ang="13,53,-45" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="3,2,3" mass="1" elasticityCoef="0.8" ang="132,-53,200" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="3,-3,-3" mass="1" elasticityCoef="0.8" ang="0,333,20" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="-3,-3,-5" mass="1" elasticityCoef="0.8" ang="0,33,20" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="3,3,-5" mass="1" elasticityCoef="0.8" ang="233,231,462" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="0,3,0" mass="1" elasticityCoef="0.8" ang="60,0,0" color="200,200,200" radius="0.45" length="10"/>
+		<capsule pos="-4,2,-1" mass="1" elasticityCoef="0.8" ang="0,100,0" color="200,200,200" radius="0.45" length="10"/>
 		
 		<sphere pos="6,6,6" mass="8" elasticityCoef="0.8" vel="-3,-3,-3" ang="0,0,0" color="200,200,50" radius="1" />
 

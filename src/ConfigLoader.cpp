@@ -7,6 +7,7 @@ Config::Config(map<string, string> config) {
     runInTestMode = false;
     useMidPhase = false;
     bpAlgorithm = BPAlgorithmChoice::none;
+    drawHalfWhite = false;
     sceneName = "";
     logOutputFile = "";
 
@@ -18,6 +19,11 @@ Config::Config(map<string, string> config) {
     it = config.find("NUM_LAT_LONGS");
     if (it != config.end()) {
         numLatLongs = stoi(it->second);
+    }
+
+    it = config.find("DRAW_HALF_WHITE");
+    if (it != config.end()) {
+        drawHalfWhite = !it->second.compare("true");
     }
 
     it = config.find("USE_MID_PHASE");

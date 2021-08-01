@@ -102,6 +102,8 @@ Matrix Object::getInertiaTensorInverse() {
 }
 
 void Object::queueImpulse(Point normal, Point tangent, float magnitude, float mass) {
+    normal = normal.roundToZeroIfNear();
+    tangent = tangent.roundToZeroIfNear();
     queuedImpulses.insert(queuedImpulses.begin(), Impulse(normal, tangent, magnitude, mass));
     velCollisionMassPerAxis = velCollisionMassPerAxis.addIfComponentNotZero(normal, mass);
     angVelCollisionMassPerAxis = angVelCollisionMassPerAxis.addIfComponentNotZero(tangent, mass);
@@ -123,12 +125,12 @@ void Object::applyImpulse(Point normal, Point tangent) {
     Point velDiff = normal / mass;
     Point angVelDiff = getInertiaTensorInverse() * tangent;
 
-    vel = vel + velDiff;
-    angularVelocity = angularVelocity + angVelDiff;
+    setVel(vel + velDiff);
+    setAngularVelocity(angularVelocity + angVelDiff);
 }
 
-void Object::draw(bool drawOBB, bool drawAABB) {
-    this->drawObject();
+void Object::draw(bool drawOBB, bool drawAABB, bool drawHalfWhite) {
+    this->drawObject(drawHalfWhite);
     if (drawOBB) this->drawOBB();
     if (drawAABB) this->drawAABB();
 }

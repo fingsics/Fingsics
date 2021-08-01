@@ -7,7 +7,7 @@ CenteredCamera::CenteredCamera(float radius, float pitch, float yaw) : Camera() 
 }
 
 CenteredCamera::CenteredCamera() : Camera() {
-    this->radius = -25;
+    this->radius = -40;
     this->pitch = -25;
     this->yaw = 0;
 }

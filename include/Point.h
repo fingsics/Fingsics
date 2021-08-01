@@ -24,6 +24,7 @@ class Point {
         float getMagnitudeSqr();
         Point invert();
         Point normalize();
+        Point roundToZeroIfNear();
         Point abs();
         bool isZero();
         bool isZero(float);

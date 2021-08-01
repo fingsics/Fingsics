@@ -29,47 +29,12 @@ void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Ob
     object2->queueImpulse(normal, rxb, jr, ma);
 }
 
-bool CollisionResponseAlgorithm::handleContact(Object* staticObject, Object* nonStaticObject, Point normal, Point vi, Point vsi) {
-    Plane* plane = dynamic_cast<Plane*>(staticObject);
-    if (!plane || !normal.hasSameDirection(Point(0, 1, 0), 0.01)) return false;
-
-    Ball* ball = dynamic_cast<Ball*>(nonStaticObject);
-    Capsule* capsule = dynamic_cast<Capsule*>(nonStaticObject);
-    if (ball) {
-        Point vn = normal * normal.dotProduct(vi);
-        Point vsn = normal * normal.dotProduct(vsi);
-        if ((vn - vsn).getMagnitude() < 1) {
-            nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-            return true;
-        };
-    }
-    else if (capsule) {
-        Point vn = normal * normal.dotProduct(vi);
-        Point vsn = normal * normal.dotProduct(vsi);
-        if ((vn - vsn).getMagnitude() < 1) {
-            if (abs(normal.dotProduct(capsule->getAxisDirection())) < 0.02) {
-                nonStaticObject->setAngularVelocity(normal * normal.dotProduct(nonStaticObject->getAngularVelocity()));
-                nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                return true;
-            }
-            else if (abs(normal.dotProduct(capsule->getAxisDirection())) > 0.9) {
-                nonStaticObject->setVel(nonStaticObject->getVel() - vn);
-                return true;
-            }
-        };
-    }
-
-    return false;
-}
-
 void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
     Point r = collisionPoint - nonStaticObject->getPos();
     Point rs = collisionPoint - staticObject->getPos();
     Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
     Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
-
-    if (handleContact(staticObject, nonStaticObject, normal, vi, vsi)) return;
 
     float e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     float m = nonStaticObject->getMass();

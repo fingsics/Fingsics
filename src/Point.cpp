@@ -32,6 +32,10 @@ Point Point::normalize() {
     return (*this) / magnitude;
 }
 
+Point Point::roundToZeroIfNear() {
+    return Point(fabs(x) < EPSILON ? 0 : x, fabs(y) < EPSILON ? 0 : y, fabs(z) < EPSILON ? 0 : z);
+}
+
 Point Point::invert() {
     return (*this) * -1;
 }

@@ -10,11 +10,11 @@ Plane::Plane(string id, bool isStatic, Point pos, Point vel, Point angle, Point 
     this->obb = OBB(pos, Point(INF, EPSILON, INF), rotationMatrix);
 }
 
-Point Plane::getNormal(){
+Point Plane::getNormal() {
     return rotationMatrix * Point(0,1,0);
 }
 
-void Plane::drawObject() {
+void Plane::drawObject(bool) {
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
     glMultMatrixf(getOpenGLRotationMatrix());

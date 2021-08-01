@@ -20,6 +20,7 @@ struct Config {
 	string sceneName;
 	int fps;
 	int numLatLongs;
+	bool drawHalfWhite;
 	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;

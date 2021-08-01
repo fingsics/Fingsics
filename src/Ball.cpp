@@ -18,8 +18,9 @@ float Ball::getRadius() {
     return radius;
 }
 
-void Ball::drawObject() {
-    Color darkColor = Color(255, 255, 255);
+void Ball::drawObject(bool drawHalfWhite) {
+    Color white = Color(255, 255, 255);
+    glColor3ub(color.getR(), color.getG(), color.getB());
 
     glPushMatrix();
 
@@ -38,8 +39,11 @@ void Ball::drawObject() {
         glBegin(GL_QUAD_STRIP);
         for(int j = 0; j <= longs; j++)
         {
-            if (j > longs / 2) glColor3ub( color.getR(), color.getG(), color.getB());
-            else glColor3ub( darkColor.getR(), darkColor.getG(), darkColor.getB());
+            if (drawHalfWhite) {
+                if (j > longs / 2) glColor3ub(color.getR(), color.getG(), color.getB());
+                else glColor3ub(white.getR(), white.getG(), white.getB());
+            }
+            
             float lng = 2 * M_PI * (float) (j - 1) / longs;
             float x = cos(lng);
             float y = sin(lng);
