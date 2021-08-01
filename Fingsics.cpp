@@ -142,7 +142,10 @@ void runTestScenes(Config config) {
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
         SimulationResults* results = runSimulation(config, window);
-        if (results) LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);
+        if (results) {
+            LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);
+            delete results;
+        }
     }
 }
 
@@ -151,7 +154,10 @@ void runSceneBenchmark(Config config) {
     SDL_Window* window = initializeSDL();
     for (int i = 0; i < config.numRuns; i++) {
         SimulationResults* results = runSimulation(config, window);
-        if (results) benchmarkResults.push_back(*results);
+        if (results) {
+            benchmarkResults.push_back(*results);
+            delete results;
+        }
     }
     LoggingManager::logBenchmarkResults(benchmarkResults, config);
 }
@@ -170,6 +176,7 @@ int main(int argc, char* argv[]) {
         if (results && config.log) {
             if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
             LoggingManager::logRunResults("output", config.logOutputFile, *results);
+            delete results;
         }
     }
     

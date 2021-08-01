@@ -12,6 +12,18 @@ FrameResult::FrameResult(int mpcdTests, int npcdTests, int collisions, float bpc
     this->totalTime = totalTime;
 }
 
+FrameResult::FrameResult() {
+    this->mpcdTests = 0;
+    this->npcdTests = 0;
+    this->collisions = 0;
+    this->bpcdTime = 0;
+    this->mpcdTime = 0;
+    this->npcdTime = 0;
+    this->collisionResponseTime = 0;
+    this->moveTime = 0;
+    this->totalTime = 0;
+}
+
 SimulationResults::SimulationResults() {
     frameResults = list<FrameResult>();
 }
@@ -36,7 +48,17 @@ void LoggingManager::logRunResults(string folderName, string outputFileName, Sim
     outputCSV.open(folderName + "\\" + outputFileName);
     outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
     for (auto it = results.frameResults.begin(); it != results.frameResults.end(); ++it) {
-        log(outputCSV, *it);
+        log(outputCSV, *it, 1);
+    }
+    outputCSV.close();
+}
+
+void LoggingManager::logManyRunsResults(string folderName, string outputFileName, FrameResult* results, int numFrames, int numRuns) {
+    ofstream outputCSV;
+    outputCSV.open(folderName + "\\" + outputFileName);
+    outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
+    for (int i = 0; i < numFrames; i++) {
+        log(outputCSV, results[i], numRuns);
     }
     outputCSV.close();
 }
@@ -57,10 +79,13 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     int collisions = 0;
     int runNumber = 1;
 
+    int numFrames = results.front().frameResults.size();
+    FrameResult* avgResultsPerFrame = new FrameResult[numFrames];
+
     for (auto it = results.begin(); it != results.end(); ++it) {
         SimulationResults runResults = *it;
         logRunResults(outputFolder, "run" + to_string(runNumber) + ".csv", runResults);
-
+        int frame = 0;
         for (auto it2 = runResults.frameResults.begin(); it2 != runResults.frameResults.end(); ++it2) {
             avgBpcdTime += it2->bpcdTime;
             avgMpcdTime += it2->mpcdTime;
@@ -69,10 +94,22 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
             mpcdTests += it2->mpcdTests;
             npcdTests += it2->npcdTests;
             collisions += it2->collisions;
+
+            avgResultsPerFrame[frame].bpcdTime += it2->bpcdTime;
+            avgResultsPerFrame[frame].mpcdTime += it2->mpcdTime;
+            avgResultsPerFrame[frame].npcdTime += it2->npcdTime;
+            avgResultsPerFrame[frame].totalTime += it2->totalTime;
+            avgResultsPerFrame[frame].mpcdTests += it2->mpcdTests;
+            avgResultsPerFrame[frame].npcdTests += it2->npcdTests;
+            avgResultsPerFrame[frame].collisions += it2->collisions;
+
+            frame++;
         }
 
         runNumber++;
     }
+
+    logManyRunsResults(outputFolder, "averages_per_frame.csv", avgResultsPerFrame, numFrames, results.size());
 
     avgBpcdTime /= config.numRuns;
     avgMpcdTime /= config.numRuns;
@@ -102,23 +139,23 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     summaryFile.close();
 }
 
-void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult) {
-    outputFile << frameResult.bpcdTime;
+void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult, int divisor) {
+    outputFile << frameResult.bpcdTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.mpcdTests;
+    outputFile << frameResult.mpcdTests / divisor;
     outputFile << ",";
-    outputFile << frameResult.mpcdTime;
+    outputFile << frameResult.mpcdTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.npcdTests;
+    outputFile << frameResult.npcdTests / divisor;
     outputFile << ",";
-    outputFile << frameResult.npcdTime;
+    outputFile << frameResult.npcdTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.collisions;
+    outputFile << frameResult.collisions / divisor;
     outputFile << ",";
-    outputFile << frameResult.collisionResponseTime;
+    outputFile << frameResult.collisionResponseTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.moveTime;
+    outputFile << frameResult.moveTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.totalTime;
+    outputFile << frameResult.totalTime / divisor;
     outputFile << "\n";
 }

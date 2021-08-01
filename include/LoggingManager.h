@@ -21,6 +21,7 @@ struct FrameResult {
     float moveTime;
     float totalTime;
     FrameResult(int, int, int, float, float, float, float, float, float);
+    FrameResult();
 };
 
 struct SimulationResults {
@@ -32,9 +33,10 @@ struct SimulationResults {
 
 class LoggingManager {
 private:
-    static void log(std::ofstream&, FrameResult);
+    static void log(std::ofstream&, FrameResult, int);
 public:
     static void logRunResults(string, string, SimulationResults);
+    static void logManyRunsResults(string, string, FrameResult*, int, int);
     static void logBenchmarkResults(list<SimulationResults>, Config);
 };
 
