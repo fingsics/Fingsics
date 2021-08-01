@@ -4,7 +4,7 @@ FPS=60
 # Number of latitudes and longitudes used to draw the triangles of balls and capsules
 NUM_LAT_LONGS=20
 
-# Algorithms (BROAD_PHASE options are NONE, BF or SAP)
+# Algorithms (BROAD_PHASE options are NONE, BF, SAP or MTSAP)
 BROAD_PHASE=SAP
 USE_MID_PHASE=true
 

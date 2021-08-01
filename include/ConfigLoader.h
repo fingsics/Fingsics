@@ -14,7 +14,7 @@ struct KeyValue {
 	KeyValue(string, string);
 };
 
-enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune };
+enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune, multithreadSweepAndPrune };
 
 struct Config {
 	string sceneName;

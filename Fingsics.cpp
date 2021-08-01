@@ -85,18 +85,21 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
     if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
     else midPhaseAlgorithm = new NoMidPhase();
 
-    BroadPhaseAlgorithm* broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
-    //switch (config.bpAlgorithm) {
-    //case BPAlgorithmChoice::none:
-    //    broadPhaseAlgorithm = new NoBroadPhase();
-    //    break;
-    //case BPAlgorithmChoice::bruteForce:
-    //    broadPhaseAlgorithm = new BruteForceBroadPhase();
-    //    break;
-    //default:
-    //    broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
-    //    break;
-    //}
+    BroadPhaseAlgorithm* broadPhaseAlgorithm;
+    switch (config.bpAlgorithm) {
+    case BPAlgorithmChoice::bruteForce:
+        broadPhaseAlgorithm = new BruteForceBroadPhase();
+        break;
+    case BPAlgorithmChoice::sweepAndPrune:
+        broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+        break;
+    case BPAlgorithmChoice::multithreadSweepAndPrune:
+        broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
+        break;
+    default:
+        broadPhaseAlgorithm = new NoBroadPhase();
+        break;
+    }
 
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
