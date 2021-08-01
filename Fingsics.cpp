@@ -8,6 +8,10 @@
 #include "include/CenteredCamera.h"
 #include "include/FreeCamera.h"
 #include "include/BroadPhaseAlgorithms.h"
+#include "include/NoBroadPhase.h"
+#include "include/BruteForceBroadPhase.h"
+#include "include/SweepAndPruneBroadPhase.h"
+#include "include/MultithreadSweepAndPruneBroadPhase.h"
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithm.h"
 #include "include/CollisionResponseAlgorithm.h"
@@ -81,18 +85,18 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
     if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
     else midPhaseAlgorithm = new NoMidPhase();
 
-    BroadPhaseAlgorithm* broadPhaseAlgorithm;
-    switch (config.bpAlgorithm) {
-    case BPAlgorithmChoice::none:
-        broadPhaseAlgorithm = new NoBroadPhase();
-        break;
-    case BPAlgorithmChoice::bruteForce:
-        broadPhaseAlgorithm = new BruteForceBroadPhase();
-        break;
-    default:
-        broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
-        break;
-    }
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
+    //switch (config.bpAlgorithm) {
+    //case BPAlgorithmChoice::none:
+    //    broadPhaseAlgorithm = new NoBroadPhase();
+    //    break;
+    //case BPAlgorithmChoice::bruteForce:
+    //    broadPhaseAlgorithm = new BruteForceBroadPhase();
+    //    break;
+    //default:
+    //    broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+    //    break;
+    //}
 
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;

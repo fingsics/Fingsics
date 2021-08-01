@@ -158,7 +158,7 @@
     <ClCompile Include="Fingsics.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\Ball.cpp" />
-    <ClCompile Include="src\BroadPhaseAlgorithms.cpp" />
+    <ClCompile Include="src\BruteForceBroadPhase.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Capsule.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
@@ -171,7 +171,9 @@
     <ClCompile Include="src\Impulse.cpp" />
     <ClCompile Include="src\Matrix.cpp" />
     <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
+    <ClCompile Include="src\MultithreadSweepAndPruneBroadPhase.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp" />
+    <ClCompile Include="src\NoBroadPhase.cpp" />
     <ClCompile Include="src\OBB.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\OpenGLHelpers.cpp" />
@@ -179,12 +181,14 @@
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
     <ClCompile Include="src\SDLHelpers.cpp" />
+    <ClCompile Include="src\SweepAndPruneBroadPhase.cpp" />
     <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.h" />
     <ClInclude Include="include\Ball.h" />
     <ClInclude Include="include\BroadPhaseAlgorithms.h" />
+    <ClInclude Include="include\BruteForceBroadPhase.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Capsule.h" />
     <ClInclude Include="include\CenteredCamera.h" />
@@ -198,7 +202,9 @@
     <ClInclude Include="include\Impulse.h" />
     <ClInclude Include="include\Matrix.h" />
     <ClInclude Include="include\MidPhaseAlgorithms.h" />
+    <ClInclude Include="include\MultithreadSweepAndPruneBroadPhase.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithm.h" />
+    <ClInclude Include="include\NoBroadPhase.h" />
     <ClInclude Include="include\OBB.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\OpenGLHelpers.h" />
@@ -206,6 +212,7 @@
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="include\ObjectLoader.h" />
     <ClInclude Include="include\SDLHelpers.h" />
+    <ClInclude Include="include\SweepAndPruneBroadPhase.h" />
     <ClInclude Include="tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

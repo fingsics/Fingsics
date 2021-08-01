@@ -49,6 +49,12 @@
     <Filter Include="Source Files\Camera">
       <UniqueIdentifier>{48e8177f-ad96-44ee-af96-e47a95a5fc99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Algorithms\BroadPhase">
+      <UniqueIdentifier>{2f1420fa-c843-4d75-a38b-16b15d41c692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Algorithms\BroadPhase">
+      <UniqueIdentifier>{27616063-eff5-4025-9d47-aee89ef51dd4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Fingsics.cpp">
@@ -68,9 +74,6 @@
     </ClCompile>
     <ClCompile Include="src\Helpers.cpp">
       <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\BroadPhaseAlgorithms.cpp">
-      <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files\Camera</Filter>
@@ -126,11 +129,20 @@
     <ClCompile Include="src\Impulse.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="src\NoBroadPhase.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BruteForceBroadPhase.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MultithreadSweepAndPruneBroadPhase.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SweepAndPruneBroadPhase.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\BroadPhaseAlgorithms.h">
-      <Filter>Header Files\Algorithms</Filter>
-    </ClInclude>
     <ClInclude Include="include\Ball.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
@@ -202,6 +214,21 @@
     </ClInclude>
     <ClInclude Include="include\Impulse.h">
       <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BroadPhaseAlgorithms.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NoBroadPhase.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BruteForceBroadPhase.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SweepAndPruneBroadPhase.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\MultithreadSweepAndPruneBroadPhase.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
