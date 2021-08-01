@@ -4,7 +4,9 @@ Config::Config(map<string, string> config) {
     fps = 60;
     numLatLongs = 10;
     log = false;
-    runInTestMode = false;
+    runMode = RunMode::normal;
+    numRuns = 10;
+    numFramesPerRun = 300;
     useMidPhase = false;
     drawHalfWhite = false;
     bpAlgorithm = BPAlgorithmChoice::sweepAndPrune;
@@ -43,9 +45,21 @@ Config::Config(map<string, string> config) {
         log = !it->second.compare("true");
     }
 
-    it = config.find("RUN_IN_TEST_MODE");
+    it = config.find("RUN_MODE");
     if (it != config.end()) {
-        runInTestMode = !it->second.compare("true");
+        if (!it->second.compare("NORMAL")) runMode = RunMode::normal;
+        else if (!it->second.compare("TEST")) runMode = RunMode::test;
+        else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
+    }
+
+    it = config.find("NUM_RUNS");
+    if (it != config.end()) {
+        numRuns = stoi(it->second);
+    }
+
+    it = config.find("NUM_FRAMES_PER_RUN");
+    if (it != config.end()) {
+        numFramesPerRun = stoi(it->second);
     }
 
     it = config.find("SCENE_FILE_NAME");
@@ -57,6 +71,39 @@ Config::Config(map<string, string> config) {
     if (it != config.end()) {
         logOutputFile = it->second;
     }
+}
+
+bool Config::isRunningOnNormalMode() {
+    return runMode == RunMode::normal;
+}
+
+bool Config::isRunningOnBenchmarkMode() {
+    return runMode == RunMode::benchmark;
+}
+
+bool Config::isRunningOnTestMode() {
+    return runMode == RunMode::test;
+}
+
+bool Config::shouldLog() {
+    return isRunningOnBenchmarkMode() || isRunningOnTestMode() || log;
+}
+
+string Config::getMPCDDescription() {
+    if (useMidPhase) return "OBB";
+    else return "None";
+}
+
+string Config::getBPCDDescription() {
+    switch (bpAlgorithm) {
+    case BPAlgorithmChoice::bruteForce:
+        return "BF";
+    case BPAlgorithmChoice::none:
+        return "None";
+    case BPAlgorithmChoice::sweepAndPrune:
+        return "SAP";
+    }
+    return "None";
 }
 
 KeyValue::KeyValue(string key, string value) {

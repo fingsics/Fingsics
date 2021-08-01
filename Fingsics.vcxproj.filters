@@ -126,6 +126,9 @@
     <ClCompile Include="src\Impulse.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="src\LoggingManager.cpp">
+      <Filter>Source Files\Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\BroadPhaseAlgorithms.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="include\Impulse.h">
       <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LoggingManager.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
