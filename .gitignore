@@ -401,3 +401,4 @@ config.txt
 output/
 testing/results
 benchmarks/
+enc_temp_folder/

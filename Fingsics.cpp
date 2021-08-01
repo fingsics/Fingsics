@@ -31,27 +31,6 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
     lastFrameTime = clock();
 }
 
-void log(std::ofstream& outputCSV, int numBroadPhaseCollisions, int numMidPhaseCollisions, int numCollisions, chrono::system_clock::time_point frameStart, chrono::system_clock::time_point broadEnd, chrono::system_clock::time_point midEnd, chrono::system_clock::time_point narrowEnd, chrono::system_clock::time_point responseEnd, chrono::system_clock::time_point moveEnd) {
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numBroadPhaseCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numMidPhaseCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000.0;
-    outputCSV << "\n";
-}
-
 SimulationResults* runSimulation(Config config, SDL_Window* window) {
     SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
 
