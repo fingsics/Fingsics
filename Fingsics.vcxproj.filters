@@ -140,6 +140,8 @@
     </ClCompile>
     <ClCompile Include="src\SweepAndPruneBroadPhase.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    <ClCompile Include="src\LoggingManager.cpp">
+      <Filter>Source Files\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +231,8 @@
     </ClInclude>
     <ClInclude Include="include\MultithreadSweepAndPruneBroadPhase.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    <ClInclude Include="include\LoggingManager.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ ObjectLoader::ObjectLoader(string scene, int numLatLongs) {
 
 vector<Object*> ObjectLoader::getObjects() {
     string filepath = "scenes/" + scene;
+    if (!filesystem::exists(filepath) || !filesystem::is_regular_file(filepath)) throw "Invalid scene name";
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLError eResult = xml_doc.LoadFile(filepath.c_str());
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
@@ -100,7 +101,8 @@ Plane* ObjectLoader::loadPlane(tinyxml2::XMLElement* xmlObject, string id) {
 
 vector<float> ObjectLoader::parseTriplet(const char* input) {
     string stringInput = string(input);
-    stringInput.erase(remove_if(stringInput.begin(), stringInput.end(), isspace), stringInput.end());
+    auto f = [](unsigned char const c) { return std::isspace(c); };
+    stringInput.erase(remove_if(stringInput.begin(), stringInput.end(), f), stringInput.end());
     stringstream ss(stringInput);
     vector<float> values;
     while (ss.good()) {

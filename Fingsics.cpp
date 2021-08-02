@@ -15,6 +15,7 @@
 #include "include/MidPhaseAlgorithms.h"
 #include "include/NarrowPhaseAlgorithm.h"
 #include "include/CollisionResponseAlgorithm.h"
+#include "include/LoggingManager.h"
 #include <iostream>
 #include <thread>
 #include <map>
@@ -34,28 +35,9 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
     lastFrameTime = clock();
 }
 
-void log(std::ofstream& outputCSV, int numBroadPhaseCollisions, int numMidPhaseCollisions, int numCollisions, chrono::system_clock::time_point frameStart, chrono::system_clock::time_point broadEnd, chrono::system_clock::time_point midEnd, chrono::system_clock::time_point narrowEnd, chrono::system_clock::time_point responseEnd, chrono::system_clock::time_point moveEnd) {
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numBroadPhaseCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(midEnd - broadEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numMidPhaseCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - midEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << numCollisions;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000.0;
-    outputCSV << ",";
-    outputCSV << (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000.0;
-    outputCSV << "\n";
-}
+SimulationResults* runSimulation(Config config, SDL_Window* window) {
+    SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
 
-int runSimulation(Config config, int stopFrame, SDL_Window* window) {
     // Camera
     Camera* centeredCamera = new CenteredCamera();
     Camera* freeCamera = new FreeCamera();
@@ -63,7 +45,7 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
 
     // Program options
     bool quit = false;
-    bool pause = true;
+    bool pause = config.isRunningOnNormalMode();
     bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
@@ -103,13 +85,6 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
 
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
-    std::ofstream outputCSV;
-
-    if (config.log || config.runInTestMode) {
-        string folder = config.runInTestMode ? "testing\\results\\" : "output\\";
-        outputCSV.open(folder + config.logOutputFile);
-        outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
-    }
 
     initializeOpenGL();
 
@@ -117,70 +92,100 @@ int runSimulation(Config config, int stopFrame, SDL_Window* window) {
     map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
     map<string, Collision> collisions;
 
-    while (!quit && (stopFrame == -1 || frame < stopFrame)) {
-        if (!config.runInTestMode) {
+    while (!quit && (config.isRunningOnNormalMode() || frame < config.numFramesPerRun)) {
+        if (config.isRunningOnNormalMode()) {
             setupFrame();
-            camera->lookAt(); // Set camera position
-            setLighting(); // Set light
+            camera->lookAt();
+            setLighting();
         }
 
         // Draw objects
-        if (draw && !config.runInTestMode) {
+        if (draw && config.isRunningOnNormalMode()) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
         }
 
         // Apply physics and movement
-        if (!pause || config.runInTestMode) {
-            if (config.log || config.runInTestMode) frameStart = std::chrono::system_clock::now();
+        if (!pause) {
+            if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
             broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-            if (config.log || config.runInTestMode) broadEnd = std::chrono::system_clock::now();
+            if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
             midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            if (config.log || config.runInTestMode) midEnd = std::chrono::system_clock::now();
+            if (config.shouldLog()) midEnd = std::chrono::system_clock::now();
             collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
-            if (config.log || config.runInTestMode) narrowEnd = std::chrono::system_clock::now();
+            if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
-            if (config.log || config.runInTestMode) responseEnd = std::chrono::system_clock::now();
+            if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
-            if (config.log || config.runInTestMode) {
+            if (config.shouldLog()) {
                 moveEnd = std::chrono::system_clock::now();
-                log(outputCSV, broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
+                results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
             frame++;
         }
 
         // Process events
-        if (!config.runInTestMode) {
+        if (config.isRunningOnNormalMode()) {
             checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, !config.runInTestMode);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.isRunningOnNormalMode());
 
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.log || config.runInTestMode) outputCSV.close();
-    return 0;
+    return results;
 }
 
-int runAllScenes(Config config) {
-    list<string> sceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
+void runTestScenes(Config config) {
+    list<string> testSceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
         "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
 
+    if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
+    if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");
     SDL_Window* window = initializeSDL();
-    for (auto scene = sceneNames.begin(); scene != sceneNames.end(); ++scene) {
-        config.sceneName = *scene;
-        config.logOutputFile = *scene + "_test.csv";
-        runSimulation(config, 300, window);
-    }
 
-    return 0;
+    for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
+        config.sceneName = *scene;
+        SimulationResults* results = runSimulation(config, window);
+        if (results) {
+            LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);
+            delete results;
+        }
+    }
 }
 
+void runSceneBenchmark(Config config) {
+    list<SimulationResults> benchmarkResults = list<SimulationResults>();
+    SDL_Window* window = initializeSDL();
+    for (int i = 0; i < config.numRuns; i++) {
+        SimulationResults* results = runSimulation(config, window);
+        if (results) {
+            benchmarkResults.push_back(*results);
+            delete results;
+        }
+    }
+    LoggingManager::logBenchmarkResults(benchmarkResults, config);
+}
 
 int main(int argc, char* argv[]) {
     Config config = ConfigLoader().getConfig();
-    if (config.runInTestMode) return runAllScenes(config);
-    return runSimulation(config, -1, initializeSDL());
+
+    if (config.isRunningOnTestMode()) {
+        runTestScenes(config);
+    }
+    else if (config.isRunningOnBenchmarkMode()) {
+        runSceneBenchmark(config);
+    }
+    else {
+        SimulationResults* results = runSimulation(config, initializeSDL());
+        if (results && config.log) {
+            if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
+            LoggingManager::logRunResults("output", config.logOutputFile, *results);
+            delete results;
+        }
+    }
+    
+    return 0;
 }

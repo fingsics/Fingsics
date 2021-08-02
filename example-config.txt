@@ -7,11 +7,13 @@ DRAW_HALF_WHITE=false
 
 # Algorithms (BROAD_PHASE options are NONE, BF, SAP or MTSAP)
 BROAD_PHASE=SAP
-USE_MID_PHASE=true
+USE_MID_PHASE=false
 
 # Logging
 LOG=true
 LOG_OUTPUT_FILE_NAME=output.csv
 
-# Testing
-RUN_IN_TEST_MODE=false
+# Run mode (options are NORMAL, TEST, BENCHMARK)
+RUN_MODE=NORMAL
+NUM_RUNS=5
+NUM_FRAMES_PER_RUN=300
