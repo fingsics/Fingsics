@@ -2,7 +2,7 @@ SCENE_FILE_NAME=scene
 FPS=60
 
 # Object drawing
-NUM_LAT_LONGS=20
+NUM_LAT_LONGS=8
 DRAW_HALF_WHITE=false
 
 # Algorithms (BROAD_PHASE options are NONE, BF, SAP or MTSAP)

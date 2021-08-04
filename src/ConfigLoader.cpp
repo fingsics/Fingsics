@@ -2,7 +2,7 @@
 
 Config::Config(map<string, string> config) {
     fps = 60;
-    numLatLongs = 10;
+    numLatLongs = 8;
     log = false;
     runMode = RunMode::normal;
     numRuns = 10;
