@@ -13,7 +13,6 @@ using namespace std;
 class MultithreadSweepAndPruneBroadPhase : public BroadPhaseAlgorithm {
 private:
     map<string, pair<Object*, Object*>> collisionPairs;
-    map<string, pair<Object*, Object*>> frameDetections;
     mutex mtx;
     int pointsPerAxis;
     AABBPoint* xPoints;
@@ -26,8 +25,8 @@ private:
     void updateAABBPoint(AABBPoint*, AABBPoint*);
     void updateAABBPointInAxis(AABBPoint*, AABBPoint*);
     void insertAABBPoint(AABBPoint, int, AABBPoint*);
-    bool AABBOverlapTest(AABB*, AABB*, AABBPoint*);
-    void addCollision(Object*, Object*, bool);
+    bool AABBOverlapTest(Object*, Object*, AABBPoint*);
+    void addCollision(Object*, Object*);
     void removeCollision(Object*, Object*);
 public:
     MultithreadSweepAndPruneBroadPhase(Object**, int);

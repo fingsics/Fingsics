@@ -7,7 +7,7 @@ MultithreadSweepAndPruneBroadPhase::MultithreadSweepAndPruneBroadPhase(Object** 
         if (dynamic_cast<Plane*>(objects[i])) {
             nonPlaneObjects--;
             // Plane-Plane collisions are ignored by NarrowPhase, they are added for consistency with NoBroadPhase and BruteForceBroadPhase
-            for (int j = 0; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j], false);
+            for (int j = 0; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j]);
         }
     }
 
@@ -140,8 +140,8 @@ void MultithreadSweepAndPruneBroadPhase::updateAABBPoint(AABBPoint* pointPointer
     while (index > 0 && point.value < pointArray[index - 1].value) {
         if (!point.isMin && pointArray[index - 1].isMin) {
             removeCollision(point.aabb->object, pointArray[index - 1].aabb->object);
-        } else if (point.isMin && !pointArray[index - 1].isMin && AABBOverlapTest(point.aabb, pointArray[index - 1].aabb, pointArray)) {
-            addCollision(point.aabb->object, pointArray[index - 1].aabb->object, false);
+        } else if (point.isMin && !pointArray[index - 1].isMin && AABBOverlapTest(point.aabb->object, pointArray[index - 1].aabb->object, pointArray)) {
+            addCollision(point.aabb->object, pointArray[index - 1].aabb->object);
         }
 
         insertAABBPoint(pointArray[index - 1], index, pointArray);
@@ -153,8 +153,8 @@ void MultithreadSweepAndPruneBroadPhase::updateAABBPoint(AABBPoint* pointPointer
     while (index < pointsPerAxis - 1 && point.value > pointArray[index + 1].value) {
         if (point.isMin && !pointArray[index + 1].isMin) {
             removeCollision(point.aabb->object, pointArray[index + 1].aabb->object);
-        } else if (!point.isMin && pointArray[index + 1].isMin && AABBOverlapTest(point.aabb, pointArray[index + 1].aabb, pointArray)) {
-            addCollision(point.aabb->object, pointArray[index + 1].aabb->object, false);
+        } else if (!point.isMin && pointArray[index + 1].isMin && AABBOverlapTest(point.aabb->object, pointArray[index + 1].aabb->object, pointArray)) {
+            addCollision(point.aabb->object, pointArray[index + 1].aabb->object);
         }
 
         insertAABBPoint(pointArray[index + 1], index, pointArray);
@@ -173,8 +173,10 @@ void MultithreadSweepAndPruneBroadPhase::updateAABBPointInAxis(AABBPoint* pointP
 
     // Shift other points to the right (updated point is smaller and moving to the left)
     while (index > 0 && point.value < pointArray[index - 1].value) {
-        if ((!point.isMin && pointArray[index - 1].isMin) || (point.isMin && !pointArray[index - 1].isMin)) {
-            addCollision(point.aabb->object, pointArray[index - 1].aabb->object, true);
+        if (!point.isMin && pointArray[index - 1].isMin) {
+            removeCollision(point.aabb->object, pointArray[index - 1].aabb->object);
+        } else if (point.isMin && !pointArray[index - 1].isMin && AABBOverlapTest(point.aabb->object, pointArray[index - 1].aabb->object, pointArray)) {
+            addCollision(point.aabb->object, pointArray[index - 1].aabb->object);
         }
 
         insertAABBPoint(pointArray[index - 1], index, pointArray);
@@ -184,8 +186,10 @@ void MultithreadSweepAndPruneBroadPhase::updateAABBPointInAxis(AABBPoint* pointP
 
     // Shift other points to the left (updated point is bigger and moving to the right)
     while (index < pointsPerAxis - 1 && point.value > pointArray[index + 1].value) {
-        if ((point.isMin && !pointArray[index + 1].isMin) || (!point.isMin && pointArray[index + 1].isMin)) {
-            addCollision(point.aabb->object, pointArray[index + 1].aabb->object, true);
+        if (point.isMin && !pointArray[index + 1].isMin) {
+            removeCollision(point.aabb->object, pointArray[index + 1].aabb->object);
+        } else if (!point.isMin && pointArray[index + 1].isMin && AABBOverlapTest(point.aabb->object, pointArray[index + 1].aabb->object, pointArray)) {
+            addCollision(point.aabb->object, pointArray[index + 1].aabb->object);
         }
 
         insertAABBPoint(pointArray[index + 1], index, pointArray);
@@ -215,29 +219,27 @@ void MultithreadSweepAndPruneBroadPhase::insertAABBPoint(AABBPoint oldAABBPoint,
     }
 }
 
-bool MultithreadSweepAndPruneBroadPhase::AABBOverlapTest(AABB* aabb1, AABB* aabb2, AABBPoint* pointArray) {
-    if (pointArray != xPoints && (aabb1->minX > aabb2->maxX || aabb2->minX > aabb1->maxX)) return false;
-    if (pointArray != yPoints && (aabb1->minY > aabb2->maxY || aabb2->minY > aabb1->maxY)) return false;
-    if (pointArray != zPoints && (aabb1->minZ > aabb2->maxZ || aabb2->minZ > aabb1->maxZ)) return false;
+bool MultithreadSweepAndPruneBroadPhase::AABBOverlapTest(Object* object1, Object* object2, AABBPoint* pointArray) {
+    if (pointArray != xPoints && (object1->getMinX() > object2->getMaxX() || object2->getMinX() > object1->getMaxX())) return false;
+    if (pointArray != yPoints && (object1->getMinY() > object2->getMaxY() || object2->getMinY() > object1->getMaxY())) return false;
+    if (pointArray != zPoints && (object1->getMinZ() > object2->getMaxZ() || object2->getMinZ() > object1->getMaxZ())) return false;
     return true;
 }
 
 // SAP "Pair manager"
 
-void MultithreadSweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2, bool frameOnly) {
+void MultithreadSweepAndPruneBroadPhase::addCollision(Object* object1, Object* object2) {
     if (object1 == object2 || (object1->getIsStatic() && object2->getIsStatic())) return;
     pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(object1, object2);
-    if (!frameOnly) {
-        if (collisionPairs.find(objectPair.first) == collisionPairs.end()) collisionPairs.insert(objectPair);
-    } else {
-        mtx.lock();
-        if (frameDetections.find(objectPair.first) == frameDetections.end()) frameDetections.insert(objectPair);
-        mtx.unlock();
-    }
+    mtx.lock();
+    if (collisionPairs.find(objectPair.first) == collisionPairs.end()) collisionPairs.insert(objectPair);
+    mtx.unlock();
 }
 
 void MultithreadSweepAndPruneBroadPhase::removeCollision(Object* object1, Object* object2) {
+    mtx.lock();
     collisionPairs.erase(getObjectPairWithId(object1, object2).first);
+    mtx.unlock();
 }
 
 map<string, pair<Object*, Object*>> MultithreadSweepAndPruneBroadPhase::getCollisions(Object** objects, int numObjects) {
@@ -248,17 +250,6 @@ map<string, pair<Object*, Object*>> MultithreadSweepAndPruneBroadPhase::getColli
     xAxisWorker.join();
     yAxisWorker.join();
     zAxisWorker.join();
-
-    
-
-    for (auto change = frameDetections.begin(); change != frameDetections.end(); ++change) {
-        if (AABBOverlapTest(change->second.first->getAABB(), change->second.second->getAABB(), NULL)) {
-            addCollision(change->second.first, change->second.second, false);
-        } else {
-            removeCollision(change->second.first, change->second.second);
-        }
-    }
-    frameDetections.clear();
 
     return collisionPairs;
 }
