@@ -1,31 +1,68 @@
 import pathlib
 import os
+import random
 
-
-def create_capsule(pos, mass, rad, length, vel, color):
-    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"90,0,0\" color=\"{color}\" radius=\"{rad}\" length=\"{length}\" />\n"
+def create_capsule_vertical(pos, mass, rad, length, vel, color):
+    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"1\" ang=\"90,0,0\" color=\"{color}\" radius=\"{rad}\" length=\"{length}\" />\n"
     
-def create_capsule2(pos, mass, rad, length, vel, color):
-    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"0,0,0\" color=\"{color}\" radius=\"{rad}\" length=\"{length}\" />\n"
+def create_capsule_horizontal(pos, mass, rad, length, vel, color):
+    return f"\t\t<capsule pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"1\" ang=\"0,0,0\" color=\"{color}\" radius=\"{rad}\" length=\"{length}\" />\n"
  
-    
 def create_ball(pos, mass, rad, vel, color):
-    return f"\t\t<sphere pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"0.4\" ang=\"0,0,0\" color=\"{color}\" radius=\"{rad}\" />\n"
+    return f"\t\t<sphere pos=\"{pos}\" vel=\"{vel}\" mass=\"{mass}\" elasticityCoef=\"1\" ang=\"0,0,0\" color=\"{color}\" radius=\"{rad}\" />\n"
     
-objects = ""
-#objects += create_ball("0,0,20", "1000", "4", "0,0,-20")
+def create_plane(pos, ang, color, drawLength, drawWidth):
+    return f"\t\t<plane pos=\"{pos}\" mass=\"{1}\" elasticityCoef=\"1\" ang=\"{ang}\" color=\"{color}\" static=\"true\" drawLength=\"{drawLength}\" drawWidth=\"{drawWidth}\" />\n"
+   
+def make_capsule_cube_horizontal(num_x, num_y, num_z, dist_1, dist_2):
+    objects = ""
+    for i in range(0, num_x):
+        for j in range(0, num_y):
+            for k in range(0, num_z):
+                objects += create_capsule_horizontal(f"{-12 + dist_1 * i},{-15 + dist_2 * j},{-50 + dist_1 * k}", "1", "0.5", "4", "0,0,15", "220,0,0")
+    return objects
 
-for i in range(0,12):
-    for j in range(0,5):
-        for k in range(0,12):
-            objects += create_capsule(f"{-12 + 3 * i},{-15 + 6 * j},{-50 + 3 * k}", "1", "0.5", "4", "0,0,15", "220,0,0")
+def make_capsule_cube_vertical(num_x, num_y, num_z, dist_1, dist_2):
+    for i in range(0, num_x):
+        for j in range(0, num_y):
+            for k in range(0, num_z):
+                objects += create_capsule_vertical(f"{-12.5 + dist_1 * i},{-16 + dist_1 * j},{50 - dist_2 * k}", "1", "0.5", "4", "0,0,-15", "0,0,220")
+    return objects
+
+def make_ball_cube(num_x, num_y, num_z, dist, rad):
+    possible_disturbances = [i/100 for i in range(-10,11,1)]
+    objects = ""
+    for i in range(0, num_x):
+        for j in range(0, num_y):
+            for k in range(0, num_z):
+                random_disturbance_1 = random.choice(possible_disturbances)
+                random_disturbance_2 = 0
+                random_disturbance_3 = random.choice(possible_disturbances)
+                objects += create_ball(f"{-((num_x - 1) * dist / 2) + dist * i + random_disturbance_1},{-((num_y - 1) * dist / 2) + dist * j + random_disturbance_2},{-((num_z - 1) * dist / 2) + dist * k + random_disturbance_3}", "1", f"{rad}", "0,0,0", "220,0,0")
+    return objects
 
 
-for i in range(0,12):
-    for j in range(0,10):
-        for k in range(0,5):
-            objects += create_capsule2(f"{-12.5 + 3 * i},{-16 + 3 * j},{50 - 6 * k}", "1", "0.5", "4", "0,0,-15", "0,0,220")
+def make_two_waves_scene():
+    objects = ""
+    num_x = 60
+    num_y = 1
+    num_z = 30
+    dist = 0.8
 
+    objects += make_ball_cube(num_x, num_y, num_z, dist, 0.3)
+
+    objects += create_ball("10,0,-20", "10", "5", "0,0,20", "220,220,220")
+    objects += create_ball("-10,0,-20", "10", "5", "0,0,20", "220,220,220")
+
+    plane_length_x = num_x * dist + 0.5
+    plane_length_z = num_z * dist + 0.5
+
+    objects += create_plane(f"{plane_length_x / 2},2,0", "0,0,90", "220,220,220", "4", f"{plane_length_z}")
+    objects += create_plane(f"0,2,{plane_length_z / 2}", "-90,0,0", "220,220,220", f"{plane_length_x}", "4")
+    objects += create_plane(f"-{plane_length_x / 2},2,0", "0,0,-90", "220,220,220", "4", f"{plane_length_z}")
+    return objects
+
+objects = make_two_waves_scene()
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
