@@ -14,6 +14,9 @@ def create_ball(pos, mass, rad, vel, color):
 def create_plane(pos, ang, color, drawLength, drawWidth):
     return f"\t\t<plane pos=\"{pos}\" mass=\"{1}\" elasticityCoef=\"1\" ang=\"{ang}\" color=\"{color}\" static=\"true\" drawLength=\"{drawLength}\" drawWidth=\"{drawWidth}\" />\n"
 
+def create_tile(pos, ang, color, length, width):
+    return f"\t\t<tile pos=\"{pos}\" mass=\"{1}\" elasticityCoef=\"1\" ang=\"{ang}\" color=\"{color}\" static=\"true\" length=\"{length}\" width=\"{width}\" />\n"
+
 def get_random_velocity():
     #posible_velocities = [i/10 for i in range(-30,31,1)]
     posible_velocities = [i/6 for i in range(-30,31,1)]
@@ -69,9 +72,20 @@ def make_two_waves_scene():
     plane_length_x = num_x * dist + 0.5
     plane_length_z = num_z * dist + 0.5
 
-    objects += create_plane(f"{plane_length_x / 2},2,0", "0,0,90", "220,220,220", "4", f"{plane_length_z}")
-    objects += create_plane(f"0,2,{plane_length_z / 2}", "-90,0,0", "220,220,220", f"{plane_length_x}", "4")
-    objects += create_plane(f"-{plane_length_x / 2},2,0", "0,0,-90", "220,220,220", "4", f"{plane_length_z}")
+    objects += create_plane(f"{plane_length_x / 2},0,0", "0,0,90", "220,220,220", "4", f"{plane_length_z}")
+    objects += create_plane(f"0,0,{plane_length_z / 2}", "-90,0,0", "220,220,220", f"{plane_length_x}", "4")
+    objects += create_plane(f"-{plane_length_x / 2},0,0", "0,0,-90", "220,220,220", "4", f"{plane_length_z}")
+    
+    mid_rect_width_div = 4
+    rect_width_div = 4.5
+    
+    objects += create_tile(f"{plane_length_x / 2 - plane_length_x / rect_width_div + plane_length_x / rect_width_div / 2},0,-{plane_length_z / 2}",
+               "90,0,0", "220,220,220", "20", f"{plane_length_x / rect_width_div}")
+    objects += create_tile(f"{-plane_length_x / 2 + plane_length_x / rect_width_div - plane_length_x / rect_width_div / 2 },0,-{plane_length_z / 2}",
+               "90,0,0", "220,220,220", "20", f"{plane_length_x / rect_width_div}")
+               
+    objects += create_tile(f"0,0,-{plane_length_z / 2}", "90,0,0", "220,220,220", "20", f"{plane_length_x / mid_rect_width_div}")
+               
     return objects
 
 def make_balls_in_box_scene():
