@@ -5,6 +5,7 @@
 #include "Point.h"
 #include "Ball.h"
 #include "Capsule.h"
+#include "Tile.h"
 #include "Plane.h"
 #include "Object.h"
 #include <filesystem>
@@ -35,6 +36,7 @@ private:
 	
     CommonFields parseCommonFields(tinyxml2::XMLElement*);
 	Ball* loadBall(tinyxml2::XMLElement*, string, int);
+	Tile* loadTile(tinyxml2::XMLElement*, string);
 	Capsule* loadCapsule(tinyxml2::XMLElement*, string, int);
 	Plane* loadPlane(tinyxml2::XMLElement*, string);
 	vector<float> parseTriplet(const char* charPoint);

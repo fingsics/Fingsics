@@ -184,6 +184,7 @@
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\ObjectLoader.cpp" />
+    <ClCompile Include="src\Tile.cpp" />
     <ClCompile Include="src\SDLHelpers.cpp" />
     <ClCompile Include="src\SweepAndPruneBroadPhase.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="include\Plane.h" />
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="include\ObjectLoader.h" />
+    <ClInclude Include="include\Tile.h" />
     <ClInclude Include="include\SDLHelpers.h" />
     <ClInclude Include="include\SweepAndPruneBroadPhase.h" />
     <ClInclude Include="include\LoggingManager.h" />

@@ -4,7 +4,7 @@ using namespace std;
 
 Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, Point planePoint, Point planeNormal) {
     float d = planeNormal.dotProduct(ballCenter - planePoint);
-    float absD= abs(d);
+    float absD = abs(d);
     if (absD < ballRadius) {
         Point normal = (d > 0) ? planeNormal : planeNormal * -1;
         Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
@@ -15,6 +15,79 @@ Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, P
 
 Collision* NarrowPhaseAlgorithm::ballPlane(Ball* ball, Plane* plane) {
     return ballPlane(ball->getPos(), ball->getRadius(), plane->getPos(), plane->getNormal());
+}
+
+Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Point lineCenter, Point lineDirection, float lineLength) {
+    float distance = (lineCenter - ballCenter).crossProduct(lineDirection).getMagnitude();
+    float absD = abs(distance);
+    if (absD < ballRadius) {
+        Point projection = lineCenter + lineDirection * (ballCenter - lineCenter).dotProduct(lineDirection);
+
+        if ((projection - lineCenter).getMagnitudeSqr() < pow(lineLength / 2, 2)) {
+            return new Collision(projection, ballCenter - projection, ballRadius - absD);
+        }
+    }
+
+    return NULL;
+}
+
+Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
+    Point tileNormal = tile->getNormal();
+    Point tileCenter = tile->getPos();
+    Point ballCenter = ball->getPos();
+    float ballRadius = ball->getRadius();
+    float d = tileNormal.dotProduct(ballCenter - tile->getPos());
+    float absD = abs(d);
+
+    if (absD < ballRadius) {
+        Point normal = (d > 0) ? tileNormal : tileNormal * -1;
+        Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
+
+        Point axis1 = tile->getAxis1();
+        Point axis2 = tile->getAxis2();
+
+        float axis1Distance = (tileCenter - projection).crossProduct(axis1).getMagnitude();
+        float axis2Distance = (tileCenter - projection).crossProduct(axis2).getMagnitude();
+
+        if (abs(axis1Distance) < tile->getAxis1Length() / 2 && abs(axis2Distance) < tile->getAxis2Length() / 2) {
+            // Collision with the plane
+            return new Collision(projection, normal, ballRadius - absD);
+        }
+        else if (abs(axis1Distance) > tile->getAxis1Length() / 2 && abs(axis2Distance) < tile->getAxis2Length() / 2) {
+            // Collision with one of the lines
+            if ((ballCenter - tileCenter).dotProduct(axis2) < 0) return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() - tile->getAxis2() * tile->getAxis2Length() / 2, tile->getAxis1(), tile->getAxis1Length());
+            return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() + tile->getAxis2() * tile->getAxis2Length() / 2, tile->getAxis1(), tile->getAxis1Length());
+        }
+        else if (abs(axis2Distance) > tile->getAxis2Length() / 2 && abs(axis1Distance) > tile->getAxis1Length()) {
+            // Collision with one of the lines
+            if ((ballCenter - tileCenter).dotProduct(axis1) < 0) return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() - tile->getAxis1() * tile->getAxis1Length() / 2, tile->getAxis2(), tile->getAxis2Length());
+            else return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() + tile->getAxis1() * tile->getAxis1Length() / 2, tile->getAxis2(), tile->getAxis2Length());
+        }
+        else {
+            // Test collision with tile's vertices
+            Point tileEnd;
+            float cos1 = (ballCenter - tileCenter).dotProduct(axis2);
+            float cos2 = (ballCenter - tileCenter).dotProduct(axis1);
+
+            if (cos1 > 0 && cos2 > 0) tileEnd = tile->getEnd1();
+            else if (cos1 > 0) tileEnd = tile->getEnd2();
+            else if (cos2 > 0) tileEnd = tile->getEnd3();
+            else tileEnd = tile->getEnd4();
+
+            Point endToBall = ballCenter - tileEnd;
+            float distance = endToBall.getMagnitude();
+            if (distance < ballRadius) {
+                return new Collision(tileEnd, endToBall / distance, ballRadius - distance);
+            }
+        }
+    }
+
+
+    return NULL;
+}
+
+Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
+    return NULL;
 }
 
 Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
@@ -165,21 +238,32 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         Capsule* capsule2 = dynamic_cast<Capsule*>(object2);
         Plane* plane1 = dynamic_cast<Plane*>(object1);
         Plane* plane2 = dynamic_cast<Plane*>(object2);
+        Tile* tile1 = dynamic_cast<Tile*>(object1);
+        Tile* tile2 = dynamic_cast<Tile*>(object2);
 
         if (ball1) {
             if (ball2) collision = ballBall(ball1, ball2);
             else if (capsule2) collision = ballCapsule(ball1, capsule2);
             else if (plane2) { collision = ballPlane(ball1, plane2); if (collision) collision->invertNormal(); }
+            else if (tile2) { collision = ballTile(ball1, tile2); if (collision) collision->invertNormal(); }
         }
         else if (capsule1) {
             if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision->invertNormal(); }
             else if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
             else if (plane2) { collision = capsulePlane(capsule1, plane2); if (collision) collision->invertNormal(); }
+            else if (tile2) collision = capsuleTile(capsule1, tile2);
         }
         else if (plane1) {
             if (ball2) collision = ballPlane(ball2, plane1);
             else if (capsule2) collision = capsulePlane(capsule2, plane1);
             else if (plane2) collision = NULL;
+            else if (tile2) collision = NULL;
+        }
+        else if (tile1) {
+            if (ball2) collision = ballPlane(ball2, plane1);
+            else if (capsule2) collision = capsulePlane(capsule2, plane1);
+            else if (plane2) collision = NULL;
+            else if (tile2) collision = NULL;
         }
 
         if (collision) {

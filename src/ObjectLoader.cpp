@@ -33,6 +33,7 @@ vector<Object*> ObjectLoader::getObjects() {
         if (objectType == "sphere") objects.push_back((Object*)loadBall(xmlObject, to_string(objects.size()), numLatLongs));
         else if (objectType == "capsule") objects.push_back((Object*)loadCapsule(xmlObject, to_string(objects.size()), numLatLongs));
         else if (objectType == "plane") objects.push_back((Object*)loadPlane(xmlObject, to_string(objects.size())));
+        else if (objectType == "tile") objects.push_back((Object*)loadTile(xmlObject, to_string(objects.size())));
     }
 
     return objects;
@@ -75,6 +76,17 @@ Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int num
     parseError = xmlObject->QueryFloatAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, numLatLongs, numLatLongs);
+}
+
+Tile* ObjectLoader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
+    CommonFields commonFields = parseCommonFields(xmlObject);
+    float length, width;
+    tinyxml2::XMLError parseError;
+    parseError = xmlObject->QueryFloatAttribute("length", &length);
+    length = (parseError == tinyxml2::XML_SUCCESS) ? length : 30;
+    parseError = xmlObject->QueryFloatAttribute("width", &width);
+    width = (parseError == tinyxml2::XML_SUCCESS) ? width : 30;
+    return new Tile(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, length, width);
 }
 
 Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
