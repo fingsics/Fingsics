@@ -44,7 +44,7 @@ def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_co
     for i in range(0, num_x):
         for j in range(0, num_y):
             for k in range(0, num_z):
-                if 1 == random.choice([1,2,3]):
+                if 1 == random.choice([1]):
                     random_disturbance_1 = random.choice(possible_disturbances)
                     random_disturbance_2 = 0
                     random_disturbance_3 = random.choice(possible_disturbances)
@@ -56,15 +56,15 @@ def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_co
 
 def make_two_waves_scene():
     objects = ""
-    num_x = 60
+    num_x = 80
     num_y = 1
-    num_z = 30
+    num_z = 40
     dist = 0.8
 
     objects += make_ball_cube(num_x, num_y, num_z, dist, 0.3, False, False)
 
-    objects += create_ball("10,0,-20", "10", "5", "0,0,20", "220,220,220")
-    objects += create_ball("-10,0,-20", "10", "5", "0,0,20", "220,220,220")
+    objects += create_ball("13,0,-30", "15", "8", "0,0,20", "220,220,220")
+    objects += create_ball("-13,0,-30", "15", "8", "0,0,20", "220,220,220")
 
     plane_length_x = num_x * dist + 0.5
     plane_length_z = num_z * dist + 0.5
@@ -97,7 +97,7 @@ def make_balls_in_box_scene():
     objects += create_plane(f"0,-{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}")
     return objects
 
-objects = make_balls_in_box_scene()
+objects = make_two_waves_scene()
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
