@@ -15,7 +15,8 @@ def create_plane(pos, ang, color, drawLength, drawWidth):
     return f"\t\t<plane pos=\"{pos}\" mass=\"{1}\" elasticityCoef=\"1\" ang=\"{ang}\" color=\"{color}\" static=\"true\" drawLength=\"{drawLength}\" drawWidth=\"{drawWidth}\" />\n"
 
 def get_random_velocity():
-    posible_velocities = [i/10 for i in range(-30,31,1)]
+    #posible_velocities = [i/10 for i in range(-30,31,1)]
+    posible_velocities = [i/6 for i in range(-30,31,1)]
     return f"{random.choice(posible_velocities)},{random.choice(posible_velocities)},{random.choice(posible_velocities)}"
     
 def get_random_color():
@@ -43,12 +44,13 @@ def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_co
     for i in range(0, num_x):
         for j in range(0, num_y):
             for k in range(0, num_z):
-                random_disturbance_1 = random.choice(possible_disturbances)
-                random_disturbance_2 = 0
-                random_disturbance_3 = random.choice(possible_disturbances)
-                vel = get_random_velocity() if use_velocities else "0,0,0"
-                color = get_random_color() if use_random_colors else "220,0,0"
-                objects += create_ball(f"{-((num_x - 1) * dist / 2) + dist * i + random_disturbance_1},{-((num_y - 1) * dist / 2) + dist * j + random_disturbance_2},{-((num_z - 1) * dist / 2) + dist * k + random_disturbance_3}", "1", f"{rad}", f"{vel}", color)
+                if 1 == random.choice([1,2,3]):
+                    random_disturbance_1 = random.choice(possible_disturbances)
+                    random_disturbance_2 = 0
+                    random_disturbance_3 = random.choice(possible_disturbances)
+                    vel = get_random_velocity() if use_velocities else "0,0,0"
+                    color = get_random_color() if use_random_colors else "220,0,0"
+                    objects += create_ball(f"{-((num_x - 1) * dist / 2) + dist * i + random_disturbance_1},{-((num_y - 1) * dist / 2) + dist * j + random_disturbance_2},{-((num_z - 1) * dist / 2) + dist * k + random_disturbance_3}", "1", f"{rad}", f"{vel}", color)
     return objects
 
 
@@ -74,9 +76,9 @@ def make_two_waves_scene():
 
 def make_balls_in_box_scene():
     objects = ""
-    num_x = 10
-    num_y = 10
-    num_z = 10
+    num_x = 18
+    num_y = 18
+    num_z = 19
     dist = 1
 
     objects += make_ball_cube(num_x, num_y, num_z, dist, 0.3, True, True)
