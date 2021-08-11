@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>.\SDL2-2.0.14\lib\x86;.\freeglut\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\libraries\SDL2-2.0.14\lib\x86;.\libraries\freeglut\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>.\SDL2-2.0.14\lib\x86;.\freeglut\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\libraries\SDL2-2.0.14\lib\x86;.\libraries\freeglut\lib;$(LibraryPath)</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>.\freeglut\lib\x64;.\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\libraries\freeglut\lib\x64;.\libraries\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>.\freeglut\lib\x64;.\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
+    <LibraryPath>.\libraries\freeglut\lib\x64;.\libraries\SDL2-2.0.14\lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\SDL2-2.0.14\include;.\freeglut\include\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libraries\SDL2-2.0.14\include;.\libraries\freeglut\include\GL;.\libraries\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -113,7 +113,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\SDL2-2.0.14\include;.\freeglut\include\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libraries\SDL2-2.0.14\include;.\libraries\freeglut\include\GL;.\libraries\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\SDL2-2.0.14\include;.\freeglut\include\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libraries\SDL2-2.0.14\include;.\libraries\freeglut\include\GL;.\libraries\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -147,7 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.\SDL2-2.0.14\include;.\freeglut\include\GL;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\libraries\SDL2-2.0.14\include;.\libraries\freeglut\include\GL;.\libraries\tinyxml2;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Fingsics.cpp" />
+    <ClCompile Include="libraries\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\BruteForceBroadPhase.cpp" />
@@ -188,7 +189,6 @@
     <ClCompile Include="src\SDLHelpers.cpp" />
     <ClCompile Include="src\SweepAndPruneBroadPhase.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
-    <ClCompile Include="tinyxml2\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.h" />
@@ -221,7 +221,7 @@
     <ClInclude Include="include\SDLHelpers.h" />
     <ClInclude Include="include\SweepAndPruneBroadPhase.h" />
     <ClInclude Include="include\LoggingManager.h" />
-    <ClInclude Include="tinyxml2\tinyxml2.h" />
+    <ClInclude Include="libraries\tinyxml2\tinyxml2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

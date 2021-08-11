@@ -8,13 +8,12 @@
 #include "Tile.h"
 #include "Plane.h"
 #include "Object.h"
+#include "tinyxml2.h"
 #include <filesystem>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <algorithm>
-
-#include "../tinyxml2/tinyxml2.h"
 
 struct CommonFields {
 	Point pos;
