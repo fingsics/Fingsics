@@ -57,9 +57,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Fingsics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Ball.cpp">
       <Filter>Source Files\Objects</Filter>
     </ClCompile>
@@ -146,6 +143,9 @@
     </ClCompile>
     <ClCompile Include="libraries\tinyxml2\tinyxml2.cpp">
       <Filter>Source Files\Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Fingsics.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

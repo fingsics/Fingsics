@@ -159,7 +159,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Fingsics.cpp" />
     <ClCompile Include="libraries\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\Ball.cpp" />
@@ -171,6 +170,7 @@
     <ClCompile Include="src\CollisionResponseAlgorithm.cpp" />
     <ClCompile Include="src\Color.cpp" />
     <ClCompile Include="src\ConfigLoader.cpp" />
+    <ClCompile Include="src\Fingsics.cpp" />
     <ClCompile Include="src\FreeCamera.cpp" />
     <ClCompile Include="src\Helpers.cpp" />
     <ClCompile Include="src\Impulse.cpp" />

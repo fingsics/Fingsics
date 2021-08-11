@@ -1,21 +1,21 @@
 // Fingsics.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include "include/SDLHelpers.h";
-#include "include/OpenGlHelpers.h";
-#include "include/ObjectLoader.h"
-#include "include/ConfigLoader.h"
-#include "include/CenteredCamera.h"
-#include "include/FreeCamera.h"
-#include "include/BroadPhaseAlgorithms.h"
-#include "include/NoBroadPhase.h"
-#include "include/BruteForceBroadPhase.h"
-#include "include/SweepAndPruneBroadPhase.h"
-#include "include/MultithreadSweepAndPruneBroadPhase.h"
-#include "include/MidPhaseAlgorithms.h"
-#include "include/NarrowPhaseAlgorithm.h"
-#include "include/CollisionResponseAlgorithm.h"
-#include "include/LoggingManager.h"
+#include "../include/SDLHelpers.h";
+#include "../include/OpenGlHelpers.h";
+#include "../include/ObjectLoader.h"
+#include "../include/ConfigLoader.h"
+#include "../include/CenteredCamera.h"
+#include "../include/FreeCamera.h"
+#include "../include/BroadPhaseAlgorithms.h"
+#include "../include/NoBroadPhase.h"
+#include "../include/BruteForceBroadPhase.h"
+#include "../include/SweepAndPruneBroadPhase.h"
+#include "../include/MultithreadSweepAndPruneBroadPhase.h"
+#include "../include/MidPhaseAlgorithms.h"
+#include "../include/NarrowPhaseAlgorithm.h"
+#include "../include/CollisionResponseAlgorithm.h"
+#include "../include/LoggingManager.h"
 #include <iostream>
 #include <thread>
 #include <map>
