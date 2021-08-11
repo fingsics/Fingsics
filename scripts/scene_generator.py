@@ -66,8 +66,8 @@ def make_two_waves_scene():
 
     objects += make_ball_cube(num_x, num_y, num_z, dist, 0.3, False, False)
 
-    objects += create_ball("13,0,-30", "15", "8", "0,0,20", "220,220,220")
-    objects += create_ball("-13,0,-30", "15", "8", "0,0,20", "220,220,220")
+    objects += create_ball("13,0,-30", "25", "6", "0,0,20", "220,220,220")
+    objects += create_ball("-13,0,-30", "25", "6", "0,0,20", "220,220,220")
 
     plane_length_x = num_x * dist + 0.5
     plane_length_z = num_z * dist + 0.5
@@ -80,11 +80,11 @@ def make_two_waves_scene():
     rect_width_div = 4.5
     
     objects += create_tile(f"{plane_length_x / 2 - plane_length_x / rect_width_div + plane_length_x / rect_width_div / 2},0,-{plane_length_z / 2}",
-               "90,0,0", "220,220,220", "20", f"{plane_length_x / rect_width_div}")
+               "90,0,0", "220,220,220", f"{plane_length_x / rect_width_div}", "20")
     objects += create_tile(f"{-plane_length_x / 2 + plane_length_x / rect_width_div - plane_length_x / rect_width_div / 2 },0,-{plane_length_z / 2}",
-               "90,0,0", "220,220,220", "20", f"{plane_length_x / rect_width_div}")
+               "90,0,0", "220,220,220", f"{plane_length_x / rect_width_div}", "20")
                
-    objects += create_tile(f"0,0,-{plane_length_z / 2}", "90,0,0", "220,220,220", "20", f"{plane_length_x / mid_rect_width_div}")
+    objects += create_tile(f"0,0,-{plane_length_z / 2}", "90,0,0", "220,220,220", f"{plane_length_x / mid_rect_width_div}", "20")
                
     return objects
 
