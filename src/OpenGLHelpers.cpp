@@ -100,6 +100,114 @@ void drawS(float up, float left, float height, float width, float mid) {
     glEnd();
 }
 
+void draw0(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left, up + height);
+    glVertex2f(left, up);
+    glEnd();
+}
+
+void draw1(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width * 0.7, up);
+    glVertex2f(left + width * 0.7, up + height);
+    glEnd();
+}
+
+void draw2(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height);
+    glEnd();
+}
+
+void draw3(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glEnd();
+
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left, up + height);
+    glEnd();
+}
+
+void draw4(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left + width, up + height * mid);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height);
+    glEnd();
+}
+
+void draw5(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height);
+    glEnd();
+}
+
+void draw6(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up);
+    glVertex2f(left, up);
+    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glEnd();
+}
+
+void draw7(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height);
+    glEnd();
+}
+
+void draw8(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left + width, up + height * mid);
+    glEnd();
+}
+
+void draw9(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height);
+    glEnd();
+}
+
 void drawFPSCounter() {
     float up = 0.02;
     float left = 0.02;
