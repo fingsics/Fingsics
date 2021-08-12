@@ -157,12 +157,12 @@ void draw4(float up, float left, float height, float width, float mid) {
 
 void draw5(float up, float left, float height, float width, float mid) {
     glBegin(GL_LINE_STRIP);
-    glVertex2f(left, up);
     glVertex2f(left + width, up);
-    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up);
     glVertex2f(left, up + height * mid);
-    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height * mid);
     glVertex2f(left + width, up + height);
+    glVertex2f(left, up + height);
     glEnd();
 }
 
@@ -208,9 +208,55 @@ void draw9(float up, float left, float height, float width, float mid) {
     glEnd();
 }
 
-void drawFPSCounter() {
+void drawCharacter(char character, float up, float left, float height, float width, float mid) {
+    switch (tolower(character)) {
+    case 'a': return;
+    case 'b': return;
+    case 'c': return;
+    case 'd': return;
+    case 'e': return;
+    case 'f': drawF(up, left, height, width, mid); return;
+    case 'g': return;
+    case 'h': return;
+    case 'i': return;
+    case 'j': return;
+    case 'k': return;
+    case 'l': return;
+    case 'm': return;
+    case 'n': return;
+    case 'o': return;
+    case 'p': drawP(up, left, height, width, mid); return;
+    case 'q': return;
+    case 'r': return;
+    case 's': drawS(up, left, height, width, mid); return;
+    case 't': return;
+    case 'u': return;
+    case 'v': return;
+    case 'w': return;
+    case 'x': return;
+    case 'y': return;
+    case 'z': return;
+    case '0': draw0(up, left, height, width, mid); return;
+    case '1': draw1(up, left, height, width, mid); return;
+    case '2': draw2(up, left, height, width, mid); return;
+    case '3': draw3(up, left, height, width, mid); return;
+    case '4': draw4(up, left, height, width, mid); return;
+    case '5': draw5(up, left, height, width, mid); return;
+    case '6': draw6(up, left, height, width, mid); return;
+    case '7': draw7(up, left, height, width, mid); return;
+    case '8': draw8(up, left, height, width, mid); return;
+    case '9': draw9(up, left, height, width, mid); return;
+    case '.': return;
+    case ' ': return;
+    case ':': return;
+    }
+}
+
+void drawFPSCounter(int fps) {
+    string stringFPS(to_string(fps) + " FPS");
+
     float up = 0.02;
-    float left = 0.02;
+    float left = 0.01;
 
     float letterHeight = 0.02;
     float letterWidth = letterHeight * 0.5;
@@ -218,9 +264,8 @@ void drawFPSCounter() {
     float midRatio = 0.5;
     float letterSpace = letterWidth * 1.3;
 
-    float width = 0.3;
     float height = letterHeight * 1.4;
-    float letterUp = up + (height - letterHeight) / 2;
+    float letterUp = (height - letterHeight) / 2;
     float letterLeft = letterUp;
 
     glMatrixMode(GL_PROJECTION);
@@ -236,10 +281,14 @@ void drawFPSCounter() {
     glColor3ub(170, 170, 170);
 
     glLineWidth(lineWidth);
-    drawF(letterUp, letterLeft, letterHeight, letterWidth, midRatio);
-    drawP(letterUp, letterLeft + letterSpace, letterHeight, letterWidth, midRatio);
-    drawS(letterUp, letterLeft + letterSpace + letterSpace, letterHeight, letterWidth, midRatio);
+    int n = 0;
+    for (string::iterator it = stringFPS.begin(); it != stringFPS.end(); ++it) {
+        drawCharacter(*it, up + letterUp, left + letterLeft + n * letterSpace, letterHeight, letterWidth, midRatio);
+        n++;
+    }
     glLineWidth(1);
+
+    float width = height - letterHeight + letterSpace * n;
 
     glBegin(GL_QUADS);
     glColor3ub(30, 30, 30);

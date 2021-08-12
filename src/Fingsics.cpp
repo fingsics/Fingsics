@@ -103,7 +103,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         if (draw && config.isRunningOnNormalMode()) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
-            drawFPSCounter();
+            drawFPSCounter(frame);
         }
 
         // Apply physics and movement
