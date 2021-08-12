@@ -66,3 +66,85 @@ void setLighting() {
 
     glPopMatrix();
 }
+
+void drawF(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up + height);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glEnd();
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glEnd();
+}
+
+void drawP(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left, up + height);
+    glVertex2f(left, up);
+    glVertex2f(left + width, up);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left, up + height * mid);
+    glEnd();
+}
+
+void drawS(float up, float left, float height, float width, float mid) {
+    glBegin(GL_LINE_STRIP);
+    glVertex2f(left + width, up);
+    glVertex2f(left, up);
+    glVertex2f(left, up + height * mid);
+    glVertex2f(left + width, up + height * mid);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left, up + height);
+    glEnd();
+}
+
+void drawFPSCounter() {
+    float up = 0.02;
+    float left = 0.02;
+
+    float letterHeight = 0.02;
+    float letterWidth = letterHeight * 0.5;
+    float lineWidth = 2;
+    float midRatio = 0.5;
+    float letterSpace = letterWidth * 1.3;
+
+    float width = 0.3;
+    float height = letterHeight * 1.4;
+    float letterUp = up + (height - letterHeight) / 2;
+    float letterLeft = letterUp;
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0.0, 1.0, 1.0, 0.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glDisable(GL_LIGHTING);
+
+    glColor3ub(170, 170, 170);
+
+    glLineWidth(lineWidth);
+    drawF(letterUp, letterLeft, letterHeight, letterWidth, midRatio);
+    drawP(letterUp, letterLeft + letterSpace, letterHeight, letterWidth, midRatio);
+    drawS(letterUp, letterLeft + letterSpace + letterSpace, letterHeight, letterWidth, midRatio);
+    glLineWidth(1);
+
+    glBegin(GL_QUADS);
+    glColor3ub(30, 30, 30);
+    glVertex2f(left, up);
+    glVertex2f(left, up + height);
+    glVertex2f(left + width, up + height);
+    glVertex2f(left + width, up);
+    glEnd();
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+
+    glEnable(GL_LIGHTING);
+}

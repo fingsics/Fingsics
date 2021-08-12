@@ -47,7 +47,6 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-
 SDL_Window* initializeSDL() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;

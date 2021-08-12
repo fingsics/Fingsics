@@ -11,5 +11,6 @@ void setupFrame();
 void drawObjects(Object**, int, bool, bool, bool);
 void drawAxis();
 void setLighting();
+void drawFPSCounter();
 
 #endif
