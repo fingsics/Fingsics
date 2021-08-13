@@ -2,6 +2,8 @@
 
 using namespace std;
 
+// Primitives
+
 Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, Point planePoint, Point planeNormal) {
     float d = planeNormal.dotProduct(ballCenter - planePoint);
     float absD = abs(d);
@@ -11,10 +13,6 @@ Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, P
         return new Collision(projection, normal, ballRadius - absD);
     }
     return NULL;
-}
-
-Collision* NarrowPhaseAlgorithm::ballPlane(Ball* ball, Plane* plane) {
-    return ballPlane(ball->getPos(), ball->getRadius(), plane->getPos(), plane->getNormal());
 }
 
 Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Point lineCenter, Point lineDirection, float lineLength) {
@@ -30,74 +28,6 @@ Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Po
 
     return NULL;
 }
-
-Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
-    Point tileNormal = tile->getNormal();
-    Point tileCenter = tile->getPos();
-    Point ballCenter = ball->getPos();
-    float ballRadius = ball->getRadius();
-    float d = tileNormal.dotProduct(ballCenter - tile->getPos());
-    float absD = abs(d);
-
-    if (absD < ballRadius) {
-        Point normal = (d > 0) ? tileNormal : tileNormal * -1;
-        Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
-
-        Point axis1 = tile->getAxis1();
-        Point axis2 = tile->getAxis2();
-
-        float axis1Distance = (tileCenter - projection).crossProduct(axis1).getMagnitude();
-        float axis2Distance = (tileCenter - projection).crossProduct(axis2).getMagnitude();
-
-        if (abs(axis1Distance) < tile->getAxis2Length() / 2 && abs(axis2Distance) < tile->getAxis1Length() / 2) {
-            // Collision with the plane
-            return new Collision(projection, normal, ballRadius - absD);
-        }
-        else if (abs(axis2Distance) < tile->getAxis1Length() / 2) {
-            // Collision with one of the lines
-            if ((ballCenter - tileCenter).dotProduct(axis2) < 0) return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() - tile->getAxis2() * tile->getAxis2Length() / 2, tile->getAxis1(), tile->getAxis1Length());
-            else return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() + tile->getAxis2() * tile->getAxis2Length() / 2, tile->getAxis1(), tile->getAxis1Length());
-        }
-        else if (abs(axis1Distance) < tile->getAxis2Length() / 2) {
-            // Collision with one of the lines
-            if ((ballCenter - tileCenter).dotProduct(axis1) < 0) return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() - tile->getAxis1() * tile->getAxis1Length() / 2, tile->getAxis2(), tile->getAxis2Length());
-            else return ballLine(ball->getPos(), ball->getRadius(), tile->getPos() + tile->getAxis1() * tile->getAxis1Length() / 2, tile->getAxis2(), tile->getAxis2Length()); 
-        }
-        else {
-            // Test collision with tile's vertices
-            Point tileEnd;
-            float cos1 = (ballCenter - tileCenter).dotProduct(axis2);
-            float cos2 = (ballCenter - tileCenter).dotProduct(axis1);
-
-            if (cos1 > 0 && cos2 > 0) tileEnd = tile->getEnd1();
-            else if (cos1 > 0) tileEnd = tile->getEnd2();
-            else if (cos2 > 0) tileEnd = tile->getEnd3();
-            else tileEnd = tile->getEnd4();
-
-            Point endToBall = ballCenter - tileEnd;
-            float distance = endToBall.getMagnitude();
-            if (distance < ballRadius) {
-                return new Collision(tileEnd, endToBall / distance, ballRadius - distance);
-            }
-        }
-    }
-
-
-    return NULL;
-}
-
-Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
-    return NULL;
-}
-
-Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
-    Collision* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
-    Collision* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
-    if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), positiveBallCollision->getPenetrationDepth());
-    if (positiveBallCollision) return positiveBallCollision;
-    return negativeBallCollision;
-}
-
 
 Collision* NarrowPhaseAlgorithm::ballBall(Point center1, float radius1, Point center2, float radius2) {
     Point normalVector = center2 - center1;
@@ -129,6 +59,76 @@ Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, float ballRadius
         }
     }
     return NULL;
+}
+
+Collision* NarrowPhaseAlgorithm::ballTile(Point ballCenter, float ballRadius, Point tileCenter, Point tileNormal, Point tileAxis1, Point tileAxis2, float tileAxis1Length, float tileAxis2Length, Point tileEnd1, Point tileEnd2, Point tileEnd3, Point tileEnd4) {
+    float d = tileNormal.dotProduct(ballCenter - tileCenter);
+    float absD = abs(d);
+
+    if (absD < ballRadius) {
+        Point normal = (d > 0) ? tileNormal : tileNormal * -1;
+        Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
+
+        float axis1Distance = (tileCenter - projection).crossProduct(tileAxis1).getMagnitude();
+        float axis2Distance = (tileCenter - projection).crossProduct(tileAxis2).getMagnitude();
+
+        if (abs(axis1Distance) < tileAxis2Length / 2 && abs(axis2Distance) < tileAxis1Length / 2) {
+            // Collision with the plane
+            return new Collision(projection, normal, ballRadius - absD);
+        }
+        else if (abs(axis2Distance) < tileAxis1Length / 2) {
+            // Collision with one of the lines
+            if ((ballCenter - tileCenter).dotProduct(tileAxis2) < 0) return ballLine(ballCenter, ballRadius, tileCenter - tileAxis2 * tileAxis2Length / 2, tileAxis1, tileAxis1Length);
+            else return ballLine(ballCenter, ballRadius, tileCenter + tileAxis2 * tileAxis2Length / 2, tileAxis1, tileAxis1Length);
+        }
+        else if (abs(axis1Distance) < tileAxis2Length / 2) {
+            // Collision with one of the lines
+            if ((ballCenter - tileCenter).dotProduct(tileAxis1) < 0) return ballLine(ballCenter, ballRadius, tileCenter - tileAxis1 * tileAxis1Length / 2, tileAxis2, tileAxis2Length);
+            else return ballLine(ballCenter, ballRadius, tileCenter + tileAxis1 * tileAxis1Length / 2, tileAxis2, tileAxis2Length);
+        }
+        else {
+            // Test collision with tile's vertices
+            Point tileEnd;
+            float cos1 = (ballCenter - tileCenter).dotProduct(tileAxis2);
+            float cos2 = (ballCenter - tileCenter).dotProduct(tileAxis1);
+
+            if (cos1 > 0 && cos2 > 0) tileEnd = tileEnd1;
+            else if (cos1 > 0) tileEnd = tileEnd2;
+            else if (cos2 > 0) tileEnd = tileEnd3;
+            else tileEnd = tileEnd4;
+
+            Point endToBall = ballCenter - tileEnd;
+            float distance = endToBall.getMagnitude();
+            if (distance < ballRadius) {
+                return new Collision(tileEnd, endToBall / distance, ballRadius - distance);
+            }
+        }
+    }
+
+
+    return NULL;
+}
+
+// Objects
+
+Collision* NarrowPhaseAlgorithm::ballPlane(Ball* ball, Plane* plane) {
+    return ballPlane(ball->getPos(), ball->getRadius(), plane->getPos(), plane->getNormal());
+}
+
+Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
+    return ballTile(ball->getPos(), ball->getRadius(), tile->getPos(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
+}
+
+Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
+    return NULL;
+}
+
+Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
+    Collision* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
+    Collision* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
+    if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), positiveBallCollision->getPenetrationDepth());
+    if (positiveBallCollision) return positiveBallCollision;
+    return negativeBallCollision;
 }
 
 Collision* NarrowPhaseAlgorithm::ballBall(Ball* ball1, Ball* ball2) {
