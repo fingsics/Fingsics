@@ -92,6 +92,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
     map<string, Collision> collisions;
 
+    // FPS drawing
+    int fps = 0;
+    chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
+
     while (!quit && (config.isRunningOnNormalMode() || frame < config.numFramesPerRun)) {
         if (config.isRunningOnNormalMode()) {
             setupFrame();
@@ -103,7 +107,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         if (draw && config.isRunningOnNormalMode()) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
-            drawFPSCounter(frame);
+            drawFPSCounter(fps);
         }
 
         // Apply physics and movement
@@ -132,6 +136,11 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
         // Force FPS cap
         manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.isRunningOnNormalMode());
+
+        if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
+            lastFPSDrawTime = std::chrono::system_clock::now();
+            fps = (int)(1.0 / timeSinceLastFrame) > config.fps ? config.fps : (int)(1.0 / timeSinceLastFrame);
+        }
 
         SDL_GL_SwapWindow(window);
     }
