@@ -4,6 +4,17 @@ using namespace std;
 
 // Primitives
 
+tuple<float, float, float> closestPointBetweenNonParallelLines(Point line1Point, Point line1Direction, Point line2Point, Point line2Direction, Point closestPointsDirection) {
+    Point UA = line1Direction;
+    Point UB = line2Direction;
+
+    Point RHS = line2Point - line1Point;
+    Matrix LHS = Matrix(UA, UB * -1, closestPointsDirection).transpose();
+
+    // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
+    return solveLinearSystem(LHS, RHS);
+}
+
 Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, Point planePoint, Point planeNormal) {
     float d = planeNormal.dotProduct(ballCenter - planePoint);
     float absD = abs(d);
@@ -26,6 +37,11 @@ Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Po
         }
     }
 
+    return NULL;
+}
+
+Collision* NarrowPhaseAlgorithm::cylinderLine(Point cylinderCenter, float cylinderRadius, float cylinderLength, Point cylinderAxisDirection, Point lineCenter, Point lineDirection, float lineLength) {
+    // TODO
     return NULL;
 }
 
@@ -120,6 +136,19 @@ Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
 }
 
 Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
+    Point cylinderPositiveEnd = capsule->getCylinderPositiveEnd();
+    Point cylinderNegativeEnd = capsule->getCylinderNegativeEnd();
+
+    Collision* positiveCollision = ballTile(cylinderPositiveEnd, capsule->getRadius(), tile->getPos(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
+    Collision* negativeCollision = ballTile(cylinderNegativeEnd, capsule->getRadius(), tile->getPos(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
+
+    if (positiveCollision && negativeCollision) return new Collision((positiveCollision->getPoint() + negativeCollision->getPoint()) / 2, (positiveCollision->getNormal() + positiveCollision->getNormal()).normalize(), (positiveCollision->getPenetrationDepth() + negativeCollision->getPenetrationDepth()) / 2);
+    if (positiveCollision) return positiveCollision;
+    if (negativeCollision) return negativeCollision;
+    
+    // TODO: CHECK CYLINDER
+    // Test the edges of the tile, if two report collisions check which collision happens on the tip of the tile, if both do return the tip, if only one does return the other one
+
     return NULL;
 }
 
@@ -127,8 +156,7 @@ Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
     Collision* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
     Collision* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
     if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), positiveBallCollision->getPenetrationDepth());
-    if (positiveBallCollision) return positiveBallCollision;
-    return negativeBallCollision;
+    return positiveBallCollision ? positiveBallCollision : negativeBallCollision;
 }
 
 Collision* NarrowPhaseAlgorithm::ballBall(Ball* ball1, Ball* ball2) {
@@ -180,11 +208,8 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
     }
 
     Point UC = UB.crossProduct(UA).normalize();
-    Point RHS = capsule2->getPos() - capsule1->getPos();
-    Matrix LHS = Matrix(UA, UB * -1, UC).transpose();
-
-    // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
-    tuple<float, float, float> solution = solveLinearSystem(LHS, RHS);
+    tuple<float, float, float> solution = closestPointBetweenNonParallelLines(capsule1->getPos(), UA, capsule2->getPos(), UB, UC);
+    
     float distanceInAxis1 = get<0>(solution);
     float distanceInAxis2 = get<1>(solution);
     Point axis1Point = UA * distanceInAxis1 + capsule1->getPos();
