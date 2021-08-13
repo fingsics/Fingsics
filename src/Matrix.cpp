@@ -97,7 +97,7 @@ Point Matrix::row(int i) {
     case 2:
         return Point(values[2][0], values[2][1], values[2][2]);
     default:
-        throw "Invalid row index.";
+        throw std::runtime_error("Invalid row index");
     }
 }
 
@@ -110,7 +110,7 @@ Point Matrix::col(int i) {
     case 2:
         return Point(values[0][2], values[1][2], values[2][2]);
     default:
-        throw "Invalid column index.";
+        throw std::runtime_error("Invalid column index");
     }
 }
 

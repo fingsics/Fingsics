@@ -114,8 +114,11 @@ KeyValue::KeyValue(string key, string value) {
 ConfigLoader::ConfigLoader() {}
 
 Config ConfigLoader::getConfig() {
+    string configFileName = "config.txt";
+    if (!filesystem::exists(configFileName) || !filesystem::is_regular_file(configFileName)) throw std::runtime_error("The config.txt file is missing");
+
     string text;
-    ifstream configFile("config.txt");
+    ifstream configFile(configFileName);
     map<string, string> config;
 
     while (getline(configFile, text)) {
@@ -139,7 +142,7 @@ KeyValue ConfigLoader::splitString(string s) {
         value = s.substr(pos + delimiter.length(), s.length());
     }
     else {
-        throw "Invalid configuration file";
+        throw std::runtime_error("Invalid configuration file");
     }
 
     return KeyValue(key, value);

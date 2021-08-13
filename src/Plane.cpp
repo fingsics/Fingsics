@@ -39,25 +39,25 @@ void Plane::drawAABB() {
 }
 
 float Plane::getMinX() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }
 
 float Plane::getMinY() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }
 
 float Plane::getMinZ() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }
 
 float Plane::getMaxX() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }
 
 float Plane::getMaxY() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }
 
 float Plane::getMaxZ() {
-    throw "Plane AABBs aren't supported.";
+    throw std::runtime_error("Plane AABBs aren't supported");
 }

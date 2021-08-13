@@ -180,21 +180,27 @@ void runSceneBenchmark(Config config) {
 }
 
 int main(int argc, char* argv[]) {
-    Config config = ConfigLoader().getConfig();
+    try {
+        Config config = ConfigLoader().getConfig();
 
-    if (config.isRunningOnTestMode()) {
-        runTestScenes(config);
-    }
-    else if (config.isRunningOnBenchmarkMode()) {
-        runSceneBenchmark(config);
-    }
-    else {
-        SimulationResults* results = runSimulation(config, initializeSDL());
-        if (results && config.log) {
-            if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
-            LoggingManager::logRunResults("output", config.logOutputFile, *results);
-            delete results;
+        if (config.isRunningOnTestMode()) {
+            runTestScenes(config);
         }
+        else if (config.isRunningOnBenchmarkMode()) {
+            runSceneBenchmark(config);
+        }
+        else {
+            SimulationResults* results = runSimulation(config, initializeSDL());
+            if (results && config.log) {
+                if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
+                LoggingManager::logRunResults("output", config.logOutputFile, *results);
+                delete results;
+            }
+        }
+    }
+    catch (const std::exception& ex) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", ex.what(), NULL);
+        return 1;
     }
     
     return 0;

@@ -4,6 +4,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "Constants.h"
+#include <stdexcept>
 
 using namespace std;
 

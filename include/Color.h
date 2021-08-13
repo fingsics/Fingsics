@@ -2,6 +2,7 @@
 #define COLOR_H
 
 #include <algorithm>
+#include <stdexcept>
 
 using namespace std;
 

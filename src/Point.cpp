@@ -28,7 +28,7 @@ float Point::getZ() {
 
 Point Point::normalize() {
     float magnitude = getMagnitude();
-    if (magnitude == 0) throw "Can't normalize a null vector";
+    if (magnitude == 0) throw std::runtime_error("Can't normalize a null vector");
     return (*this) / magnitude;
 }
 
@@ -124,7 +124,7 @@ float Point::operator[](int i) {
     if (i == 0) return x;
     else if (i == 1) return y;
     else if (i == 2) return z;
-    throw "Invalid point index.";
+    throw std::runtime_error("Invalid point index");
 }
 
 bool Point::equals(Point other) {

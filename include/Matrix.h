@@ -5,6 +5,7 @@
 #include "Point.h"
 #include "SDL_opengl.h"
 #include <math.h>
+#include <stdexcept>
 
 using namespace std;
 
