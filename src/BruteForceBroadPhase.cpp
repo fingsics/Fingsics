@@ -6,7 +6,7 @@ map<string, pair<Object*, Object*>> BruteForceBroadPhase::getCollisions(Object**
         for (int j = i + 1; j < numObjects; j++) {
             if (objects[i]->getIsStatic() && objects[j]->getIsStatic()) continue;
             pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(objects[i], objects[j]);
-            if (collisionMap.find(objectPair.first) == collisionMap.end() && (dynamic_cast<Plane*>(objects[i]) || dynamic_cast<Plane*>(objects[j]) || AABBOverlapTest(objects[i], objects[j]))) {
+            if (collisionMap.find(objectPair.first) == collisionMap.end() && AABBOverlapTest(objects[i], objects[j])) {
                 collisionMap.insert(objectPair);
             }
         }

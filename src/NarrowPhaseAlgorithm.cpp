@@ -28,8 +28,6 @@ tuple<Point, Point>* calculateCylinderLineSystemCollision(Capsule* capsule, Poin
     return distance < capsule->getRadius() ? new tuple<Point, Point>(axisPoint, capsulePoint) : NULL;
 }
 
-// Primitives
-
 tuple<float, float, float> closestPointBetweenNonParallelLines(Point line1Point, Point line1Direction, Point line2Point, Point line2Direction, Point closestPointsDirection) {
     Point UA = line1Direction;
     Point UB = line2Direction;
@@ -41,16 +39,7 @@ tuple<float, float, float> closestPointBetweenNonParallelLines(Point line1Point,
     return solveLinearSystem(LHS, RHS);
 }
 
-Collision* NarrowPhaseAlgorithm::ballPlane(Point ballCenter, float ballRadius, Point planePoint, Point planeNormal) {
-    float d = planeNormal.dotProduct(ballCenter - planePoint);
-    float absD = abs(d);
-    if (absD < ballRadius) {
-        Point normal = (d > 0) ? planeNormal : planeNormal * -1;
-        Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
-        return new Collision(projection, normal, ballRadius - absD);
-    }
-    return NULL;
-}
+// Primitives
 
 Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Point lineCenter, Point lineDirection, float lineLength) {
     float distance = (lineCenter - ballCenter).crossProduct(lineDirection).getMagnitude();
@@ -63,11 +52,6 @@ Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Po
         }
     }
 
-    return NULL;
-}
-
-Collision* NarrowPhaseAlgorithm::cylinderLine(Point cylinderCenter, float cylinderRadius, float cylinderLength, Point cylinderAxisDirection, Point lineCenter, Point lineDirection, float lineLength) {
-    // TODO
     return NULL;
 }
 
@@ -153,10 +137,6 @@ Collision* NarrowPhaseAlgorithm::ballTile(Point ballCenter, float ballRadius, Po
 
 // Objects
 
-Collision* NarrowPhaseAlgorithm::ballPlane(Ball* ball, Plane* plane) {
-    return ballPlane(ball->getPos(), ball->getRadius(), plane->getPos(), plane->getNormal());
-}
-
 Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
     return ballTile(ball->getPos(), ball->getRadius(), tile->getPos(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
 }
@@ -206,18 +186,9 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
 
     Point tilePoint = average({ edge1Collision ? &get<0>(*edge1Collision) : NULL, edge2Collision ? &get<0>(*edge2Collision) : NULL, edge3Collision ? &get<0>(*edge3Collision) : NULL, edge4Collision ? &get<0>(*edge4Collision) : NULL });
     Point capsulePoint = average({ edge1Collision ? &get<1>(*edge1Collision) : NULL, edge2Collision ? &get<1>(*edge2Collision) : NULL, edge3Collision ? &get<1>(*edge3Collision) : NULL, edge4Collision ? &get<1>(*edge4Collision) : NULL });
-
     float penetrationDepth = capsule->getRadius() - (capsulePoint - tilePoint).getMagnitude();
 
-
     return new Collision(tilePoint, (capsulePoint - tilePoint).normalize(), penetrationDepth);
-}
-
-Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
-    Collision* positiveBallCollision = ballPlane(capsule->getCylinderPositiveEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
-    Collision* negativeBallCollision = ballPlane(capsule->getCylinderNegativeEnd(), capsule->getRadius(), plane->getPos(), plane->getNormal());
-    if (positiveBallCollision && negativeBallCollision) return new Collision((positiveBallCollision->getPoint() + negativeBallCollision->getPoint()) / 2, positiveBallCollision->getNormal(), positiveBallCollision->getPenetrationDepth());
-    return positiveBallCollision ? positiveBallCollision : negativeBallCollision;
 }
 
 Collision* NarrowPhaseAlgorithm::ballBall(Ball* ball1, Ball* ball2) {
@@ -322,33 +293,22 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         Ball* ball2 = dynamic_cast<Ball*>(object2);
         Capsule* capsule1 = dynamic_cast<Capsule*>(object1);
         Capsule* capsule2 = dynamic_cast<Capsule*>(object2);
-        Plane* plane1 = dynamic_cast<Plane*>(object1);
-        Plane* plane2 = dynamic_cast<Plane*>(object2);
         Tile* tile1 = dynamic_cast<Tile*>(object1);
         Tile* tile2 = dynamic_cast<Tile*>(object2);
 
         if (ball1) {
             if (ball2) collision = ballBall(ball1, ball2);
             else if (capsule2) collision = ballCapsule(ball1, capsule2);
-            else if (plane2) { collision = ballPlane(ball1, plane2); if (collision) collision->invertNormal(); }
             else if (tile2) { collision = ballTile(ball1, tile2); if (collision) collision->invertNormal(); }
         }
         else if (capsule1) {
             if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision->invertNormal(); }
             else if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
-            else if (plane2) { collision = capsulePlane(capsule1, plane2); if (collision) collision->invertNormal(); }
             else if (tile2) { collision = capsuleTile(capsule1, tile2); if (collision) collision->invertNormal(); }
-        }
-        else if (plane1) {
-            if (ball2) collision = ballPlane(ball2, plane1);
-            else if (capsule2) collision = capsulePlane(capsule2, plane1);
-            else if (plane2) collision = NULL;
-            else if (tile2) collision = NULL;
         }
         else if (tile1) {
             if (ball2) collision = ballTile(ball2, tile1);
             else if (capsule2) collision = capsuleTile(capsule2, tile1);
-            else if (plane2) collision = NULL;
             else if (tile2) collision = NULL;
         }
 

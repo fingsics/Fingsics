@@ -344,12 +344,12 @@
 		<sphere pos="4.42,4.5,-1.5" vel="1.7142857142857142,2.0,-2.0" mass="1" elasticityCoef="1" ang="0,0,0" color="207,240,211" radius="0.3" />
 		<sphere pos="4.51,4.5,3.56" vel="6.571428571428571,7.714285714285714,-2.2857142857142856" mass="1" elasticityCoef="1" ang="0,0,0" color="221,148,91" radius="0.3" />
 		<sphere pos="4.4,4.5,4.58" vel="4.571428571428571,-0.2857142857142857,-3.142857142857143" mass="1" elasticityCoef="1" ang="0,0,0" color="64,11,72" radius="0.3" />
-		<plane pos="5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="-5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" drawLength="0" drawWidth="0" />
-		<plane pos="0,0,5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="0,0,-5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="0,5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="0" drawWidth="0" />
-		<plane pos="0,-5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
+		<tile pos="5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="-5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="10.5" width="10.5" draw="false" />
+		<tile pos="0,0,5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="0,0,-5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="0,5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="10.5" width="10.5" draw="false" />
+		<tile pos="0,-5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
 
 	</objects>
 </config>

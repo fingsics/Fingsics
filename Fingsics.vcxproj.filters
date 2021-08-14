@@ -81,9 +81,6 @@
     <ClCompile Include="src\MidPhaseAlgorithms.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\Plane.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
@@ -172,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="include\MidPhaseAlgorithms.h">
       <Filter>Header Files\Algorithms</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Plane.h">
-      <Filter>Header Files\Objects</Filter>
     </ClInclude>
     <ClInclude Include="include\NarrowPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
