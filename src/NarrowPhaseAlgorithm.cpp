@@ -2,6 +2,32 @@
 
 using namespace std;
 
+Point average(list<Point*> points) {
+    int count = 0;
+    Point res = Point();
+    list<Point*>::iterator it;
+    for (it = points.begin(); it != points.end(); ++it) {
+        if (*it) {
+            res = res + **it;
+            count++;
+        }
+    }
+    return res / count;
+}
+
+int sign(float x) {
+    return (x > 0) - (x < 0);
+}
+
+tuple<Point, Point>* calculateCylinderLineSystemCollision(Capsule* capsule, Point edgeCenter, Point tileAxis, float tileAxisLength, tuple<float, float, float> solution) {
+    float distanceInCapsule = get<0>(solution);
+    float distanceInEdge = get<1>(solution);
+    Point capsulePoint = capsule->getPos() + capsule->getAxisDirection() * (abs(distanceInCapsule) < capsule->getLength() / 2 ? distanceInCapsule : capsule->getLength() * sign(distanceInCapsule) / 2);
+    Point axisPoint = edgeCenter + tileAxis * (abs(distanceInEdge) < tileAxisLength / 2 ? distanceInEdge : tileAxisLength * sign(distanceInEdge) / 2);
+    float distance = (capsulePoint - axisPoint).getMagnitude();
+    return distance < capsule->getRadius() ? new tuple<Point, Point>(axisPoint, capsulePoint) : NULL;
+}
+
 // Primitives
 
 tuple<float, float, float> closestPointBetweenNonParallelLines(Point line1Point, Point line1Direction, Point line2Point, Point line2Direction, Point closestPointsDirection) {
@@ -146,10 +172,44 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     if (positiveCollision) return positiveCollision;
     if (negativeCollision) return negativeCollision;
     
-    // TODO: CHECK CYLINDER
-    // Test the edges of the tile, if two report collisions check which collision happens on the tip of the tile, if both do return the tip, if only one does return the other one
+    // TODO: Check for parallel axis on top
+    
+    // TODO: Check for parallel axis on the side
 
-    return NULL;
+    // Test the edges of the tile, if two report collisions check which collision happens on the tip of the tile, if both do return the tip, if only one does return the other one
+    Point UA = capsule->getAxisDirection();
+    Point UB12 = tile->getAxis1();
+    Point UB34 = tile->getAxis2();
+
+    Point edge1Center = tile->getPos() + UB12 * tile->getAxis1Length() / 2;
+    Point edge2Center = tile->getPos() - UB12 * tile->getAxis1Length() / 2;
+    Point edge3Center = tile->getPos() + UB34 * tile->getAxis2Length() / 2;
+    Point edge4Center = tile->getPos() - UB34 * tile->getAxis2Length() / 2;
+
+    Point capsuleCenter = capsule->getPos();
+    Point capsuleAxis= capsule->getAxisDirection();
+
+    Point UC12 = UB12.crossProduct(UA).normalize();
+    tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC12);
+    tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC12);
+    Point UC34 = UB34.crossProduct(UA).normalize();
+    tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC34);
+    tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC34);
+
+    tuple<Point, Point>* edge1Collision = calculateCylinderLineSystemCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
+    tuple<Point, Point>* edge2Collision = calculateCylinderLineSystemCollision(capsule, edge2Center, UB34, tile->getAxis2Length(), edge2Solution);
+    tuple<Point, Point>* edge3Collision = calculateCylinderLineSystemCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
+    tuple<Point, Point>* edge4Collision = calculateCylinderLineSystemCollision(capsule, edge4Center, UB12, tile->getAxis1Length(), edge4Solution);
+
+    if (!(edge1Collision || edge2Collision || edge3Collision || edge4Collision)) return NULL;
+
+    Point tilePoint = average({ edge1Collision ? &get<0>(*edge1Collision) : NULL, edge2Collision ? &get<0>(*edge2Collision) : NULL, edge3Collision ? &get<0>(*edge3Collision) : NULL, edge4Collision ? &get<0>(*edge4Collision) : NULL });
+    Point capsulePoint = average({ edge1Collision ? &get<1>(*edge1Collision) : NULL, edge2Collision ? &get<1>(*edge2Collision) : NULL, edge3Collision ? &get<1>(*edge3Collision) : NULL, edge4Collision ? &get<1>(*edge4Collision) : NULL });
+
+    float penetrationDepth = capsule->getRadius() - (capsulePoint - tilePoint).getMagnitude();
+
+
+    return new Collision(tilePoint, (tilePoint - capsulePoint).normalize(), penetrationDepth);
 }
 
 Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
@@ -286,7 +346,7 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         }
         else if (tile1) {
             if (ball2) collision = ballTile(ball2, tile1);
-            else if (capsule2) collision = capsuleTile(capsule2, tile1);
+            else if (capsule2) { collision = capsuleTile(capsule2, tile1); if (collision) collision->invertNormal(); }
             else if (plane2) collision = NULL;
             else if (tile2) collision = NULL;
         }
