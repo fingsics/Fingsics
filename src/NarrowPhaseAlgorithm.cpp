@@ -190,11 +190,12 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     Point capsuleAxis= capsule->getAxisDirection();
 
     Point UC12 = UB12.crossProduct(UA).normalize();
-    tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC12);
-    tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC12);
     Point UC34 = UB34.crossProduct(UA).normalize();
-    tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC34);
-    tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC34);
+
+    tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC34);
+    tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC34);
+    tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC12);
+    tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC12);
 
     tuple<Point, Point>* edge1Collision = calculateCylinderLineSystemCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
     tuple<Point, Point>* edge2Collision = calculateCylinderLineSystemCollision(capsule, edge2Center, UB34, tile->getAxis2Length(), edge2Solution);
@@ -209,7 +210,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     float penetrationDepth = capsule->getRadius() - (capsulePoint - tilePoint).getMagnitude();
 
 
-    return new Collision(tilePoint, (tilePoint - capsulePoint).normalize(), penetrationDepth);
+    return new Collision(tilePoint, (capsulePoint - tilePoint).normalize(), penetrationDepth);
 }
 
 Collision* NarrowPhaseAlgorithm::capsulePlane(Capsule* capsule, Plane* plane) {
@@ -336,7 +337,7 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
             if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision->invertNormal(); }
             else if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
             else if (plane2) { collision = capsulePlane(capsule1, plane2); if (collision) collision->invertNormal(); }
-            else if (tile2) collision = capsuleTile(capsule1, tile2);
+            else if (tile2) { collision = capsuleTile(capsule1, tile2); if (collision) collision->invertNormal(); }
         }
         else if (plane1) {
             if (ball2) collision = ballPlane(ball2, plane1);
@@ -346,7 +347,7 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         }
         else if (tile1) {
             if (ball2) collision = ballTile(ball2, tile1);
-            else if (capsule2) { collision = capsuleTile(capsule2, tile1); if (collision) collision->invertNormal(); }
+            else if (capsule2) collision = capsuleTile(capsule2, tile1);
             else if (plane2) collision = NULL;
             else if (tile2) collision = NULL;
         }
