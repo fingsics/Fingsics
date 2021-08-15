@@ -180,9 +180,6 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     Point capsuleAxis = capsule->getAxisDirection();
     float capsuleLength = capsule->getLength();
 
-    Point UC12 = UB12.crossProduct(UA).normalize();
-    Point UC34 = UB34.crossProduct(UA).normalize();
-
     tuple<Point, Point>* collision1 = NULL;
     tuple<Point, Point>* collision2 = NULL;
     tuple<Point, Point>* collision3 = NULL;
@@ -201,6 +198,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
             collision2 = get<1>(collisions);
         }
     } else {
+        Point UC34 = UB34.crossProduct(UA).normalize();
         tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC34);
         tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC34);
         collision1 = calculateCylinderLineSystemCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
@@ -220,6 +218,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
             collision4 = get<1>(collisions);
         }
     } else {
+        Point UC12 = UB12.crossProduct(UA).normalize();
         tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC12);
         tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC12);
         collision3 = calculateCylinderLineSystemCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
