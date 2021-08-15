@@ -39,6 +39,23 @@ tuple<float, float, float> closestPointBetweenNonParallelLines(Point line1Point,
     return solveLinearSystem(LHS, RHS);
 }
 
+tuple<tuple<Point, Point>*, tuple<Point, Point>*> parallelCapsuleAndTileEdge(Point vertex1, Point vertex2, Point capsuleCenter, Point capsuleAxis, float capsuleLength) {
+    Point projection1 = capsuleCenter + capsuleAxis * vertex1.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
+    Point projection2 = capsuleCenter + capsuleAxis * vertex2.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
+
+    tuple<tuple<Point, Point>*, tuple<Point, Point>*> res = tuple<tuple<Point, Point>*, tuple<Point, Point>*>(NULL, NULL);
+
+    if ((projection1 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) {
+        get<0>(res) = new tuple<Point, Point>(vertex1, projection1);
+    }
+
+    if ((projection2 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) {
+        get<1>(res) = new tuple<Point, Point>(vertex2, projection2);
+    }
+
+    return res;
+}
+
 // Primitives
 
 Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Point lineCenter, Point lineDirection, float lineLength) {
@@ -149,14 +166,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     Collision* negativeCollision = ballTile(cylinderNegativeEnd, capsule->getRadius(), tile->getPos(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
 
     if (positiveCollision && negativeCollision) return new Collision((positiveCollision->getPoint() + negativeCollision->getPoint()) / 2, (positiveCollision->getNormal() + positiveCollision->getNormal()).normalize(), (positiveCollision->getPenetrationDepth() + negativeCollision->getPenetrationDepth()) / 2);
-    if (positiveCollision) return positiveCollision;
-    if (negativeCollision) return negativeCollision;
-    
-    // TODO: Check for parallel axis on top
-    
-    // TODO: Check for parallel axis on the side
 
-    // Test the edges of the tile, if two report collisions check which collision happens on the tip of the tile, if both do return the tip, if only one does return the other one
     Point UA = capsule->getAxisDirection();
     Point UB12 = tile->getAxis1();
     Point UB34 = tile->getAxis2();
@@ -167,25 +177,69 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     Point edge4Center = tile->getPos() - UB34 * tile->getAxis2Length() / 2;
 
     Point capsuleCenter = capsule->getPos();
-    Point capsuleAxis= capsule->getAxisDirection();
+    Point capsuleAxis = capsule->getAxisDirection();
+    float capsuleLength = capsule->getLength();
 
     Point UC12 = UB12.crossProduct(UA).normalize();
     Point UC34 = UB34.crossProduct(UA).normalize();
 
-    tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC34);
-    tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC34);
-    tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC12);
-    tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC12);
+    tuple<Point, Point>* collision1 = NULL;
+    tuple<Point, Point>* collision2 = NULL;
+    tuple<Point, Point>* collision3 = NULL;
+    tuple<Point, Point>* collision4 = NULL;
 
-    tuple<Point, Point>* edge1Collision = calculateCylinderLineSystemCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
-    tuple<Point, Point>* edge2Collision = calculateCylinderLineSystemCollision(capsule, edge2Center, UB34, tile->getAxis2Length(), edge2Solution);
-    tuple<Point, Point>* edge3Collision = calculateCylinderLineSystemCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
-    tuple<Point, Point>* edge4Collision = calculateCylinderLineSystemCollision(capsule, edge4Center, UB12, tile->getAxis1Length(), edge4Solution);
 
-    if (!(edge1Collision || edge2Collision || edge3Collision || edge4Collision)) return NULL;
+    if (capsuleAxis.parallel(UB34)) {
+        tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
+        if (UB34.crossProduct(capsuleCenter - edge1Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdge(tile->getEnd1(), tile->getEnd3(), capsuleCenter, capsuleAxis, capsuleLength);
+            collision1 = get<0>(collisions);
+            collision2 = get<1>(collisions);
+        } else if (UB34.crossProduct(capsuleCenter - edge2Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdge(tile->getEnd2(), tile->getEnd4(), capsuleCenter, capsuleAxis, capsuleLength);
+            collision1 = get<0>(collisions);
+            collision2 = get<1>(collisions);
+        }
+    } else {
+        tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC34);
+        tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC34);
+        collision1 = calculateCylinderLineSystemCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
+        collision2 = calculateCylinderLineSystemCollision(capsule, edge2Center, UB34, tile->getAxis2Length(), edge2Solution);
+    }
 
-    Point tilePoint = average({ edge1Collision ? &get<0>(*edge1Collision) : NULL, edge2Collision ? &get<0>(*edge2Collision) : NULL, edge3Collision ? &get<0>(*edge3Collision) : NULL, edge4Collision ? &get<0>(*edge4Collision) : NULL });
-    Point capsulePoint = average({ edge1Collision ? &get<1>(*edge1Collision) : NULL, edge2Collision ? &get<1>(*edge2Collision) : NULL, edge3Collision ? &get<1>(*edge3Collision) : NULL, edge4Collision ? &get<1>(*edge4Collision) : NULL });
+    if (capsuleAxis.parallel(UB12)) {
+        tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
+        if (UB12.crossProduct(capsuleCenter - edge3Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdge(tile->getEnd1(), tile->getEnd2(), capsuleCenter, capsuleAxis, capsuleLength);
+            collision3 = get<0>(collisions);
+            collision4 = get<1>(collisions);
+        }
+        else if (UB12.crossProduct(capsuleCenter - edge4Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdge(tile->getEnd3(), tile->getEnd4(), capsuleCenter, capsuleAxis, capsuleLength);
+            collision3 = get<0>(collisions);
+            collision4 = get<1>(collisions);
+        }
+    } else {
+        tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC12);
+        tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC12);
+        collision3 = calculateCylinderLineSystemCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
+        collision4 = calculateCylinderLineSystemCollision(capsule, edge4Center, UB12, tile->getAxis1Length(), edge4Solution);
+    }
+
+    if (!(collision1 || collision2 || collision3 || collision4)) return positiveCollision ? positiveCollision : negativeCollision;
+
+    Point tilePoint = average({
+        collision1 ? &get<0>(*collision1) : NULL,
+        collision2 ? &get<0>(*collision2) : NULL,
+        collision3 ? &get<0>(*collision3) : NULL,
+        collision4 ? &get<0>(*collision4) : NULL
+    });
+    Point capsulePoint = average({
+        collision1 ? &get<1>(*collision1) : NULL,
+        collision2 ? &get<1>(*collision2) : NULL,
+        collision3 ? &get<1>(*collision3) : NULL,
+        collision4 ? &get<1>(*collision4) : NULL
+    });
     float penetrationDepth = capsule->getRadius() - (capsulePoint - tilePoint).getMagnitude();
 
     return new Collision(tilePoint, (capsulePoint - tilePoint).normalize(), penetrationDepth);
@@ -212,7 +266,7 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
     Point UB = capsule2->getAxisDirection();
 
     // Check if capsules are parallel
-    if (UA.equals(UB) || UA.equals(UB * -1)) {
+    if (UA.parallel(UB)) {
         
         Collision* capsule1Ball1 = ballCapsule(capsule1->getCylinderPositiveEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
         Collision* capsule1Ball2 = ballCapsule(capsule1->getCylinderNegativeEnd(), capsule1->getRadius(), capsule2->getPos(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());

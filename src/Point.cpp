@@ -137,6 +137,10 @@ bool Point::equals(Point other, float tolerance) {
     return diff.getMagnitudeSqr() < tolerance;
 }
 
+bool Point::parallel(Point other) {
+    return this->equals(other) || this->equals(other * -1);
+}
+
 bool Point::hasSameDirection(Point other, float tolerance) {
     float coef;
     if (fabs(x) > tolerance) {
