@@ -28,6 +28,10 @@ private:
     Collision* ballCapsule(Ball*, Capsule*);
     Collision* capsuleCapsule(Capsule*, Capsule*);
     Collision* capsuleTile(Capsule*, Tile*);
+    Collision* parallelCapsules(Capsule*, Capsule*);
+    tuple<Point, Point>* calculateCylinderLineCollision(Capsule*, Point, Point, float, tuple<float, float, float>);
+    tuple<float, float, float> closestPointBetweenNonParallelLines(Point, Point, Point, Point, Point);
+    tuple<tuple<Point, Point>*, tuple<Point, Point>*> parallelCapsuleAndTileEdgeCollisions(Point, Point, Point, Point, float);
 };
 
 #endif
