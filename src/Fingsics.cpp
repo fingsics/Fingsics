@@ -5,6 +5,7 @@
 #include "../include/OpenGlHelpers.h";
 #include "../include/ObjectLoader.h"
 #include "../include/ConfigLoader.h"
+#include "../include/SceneRecorder.h"
 #include "../include/CenteredCamera.h"
 #include "../include/FreeCamera.h"
 #include "../include/BroadPhaseAlgorithms.h"
@@ -24,6 +25,7 @@
 #define _USE_MATH_DEFINES
 
 using namespace std;
+
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
     float minFrameTime = 1.0 / fps;
@@ -180,6 +182,9 @@ void runSceneBenchmark(Config config) {
 }
 
 int main(int argc, char* argv[]) {
+    recordScene();
+    importScene();
+
     try {
         Config config = ConfigLoader().getConfig();
 
