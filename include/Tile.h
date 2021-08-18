@@ -44,6 +44,7 @@ class Tile : public Object {
         float getMaxX();
         float getMaxY();
         float getMaxZ();
+        bool getDraw();
 };
 
 #endif

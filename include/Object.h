@@ -46,6 +46,7 @@ class Object {
         bool getIsStatic();
         OBB getOBB();
         AABB* getAABB();
+        Color getColor();
         
         float getElasticity();
         void setPos(Point);

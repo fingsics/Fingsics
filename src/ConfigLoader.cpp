@@ -50,6 +50,7 @@ Config::Config(map<string, string> config) {
         if (!it->second.compare("NORMAL")) runMode = RunMode::normal;
         else if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
+        else if (!it->second.compare("RECORDER")) runMode = RunMode::recorder;
     }
 
     it = config.find("NUM_RUNS");
@@ -85,8 +86,12 @@ bool Config::isRunningOnTestMode() {
     return runMode == RunMode::test;
 }
 
+bool Config::isRunningOnRecorderMode() {
+    return runMode == RunMode::recorder;
+}
+
 bool Config::shouldLog() {
-    return isRunningOnBenchmarkMode() || isRunningOnTestMode() || log;
+    return isRunningOnBenchmarkMode() || isRunningOnTestMode() || isRunningOnRecorderMode() || log;
 }
 
 string Config::getMPCDDescription() {

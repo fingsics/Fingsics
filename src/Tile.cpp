@@ -50,6 +50,10 @@ Point Tile::getNormal() {
     return rotationMatrix * Point(0, 1, 0);
 }
 
+bool Tile::getDraw() {
+    return draw;
+}
+
 void Tile::updateEnds() {
     end1 = pos + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
     end2 = pos - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;

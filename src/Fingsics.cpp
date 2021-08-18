@@ -88,6 +88,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
 
+
+
     initializeOpenGL();
 
     // Collision collections
@@ -129,6 +131,9 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                 results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
             frame++;
+            if (config.isRunningOnRecorderMode()) {
+
+            }
         }
 
         // Process events
@@ -182,9 +187,6 @@ void runSceneBenchmark(Config config) {
 }
 
 int main(int argc, char* argv[]) {
-    recordScene();
-    importScene();
-
    // try {
         Config config = ConfigLoader().getConfig();
 

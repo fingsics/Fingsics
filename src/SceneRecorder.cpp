@@ -1,41 +1,100 @@
 #include "../include/SceneRecorder.h"
 
-void recordScene() {
-    if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
-
-    ofstream wf("recordings\\hola.dat", ios::out | ios::binary);
-    if (!wf) throw "Cannot open file!";
-    const int num = 10;
-    float dims[2 * num];
-    SerializedObject objects[num];
-    for (int i = 0; i < num; i++) {
-        objects[i].type = rand() % 3;
-        objects[i].r = rand() * 255;
-        objects[i].g = rand() * 255;
-        objects[i].b = rand() * 255;
-        dims[2 * i] = rand() * 1000;
-        objects[i].dim1 = reinterpret_cast<uint32_t&>(dims[2 * i]);
-        dims[2 * i + 1] = objects[i].type != 0 ? rand() * 1000 : 0;
-        objects[i].dim2 = reinterpret_cast<uint32_t&>(dims[2 * i + 1]);
+SceneRecorder::SceneRecorder(Object** objects, int numObjects, int frames, string path) {
+    this->currentFrame = 0;
+    this->numObjects = numObjects;
+    this->numObjects = frames;
+    this->objects = new SerializedObject[numObjects];
+    this->positions = new SerializedPosition*[numObjects];
+    this->rotationMatrices = new SerializedRotationMatrix*[numObjects];
+    for (int i = 0; i < numObjects; i++) {
+        serializeObject(objects[i], &this->objects[i]);
+        this->positions[i] = new SerializedPosition[frames];
+        this->rotationMatrices[i] = new SerializedRotationMatrix[frames];
     }
-    for (int i = 0; i < num; i++) wf.write((char*)&objects[i], sizeof(SerializedObject));
-    wf.close();
-    if (!wf.good()) throw "Error occurred at writing time!";
+    this->path = path;
 }
 
-void importScene() {
+void SceneRecorder::serializeObject(Object* object, SerializedObject* serializedObject) {
+    serializedObject->r = object->getColor().getR();
+    serializedObject->g = object->getColor().getG();
+    serializedObject->b = object->getColor().getB();
+    if (Ball* ball = dynamic_cast<Ball*>(object)) {
+        float radius = ball->getRadius();
+        serializedObject->type = BALL;
+        serializedObject->dim1 = reinterpret_cast<uint32_t&>(radius);
+        serializedObject->dim2 = 0;
+        serializedObject->draw = 1;
+    }
+    else if (Capsule* capsule = dynamic_cast<Capsule*>(object)) {
+        float radius = capsule->getRadius();
+        float length = capsule->getLength();
+        serializedObject->type = CAPSULE;
+        serializedObject->dim1 = reinterpret_cast<uint32_t&>(radius);
+        serializedObject->dim2 = reinterpret_cast<uint32_t&>(length);
+        serializedObject->draw = 1;
+    }
+    else if (Tile* tile = dynamic_cast<Tile*>(object)) {
+        float length1 = tile->getAxis1Length();
+        float length2 = tile->getAxis2Length();
+        serializedObject->type = TILE;
+        serializedObject->dim1 = reinterpret_cast<uint32_t&>(length1);
+        serializedObject->dim2 = reinterpret_cast<uint32_t&>(length2);
+        serializedObject->draw = tile->getDraw();
+    }
+}
+
+Object* SceneRecorder::deserializeObject(SerializedObject serializedObject) {
+    if (serializedObject.type == BALL) return new Ball();
+    else if (serializedObject.type == CAPSULE) return new Capsule();
+    else if (serializedObject.type == TILE) return new Tile();
+}
+
+void SceneRecorder::recordFrame() {
+    return;
+}
+
+void SceneRecorder::storeRecordedData() {
     if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
-    ifstream rf("recordings\\hola.dat", ios::out | ios::binary);
+
+    ofstream file("recordings\\" + path, ios::out | ios::binary);
+    if (!file) throw "Cannot open file!";
+
+    uint32_t numObjects = this->numObjects;
+    uint32_t frames = this->frames;
+    file.write((char*)&numObjects, sizeof(uint32_t));
+    file.write((char*)&frames, sizeof(uint32_t));
+
+    for (int i = 0; i < numObjects; i++) file.write((char*)&objects[i], sizeof(SerializedObject));
+
+    // TODO: Record positions and matrices
+
+    file.close();
+    if (!file.good()) throw "Error occurred at writing time!";
+}
+
+vector<Object*> SceneRecorder::importRecordedScene() {
+    if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
+    ifstream rf("recordings\\" + path, ios::out | ios::binary);
     if (!rf) throw "Cannot open file!";
-    const int num = 10;
-    float dims2[2 * num];
-    SerializedObject objects2[num];
-    for (int i = 0; i < num; i++) rf.read((char*)&objects2[i], sizeof(SerializedObject));
+
+    uint32_t numObjects;
+    uint32_t frames;
+    rf.read((char*)&numObjects, sizeof(uint32_t));
+    rf.read((char*)&frames, sizeof(uint32_t));
+
+    vector<Object*> res = vector<Object*>(numObjects, NULL);
+    SerializedObject incoming;
+
+    for (int i = 0; i < numObjects; i++) {
+        rf.read((char*)&incoming, sizeof(SerializedObject));
+        res[i] = deserializeObject(incoming);
+    }
+
+    // TODO: Read positions and matrices
+
     rf.close();
     if (!rf.good()) throw "Error occurred at reading time!";
 
-    for (int i = 0; i < num; i++) {
-        dims2[2 * i] = reinterpret_cast<float&>(objects2[i].dim1);
-        dims2[2 * i + 1] = reinterpret_cast<float&>(objects2[i].dim2);
-    }
+    return res;
 }

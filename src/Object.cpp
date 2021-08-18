@@ -67,6 +67,10 @@ AABB* Object::getAABB() {
     return aabb;
 }
 
+Color Object::getColor() {
+    return color;
+}
+
 void Object::setPos(Point pos) {
     this->pos = pos;
     obb.setPosition(pos);
