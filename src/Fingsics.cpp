@@ -185,7 +185,7 @@ int main(int argc, char* argv[]) {
     recordScene();
     importScene();
 
-    try {
+   // try {
         Config config = ConfigLoader().getConfig();
 
         if (config.isRunningOnTestMode()) {
@@ -202,11 +202,11 @@ int main(int argc, char* argv[]) {
                 delete results;
             }
         }
-    }
-    catch (const std::exception& ex) {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", ex.what(), NULL);
-        return 1;
-    }
-    
+    //}
+    //catch (const std::exception& ex) {
+    //    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", ex.what(), NULL);
+    //    return 1;
+    //}
+    //
     return 0;
 }

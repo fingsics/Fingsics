@@ -6,7 +6,6 @@
 #include "Ball.h"
 #include "Capsule.h"
 #include "Tile.h"
-#include "Plane.h"
 #include "Object.h"
 #include "tinyxml2.h"
 #include <filesystem>
@@ -37,7 +36,6 @@ private:
 	Ball* loadBall(tinyxml2::XMLElement*, string, int);
 	Tile* loadTile(tinyxml2::XMLElement*, string);
 	Capsule* loadCapsule(tinyxml2::XMLElement*, string, int);
-	Plane* loadPlane(tinyxml2::XMLElement*, string);
 	vector<float> parseTriplet(const char* charPoint);
 	Point parsePoint(const char*);
 	Color parseColor(const char*);

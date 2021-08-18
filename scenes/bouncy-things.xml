@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<plane pos="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="240,240,240" static="true" drawLength="16" drawWidth="16" />
-		<plane pos="8,4,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,0,0" static="true" drawLength="8" drawWidth="16" />
-		<plane pos="0,4,-8" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" static="true" drawLength="16" drawWidth="8" />
-		<plane pos="0,4,8" mass="1" elasticityCoef="1" ang="-90,0,0" color="0,0,220" static="true" drawLength="16" drawWidth="8" />
-		<plane pos="-8,4,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,0,0" static="true" drawLength="0" drawWidth="0" />
+		<tile pos="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="240,240,240" static="true" length="16" width="16" />
+		<tile pos="8,4,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,0,0" static="true" length="8" width="16" />
+		<tile pos="0,4,-8" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" static="true" length="16" width="8" />
+		<tile pos="0,4,8" mass="1" elasticityCoef="1" ang="-90,0,0" color="0,0,220" static="true" length="16" width="8" />
+		<tile pos="-8,4,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,0,0" static="true" length="8" width="16" draw="false" />
 		
 		<sphere pos="0,2,0" radius="0.5" mass="1" elasticityCoef="1" vel="5,0,2" color="70,70,70" acceleration="0,-9.8,0" />
 		<capsule pos="-4,4,0" mass="1" elasticityCoef="1" vel="-5,0,2" ang="23,414,52" angVel="20,0,0" color="70,70,70" radius="0.5" length="4" acceleration="0,-9.8,0" />

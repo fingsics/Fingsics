@@ -2,11 +2,12 @@
 
 using namespace std;
 
-Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float length, float width) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float length, float width, bool draw) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->axis1Length = length;
     this->axis2Length = width;
+    this->draw = draw;
     this->obb = OBB(pos, Point(width, EPSILON, length), rotationMatrix);
     this->axis1 = rotationMatrix * Point(1, 0, 0);
     this->axis2 = rotationMatrix * Point(0, 0, 1);
@@ -65,6 +66,8 @@ void Tile::setRotation(Matrix rotationMatrix) {
 }
 
 void Tile::drawObject(bool) {
+    if (!draw) return;
+
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
     glMultMatrixf(getOpenGLRotationMatrix());

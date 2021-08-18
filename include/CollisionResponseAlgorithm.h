@@ -6,7 +6,6 @@
 #include "Collision.h"
 #include "Ball.h"
 #include "Capsule.h"
-#include "Plane.h"
 #include <map>
 
 using namespace std;

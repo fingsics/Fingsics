@@ -13,6 +13,7 @@ using namespace std;
 
 class Tile : public Object {
     private:
+        bool draw;
         float axis1Length;
         float axis2Length;
         Point axis1;
@@ -23,7 +24,7 @@ class Tile : public Object {
         Point end4;
         void updateEnds();
     public:
-        Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float);
+        Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, bool);
         void drawObject(bool);
         Point getNormal();
         Matrix getInertiaTensor();
