@@ -2,7 +2,6 @@
 #define BRUTEFORCEBP_H
 
 #include "BroadPhaseAlgorithms.h"
-#include "Plane.h"
 #include "AABB.h"
 #include "Helpers.h"
 

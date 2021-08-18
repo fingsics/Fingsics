@@ -2,7 +2,6 @@
 #define NOBP_H
 
 #include "BroadPhaseAlgorithms.h"
-#include "Plane.h"
 #include "Helpers.h"
 
 using namespace std;

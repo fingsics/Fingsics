@@ -1001,12 +1001,12 @@
 		<sphere pos="4.46,4.5,2.55" vel="-0.5,-2.0,-2.5" mass="1" elasticityCoef="1" ang="0,0,0" color="185,234,199" radius="0.3" />
 		<sphere pos="4.57,4.5,3.47" vel="-3.0,1.5,-2.0" mass="1" elasticityCoef="1" ang="0,0,0" color="248,125,137" radius="0.3" />
 		<sphere pos="4.49,4.5,4.51" vel="-1.9,-0.8,0.6" mass="1" elasticityCoef="1" ang="0,0,0" color="212,168,34" radius="0.3" />
-		<plane pos="5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="-5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" drawLength="0" drawWidth="0" />
-		<plane pos="0,0,5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="0,0,-5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
-		<plane pos="0,5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="0" drawWidth="0" />
-		<plane pos="0,-5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" drawLength="10.5" drawWidth="10.5" />
+		<tile pos="5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="-5.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="10.5" width="10.5" draw="false" />
+		<tile pos="0,0,5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="0,0,-5.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
+		<tile pos="0,5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="10.5" width="10.5" draw="false" />
+		<tile pos="0,-5.25,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="10.5" width="10.5" />
 
 	</objects>
 </config>

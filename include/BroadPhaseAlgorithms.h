@@ -4,7 +4,6 @@
 #include "Object.h"
 #include <map>
 #include <string>
-#include "Plane.h"
 #include "Helpers.h"
 
 using namespace std;

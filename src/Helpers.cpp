@@ -1,5 +1,22 @@
 #include "../include/Helpers.h"
 
+Point average(list<Point*> points) {
+    int count = 0;
+    Point res = Point();
+    list<Point*>::iterator it;
+    for (it = points.begin(); it != points.end(); ++it) {
+        if (*it) {
+            res = res + **it;
+            count++;
+        }
+    }
+    return res / count;
+}
+
+int sign(float x) {
+    return (x > 0) - (x < 0);
+}
+
 pair<string,pair<Object*,Object*>> getObjectPairWithId(Object * object1, Object * object2) {
     return object1->getId() < object2->getId()
         ? make_pair(object1->getId() + "-" + object2->getId(), make_pair(object1, object2))

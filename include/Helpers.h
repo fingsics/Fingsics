@@ -8,6 +8,10 @@
 
 using namespace std;
 
+Point average(list<Point*>);
+
+int sign(float);
+
 pair<string,pair<Object*, Object*>> getObjectPairWithId(Object*, Object*);
 
 float** getMatrixForGausianElimination(Matrix, Point);

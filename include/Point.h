@@ -39,6 +39,7 @@ class Point {
         Point operator*(Point);
         float operator[](int i);
         bool equals(Point);
+        bool parallel(Point);
         bool equals(Point, float);
         bool hasSameDirection(Point, float);
 };

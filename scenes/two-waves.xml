@@ -3203,9 +3203,9 @@
 		<sphere pos="31.53,0.0,15.660000000000002" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.3" />
 		<sphere pos="13,0,-30" vel="0,0,20" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
 		<sphere pos="-13,0,-30" vel="0,0,20" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
-		<plane pos="32.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" drawLength="4" drawWidth="32.5" />
-		<plane pos="0,0,16.25" mass="1" elasticityCoef="1" ang="-90,0,0" color="220,220,220" static="true" drawLength="64.5" drawWidth="4" />
-		<plane pos="-32.25,0,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,220,220" static="true" drawLength="4" drawWidth="32.5" />
+		<tile pos="32.25,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="4" width="32.5" />
+		<tile pos="0,0,16.25" mass="1" elasticityCoef="1" ang="-90,0,0" color="220,220,220" static="true" length="64.5" width="4" />
+		<tile pos="-32.25,0,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,220,220" static="true" length="4" width="32.5" />
 		<tile pos="25.083333333333332,0,-16.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="14.333333333333334" width="20" />
 		<tile pos="-25.083333333333332,0,-16.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="14.333333333333334" width="20" />
 		<tile pos="0,0,-16.25" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="16.125" width="20" />

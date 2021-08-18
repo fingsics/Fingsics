@@ -1,25 +1,11 @@
 #include "../include/SweepAndPruneBroadPhase.h"
 
 SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObjects) {
-    // Count Planes and add all their collisions to the list (these won't be discarded by SAP)
-    int nonPlaneObjects = numObjects;
-    for (int i = 0; i < numObjects; i++) {
-        if (dynamic_cast<Plane*>(objects[i])) {
-            nonPlaneObjects--;
-            // Plane-Plane collisions are ignored by NarrowPhase, they are added for consistency with NoBroadPhase and BruteForceBroadPhase
-            for (int j = 0; j < numObjects; j++) if (i != j) addCollision(objects[i], objects[j]);
-        }
-    }
-
-    this->xPoints = new AABBPoint[2 * nonPlaneObjects];
-    this->yPoints = new AABBPoint[2 * nonPlaneObjects];
-    this->zPoints = new AABBPoint[2 * nonPlaneObjects];
-    
-    // Add non-Planes to the SAP arrays
     this->pointsPerAxis = 0;
-    for (int i = 0; i < numObjects; i++) {
-        if (!dynamic_cast<Plane*>(objects[i])) insertObject (objects[i]);
-    }
+    this->xPoints = new AABBPoint[2 * numObjects];
+    this->yPoints = new AABBPoint[2 * numObjects];
+    this->zPoints = new AABBPoint[2 * numObjects];
+    for (int i = 0; i < numObjects; i++) insertObject(objects[i]);
 }
 
 void SweepAndPruneBroadPhase::insertObject(Object* object) {
@@ -63,9 +49,6 @@ void SweepAndPruneBroadPhase::insertObject(Object* object) {
 }
 
 void SweepAndPruneBroadPhase::updateObject(Object* object) {
-    // Ignore Planes in updates, since they're already in collisionPairs
-    if (dynamic_cast<Plane*>(object)) return;
-
     AABB* aabb = object->getAABB();
 
     // MinX
