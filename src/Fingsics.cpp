@@ -47,7 +47,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Program options
     bool quit = false;
-    bool pause = config.isRunningOnNormalMode();
+    bool pause = config.runMode == RunMode::normal;
     bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
@@ -100,17 +100,17 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int fps = 0;
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
-    while (!quit && (config.isRunningOnNormalMode() || frame < config.numFramesPerRun)) {
-        if (config.isRunningOnNormalMode()) {
+    while (!quit && (config.runMode == RunMode::normal || frame < config.numFramesPerRun)) {
+        if (config.runMode == RunMode::normal) {
             setupFrame();
             camera->lookAt();
             setLighting();
         }
 
         // Draw objects
-        if (draw && config.isRunningOnNormalMode()) {
+        if (draw && config.runMode == RunMode::normal) {
             drawAxis();
-            drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
+            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite, frame);
             drawFPSCounter(fps);
         }
 
@@ -130,19 +130,19 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                 moveEnd = std::chrono::system_clock::now();
                 results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
-            frame++;
-            if (config.isRunningOnRecorderMode()) {
-
+            if (config.runMode == RunMode::recorder) {
+                // TODO: Record shit
             }
+            frame++;
         }
 
         // Process events
-        if (config.isRunningOnNormalMode()) {
+        if (config.runMode == RunMode::normal) {
             checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.isRunningOnNormalMode());
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::normal);
 
         if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
             lastFPSDrawTime = std::chrono::system_clock::now();
@@ -155,13 +155,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     return results;
 }
 
-void runTestScenes(Config config) {
+void runTestScenes(Config config, SDL_Window* window) {
     list<string> testSceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
         "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
 
     if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
     if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");
-    SDL_Window* window = initializeSDL();
 
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
@@ -173,9 +172,8 @@ void runTestScenes(Config config) {
     }
 }
 
-void runSceneBenchmark(Config config) {
+void runSceneBenchmark(Config config, SDL_Window* window) {
     list<SimulationResults> benchmarkResults = list<SimulationResults>();
-    SDL_Window* window = initializeSDL();
     for (int i = 0; i < config.numRuns; i++) {
         SimulationResults* results = runSimulation(config, window);
         if (results) {
@@ -186,18 +184,74 @@ void runSceneBenchmark(Config config) {
     LoggingManager::logBenchmarkResults(benchmarkResults, config);
 }
 
+void replayScene(Config config, SDL_Window* window) {
+    // Camera
+    Camera* centeredCamera = new CenteredCamera();
+    Camera* freeCamera = new FreeCamera();
+    Camera* camera = centeredCamera;
+
+    // Program options
+    bool quit = false;
+    bool pause = true;
+    bool draw = true;
+    bool slowMotion = false;
+    bool drawOBBs = false;
+    bool drawAABBs = false;
+
+    // FPS management
+    clock_t lastFrameTime = clock();
+    float timeSinceLastFrame = 0;
+    int frame = 0;
+    int fps = 0;
+    chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
+
+    // Scene
+    vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects(); // TODO: Load regular objects
+    Object** objects = &objectsVector[0];
+    int numObjects = objectsVector.size();
+
+    initializeOpenGL();
+
+    while (!quit && frame < config.numFramesPerRun) {
+        setupFrame();
+        camera->lookAt();
+        setLighting();
+        drawAxis();
+        for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite, frame);
+        drawFPSCounter(fps);
+
+        if (!pause) frame++;
+
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera); // Create replay specific controls
+
+        // Force FPS cap
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, true);
+        if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
+            lastFPSDrawTime = std::chrono::system_clock::now();
+            fps = (int)(1.0 / timeSinceLastFrame) > config.fps ? config.fps : (int)(1.0 / timeSinceLastFrame);
+        }
+
+        SDL_GL_SwapWindow(window);
+    }
+}
+
 int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
+        SDL_Window* window = initializeSDL();
 
-        if (config.isRunningOnTestMode()) {
-            runTestScenes(config);
+        if (config.runMode == RunMode::test) {
+            runTestScenes(config, window);
         }
-        else if (config.isRunningOnBenchmarkMode()) {
-            runSceneBenchmark(config);
+        if (config.runMode == RunMode::benchmark) {
+            runSceneBenchmark(config, window);
+            config.runMode = RunMode::replay; // Replay the scene after recording
         }
-        else {
-            SimulationResults* results = runSimulation(config, initializeSDL());
+        if (config.runMode == RunMode::replay) {
+            replayScene(config, window);
+        }
+        if (config.runMode == RunMode::normal) {
+            SimulationResults* results = runSimulation(config, window);
             if (results && config.log) {
                 if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
                 LoggingManager::logRunResults("output", config.logOutputFile, *results);

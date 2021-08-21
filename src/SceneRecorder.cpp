@@ -44,10 +44,14 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
     }
 }
 
-Object* SceneRecorder::deserializeObject(SerializedObject serializedObject) {
-    if (serializedObject.type == BALL) return new Ball();
-    else if (serializedObject.type == CAPSULE) return new Capsule();
-    else if (serializedObject.type == TILE) return new Tile();
+Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, SerializedPosition* serializedPositions, SerializedRotationMatrix* serializedRotationMatrices, int frames, string id) {
+    Color color = Color(serializedObject.r, serializedObject.g, serializedObject.b);
+
+    // TODO: Fix positions and rotation matrices
+    // TODO: Fix lats and longs
+    if (serializedObject.type == BALL) return new Ball(id, color, NULL, NULL, 0, reinterpret_cast<float&>(serializedObject.dim1), 5,5);
+    else if (serializedObject.type == CAPSULE) return new Capsule(id, color, NULL, NULL, 0, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), 5, 5);
+    else if (serializedObject.type == TILE) return new Tile(id, color, NULL, NULL, 0, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), serializedObject.draw == DRAW);
 }
 
 void SceneRecorder::recordFrame() {
@@ -83,12 +87,11 @@ vector<Object*> SceneRecorder::importRecordedScene() {
     rf.read((char*)&numObjects, sizeof(uint32_t));
     rf.read((char*)&frames, sizeof(uint32_t));
 
+    SerializedObject* incoming = new SerializedObject[numObjects];
     vector<Object*> res = vector<Object*>(numObjects, NULL);
-    SerializedObject incoming;
 
     for (int i = 0; i < numObjects; i++) {
-        rf.read((char*)&incoming, sizeof(SerializedObject));
-        res[i] = deserializeObject(incoming);
+        rf.read((char*)&incoming[i], sizeof(SerializedObject));
     }
 
     // TODO: Read positions and matrices

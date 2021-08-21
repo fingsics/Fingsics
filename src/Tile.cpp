@@ -2,6 +2,18 @@
 
 using namespace std;
 
+Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float length, float width, bool draw) : Object(id, color, positions, rotationMatrices, frames) {
+    this->axis1Length = length;
+    this->axis2Length = width;
+    this->draw = draw;
+
+    this->baseInertiaTensor = Matrix();
+    this->invertedInertiaTensor = Matrix();
+    this->obb = OBB();
+    this->axis1 = Point();
+    this->axis2 = Point();
+}
+
 Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float length, float width, bool draw) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -55,10 +67,10 @@ bool Tile::getDraw() {
 }
 
 void Tile::updateEnds() {
-    end1 = pos + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
-    end2 = pos - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
-    end3 = pos + axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
-    end4 = pos - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
+    end1 = position + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
+    end2 = position - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
+    end3 = position + axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
+    end4 = position - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
 }
 
 void Tile::setRotation(Matrix rotationMatrix) {
@@ -69,12 +81,14 @@ void Tile::setRotation(Matrix rotationMatrix) {
     updateEnds();
 }
 
-void Tile::drawObject(bool) {
+void Tile::drawObject(bool drawHalfWhite, int frame) {
     if (!draw) return;
+    Point pos = replayMode ? positions[frame] : position;
+    float* mat = (replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix();
 
     glPushMatrix();
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glMultMatrixf(mat);
     glColor3ub(color.getR(), color.getG(), color.getB());
     glBegin(GL_QUADS);
     glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);

@@ -7,10 +7,10 @@ void CollisionResponseAlgorithm::moveObjects(Object** objects, int numObjects, f
 
 void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
-    Point ra = collisionPoint - object1->getPos();
-    Point rb = collisionPoint - object2->getPos();
-    Point vai = object1->getVel() + object1->getAngularVelocity().crossProduct(ra);
-    Point vbi = object2->getVel() + object2->getAngularVelocity().crossProduct(rb);
+    Point ra = collisionPoint - object1->getPosition();
+    Point rb = collisionPoint - object2->getPosition();
+    Point vai = object1->getVelocity() + object1->getAngularVelocity().crossProduct(ra);
+    Point vbi = object2->getVelocity() + object2->getAngularVelocity().crossProduct(rb);
 
     float e = (object1->getElasticity() + object2->getElasticity()) / 2;
     float ma = object1->getMass();
@@ -31,10 +31,10 @@ void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Ob
 
 void CollisionResponseAlgorithm::calculateStaticCollision(Object* staticObject, Object* nonStaticObject, Point collisionPoint, Point normal) {
     // https://en.wikipedia.org/wiki/Collision_response#Impulse-based_contact_model
-    Point r = collisionPoint - nonStaticObject->getPos();
-    Point rs = collisionPoint - staticObject->getPos();
-    Point vi = nonStaticObject->getVel() + nonStaticObject->getAngularVelocity().crossProduct(r);
-    Point vsi = staticObject->getVel() + staticObject->getAngularVelocity().crossProduct(rs);
+    Point r = collisionPoint - nonStaticObject->getPosition();
+    Point rs = collisionPoint - staticObject->getPosition();
+    Point vi = nonStaticObject->getVelocity() + nonStaticObject->getAngularVelocity().crossProduct(r);
+    Point vsi = staticObject->getVelocity() + staticObject->getAngularVelocity().crossProduct(rs);
 
     float e = (staticObject->getElasticity() + nonStaticObject->getElasticity()) / 2;
     float m = nonStaticObject->getMass();

@@ -2,6 +2,16 @@
 
 using namespace std;
 
+Ball::Ball(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float radius, int lats, int longs) : Object(id, color, positions, rotationMatrices, frames) {
+    this->radius = radius;
+    this->lats = lats;
+    this->longs = longs;
+
+    this->baseInertiaTensor = Matrix();
+    this->invertedInertiaTensor = Point();
+    this->obb = OBB();
+}
+
 Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, int lats, int longs) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->lats = lats;
     this->longs = longs;
@@ -18,14 +28,17 @@ float Ball::getRadius() {
     return radius;
 }
 
-void Ball::drawObject(bool drawHalfWhite) {
+void Ball::drawObject(bool drawHalfWhite, int frame) {
+    Point pos = replayMode ? positions[frame] : position;
+    float* mat = (replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix();
+
     Color white = Color(255, 255, 255);
     glColor3ub(color.getR(), color.getG(), color.getB());
 
     glPushMatrix();
 
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glMultMatrixf(mat);
 
     for(int i = 0; i <= lats; i++) {
         float lat0 = M_PI * (-0.5 + (float) (i - 1) / lats);
@@ -70,25 +83,25 @@ Matrix Ball::getInertiaTensorInverse() {
 }
 
 float Ball::getMinX() {
-    return pos.getX() - radius;
+    return position.getX() - radius;
 }
 
 float Ball::getMinY() {
-    return pos.getY() - radius;
+    return position.getY() - radius;
 }
 
 float Ball::getMinZ() {
-    return pos.getZ() - radius;
+    return position.getZ() - radius;
 }
 
 float Ball::getMaxX() {
-    return pos.getX() + radius;
+    return position.getX() + radius;
 }
 
 float Ball::getMaxY() {
-    return pos.getY() + radius;
+    return position.getY() + radius;
 }
 
 float Ball::getMaxZ() {
-    return pos.getZ() + radius;
+    return position.getZ() + radius;
 }

@@ -1,12 +1,8 @@
 #ifndef CAPSULE_H
 #define CAPSULE_H
 #define _USE_MATH_DEFINES
-#include <vector>
-#include <math.h>
-#include <string>
+
 #include "SDL_opengl.h"
-#include "Color.h"
-#include "Point.h"
 #include "Object.h"
 
 using namespace std;
@@ -25,7 +21,8 @@ public:
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
     Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, int, int);
-    void drawObject(bool);
+    Capsule(string, Color, Point*, Matrix*, int, float, float, int, int);
+    void drawObject(bool, int);
     float getMinX();
     float getMinY();
     float getMinZ();

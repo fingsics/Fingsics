@@ -17,6 +17,8 @@ constexpr uint32_t BALL = 0;
 constexpr uint32_t CAPSULE = 0;
 constexpr uint32_t TILE = 0;
 
+constexpr uint8_t NODRAW = 0b00000000;
+constexpr uint8_t DRAW = 0b11111111;
 
 struct SerializedObject {
     uint8_t type;
@@ -48,8 +50,7 @@ private:
     SerializedRotationMatrix** rotationMatrices;
     string path;
     void serializeObject(Object*, SerializedObject*);
-    Object* deserializeObject(SerializedObject);
-public:
+    Object* deserializeObject(SerializedObject, SerializedPosition*, SerializedRotationMatrix*, int, string);
     SceneRecorder(Object**, int, int, string);
     void recordFrame();
     void storeRecordedData();
