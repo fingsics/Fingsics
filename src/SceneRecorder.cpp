@@ -98,6 +98,12 @@ void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, P
     position->setZ(reinterpret_cast<float&>(serializedPosition.z));
 }
 
+void SceneRecorder::deserializeRotationMatrix(SerializedMatrix serializedRotationMatrix, Matrix* rotationMatrix) {
+    memcpy(&rotationMatrix[0], &serializedRotationMatrix.values[0], sizeof(uint32_t) * 3);
+    memcpy(&rotationMatrix[1], &serializedRotationMatrix.values[3], sizeof(uint32_t) * 3);
+    memcpy(&rotationMatrix[2], &serializedRotationMatrix.values[6], sizeof(uint32_t) * 3);
+}
+
 void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
     for (int i = 0; i < numObjects; i++) {
         serializePosition(objects[i]->getPosition(), &positions[i][frame]);
