@@ -36,7 +36,7 @@ struct SerializedPosition {
     uint32_t z;
 };
 
-struct SerializedRotationMatrix {
+struct SerializedMatrix {
     uint32_t values[9];
 };
 
@@ -44,15 +44,20 @@ class SceneRecorder {
 private:
     int numObjects;
     int frames;
-    int currentFrame;
     SerializedObject* objects;
     SerializedPosition** positions;
-    SerializedRotationMatrix** rotationMatrices;
+    SerializedMatrix** rotationMatrices;
     string path;
     void serializeObject(Object*, SerializedObject*);
-    Object* deserializeObject(SerializedObject, SerializedPosition*, SerializedRotationMatrix*, int, string);
-    SceneRecorder(Object**, int, int, string);
-    void recordFrame();
+    void deserializeObject(SerializedObject, SerializedPosition*, SerializedMatrix*, int, string, Object*);
+    void serializePosition(Point, SerializedPosition*);
+    void deserializePosition(SerializedPosition, Point*);
+    void serializeRotationMatrix(Matrix, SerializedMatrix*);
+    void deserializeRotationMatrix(SerializedMatrix, Matrix*);
+public:
+    SceneRecorder(Object**, int, int, string); // Recorder
+    SceneRecorder(string); // Loader
+    void recordFrame(Object**, int, int);
     void storeRecordedData();
     vector<Object*> importRecordedScene();
 };

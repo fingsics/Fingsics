@@ -51,7 +51,6 @@ Config::Config(map<string, string> config) {
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
         else if (!it->second.compare("RECORDER")) runMode = RunMode::recorder;
         else if (!it->second.compare("REPLAY")) runMode = RunMode::recorder;
-        runMode = RunMode::normal;
     }
 
     it = config.find("NUM_RUNS");
