@@ -183,7 +183,7 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\OpenGLHelpers.cpp" />
     <ClCompile Include="src\Point.cpp" />
-    <ClCompile Include="src\ObjectLoader.cpp" />
+    <ClCompile Include="src\XmlReader.cpp" />
     <ClCompile Include="src\Tile.cpp" />
     <ClCompile Include="src\SDLHelpers.cpp" />
     <ClCompile Include="src\SweepAndPruneBroadPhase.cpp" />
@@ -214,7 +214,7 @@
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\OpenGLHelpers.h" />
     <ClInclude Include="include\Point.h" />
-    <ClInclude Include="include\ObjectLoader.h" />
+    <ClInclude Include="include\XmlReader.h" />
     <ClInclude Include="include\Tile.h" />
     <ClInclude Include="include\SDLHelpers.h" />
     <ClInclude Include="include\SweepAndPruneBroadPhase.h" />

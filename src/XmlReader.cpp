@@ -1,4 +1,4 @@
-#include "../include/ObjectLoader.h"
+#include "../include/XmlReader.h"
 
 CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float m, float ec, Color c, bool s) {
     pos = p;
@@ -12,18 +12,49 @@ CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float
     isStatic = s;
 }
 
-ObjectLoader::ObjectLoader(string scene, int numLatLongs) {
+XmlReader::XmlReader(string scene, int numLatLongs) {
     this->scene = scene;
     this->numLatLongs = numLatLongs;
 }
 
-vector<Object*> ObjectLoader::getObjects() {
+void XmlReader::checkFileExists() {
     string filepath = "scenes/" + scene;
     if (!filesystem::exists(filepath) || !filesystem::is_regular_file(filepath)) {
         string error1 = "A scene named \'";
         string error2 = "\' was not found";
         throw std::runtime_error(error1 + scene + error2);
     }
+}
+
+FreeCamera* XmlReader::getCamera() {
+    checkFileExists();
+
+    string filepath = "scenes/" + scene;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLError eResult = xml_doc.LoadFile(filepath.c_str());
+    tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
+    tinyxml2::XMLElement* cameraSettings = config->FirstChildElement("camera");
+
+    if (!cameraSettings) return NULL;
+
+    float pitch, yaw;
+    const char* posChar;
+    Point pos;
+    tinyxml2::XMLError parseError;
+    parseError = cameraSettings->QueryStringAttribute("pos", &posChar);
+    pos = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(posChar) : Point(-13, 6, 0);
+    parseError = cameraSettings->QueryFloatAttribute("pitch", &pitch);
+    pitch = (parseError == tinyxml2::XML_SUCCESS) ? pitch : -25;
+    parseError = cameraSettings->QueryFloatAttribute("yaw", &yaw);
+    yaw = (parseError == tinyxml2::XML_SUCCESS) ? yaw : 0;
+
+    return new FreeCamera(pos, pitch, yaw);
+}
+
+vector<Object*> XmlReader::getObjects() {
+    checkFileExists();
+
+    string filepath = "scenes/" + scene;
     tinyxml2::XMLDocument xml_doc;
     tinyxml2::XMLError eResult = xml_doc.LoadFile(filepath.c_str());
     tinyxml2::XMLElement* config = xml_doc.FirstChildElement("config");
@@ -42,7 +73,7 @@ vector<Object*> ObjectLoader::getObjects() {
     return objects;
 }
 
-CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
+CommonFields XmlReader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     const char* posChar, * velChar, * angChar, * angVelChar, * accelerationChar, * colorChar;
     Point pos, vel, ang, angVel, acceleration;
     Color color;
@@ -72,7 +103,7 @@ CommonFields ObjectLoader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     return CommonFields(pos, vel, ang, angVel, acceleration, mass, elasticityCoef, color, isStatic);
 }
 
-Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
+Ball* XmlReader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     float radius;
     tinyxml2::XMLError parseError;
@@ -81,7 +112,7 @@ Ball* ObjectLoader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int num
     return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, numLatLongs, numLatLongs);
 }
 
-Tile* ObjectLoader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
+Tile* XmlReader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     float length, width;
     bool draw;
@@ -95,7 +126,7 @@ Tile* ObjectLoader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
     return new Tile(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, length, width, draw);
 }
 
-Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
+Capsule* XmlReader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     float radius, length;
     tinyxml2::XMLError parseError;
@@ -106,7 +137,7 @@ Capsule* ObjectLoader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, i
     return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length, numLatLongs, numLatLongs);
 }
 
-vector<float> ObjectLoader::parseTriplet(const char* input) {
+vector<float> XmlReader::parseTriplet(const char* input) {
     try {
         string stringInput = string(input);
         auto f = [](unsigned char const c) { return std::isspace(c); };
@@ -125,12 +156,12 @@ vector<float> ObjectLoader::parseTriplet(const char* input) {
     }
 }
 
-Point ObjectLoader::parsePoint(const char* charPoint) {
+Point XmlReader::parsePoint(const char* charPoint) {
     vector<float> values = parseTriplet(charPoint);
     return Point(values[0], values[1], values[2]);
 }
 
-Color ObjectLoader::parseColor(const char* charColor) {
+Color XmlReader::parseColor(const char* charColor) {
     vector<float> values = parseTriplet(charColor);
     return Color(values[0], values[1], values[2]);
 }

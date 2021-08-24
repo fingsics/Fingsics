@@ -3,7 +3,7 @@
 
 #include "../include/SDLHelpers.h";
 #include "../include/OpenGlHelpers.h";
-#include "../include/ObjectLoader.h"
+#include "../include/XmlReader.h"
 #include "../include/ConfigLoader.h"
 #include "../include/CenteredCamera.h"
 #include "../include/FreeCamera.h"
@@ -37,11 +37,13 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
 
 SimulationResults* runSimulation(Config config, SDL_Window* window) {
     SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
+    XmlReader xmlReader = XmlReader(config.sceneName + ".xml", config.numLatLongs);
 
     // Camera
     Camera* centeredCamera = new CenteredCamera();
-    Camera* freeCamera = new FreeCamera();
-    Camera* camera = centeredCamera;
+    Camera* settingsCamera = xmlReader.getCamera();
+    Camera* freeCamera = settingsCamera ? settingsCamera : new FreeCamera();
+    Camera* camera = settingsCamera ? freeCamera : centeredCamera;
 
     // Program options
     bool quit = false;
@@ -57,7 +59,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int frame = 0;
 
     // Scene
-    vector<Object*> objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
+    vector<Object*> objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
 
