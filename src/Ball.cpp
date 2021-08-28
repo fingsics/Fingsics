@@ -29,42 +29,41 @@ float Ball::getRadius() {
 }
 
 void Ball::drawObject(bool drawHalfWhite, int frame) {
-    Point pos = replayMode ? positions[frame] : position;
-    float* mat = (replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix();
-
     Color white = Color(255, 255, 255);
     glColor3ub(color.getR(), color.getG(), color.getB());
 
+
     glPushMatrix();
 
+    Point pos = replayMode ? positions[frame] : position;
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(mat);
+    glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
 
-    for(int i = 0; i <= lats; i++) {
-        float lat0 = M_PI * (-0.5 + (float) (i - 1) / lats);
+    for (int i = 0; i <= lats; i++) {
+        float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
         float z0 = sin(lat0);
         float zr0 = cos(lat0);
 
-        float lat1 = M_PI * (-0.5 + (float) i / lats);
+        float lat1 = M_PI * (-0.5 + (float)i / lats);
         float z1 = sin(lat1);
         float zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        for(int j = 0; j <= longs; j++)
+        for (int j = 0; j <= longs; j++)
         {
             if (drawHalfWhite) {
                 if (j > longs / 2) glColor3ub(color.getR(), color.getG(), color.getB());
                 else glColor3ub(white.getR(), white.getG(), white.getB());
             }
-            
-            float lng = 2 * M_PI * (float) (j - 1) / longs;
+
+            float lng = 2 * M_PI * (float)(j - 1) / longs;
             float x = cos(lng);
             float y = sin(lng);
 
             float s1, s2, t;
-            s1 = ((float) i) / lats;
-            s2 = ((float) i + 1) / lats;
-            t = ((float) j) / longs;
+            s1 = ((float)i) / lats;
+            s2 = ((float)i + 1) / lats;
+            t = ((float)j) / longs;
 
             glNormal3d(x * zr0, y * zr0, z0);
             glVertex3d(radius * x * zr0, radius * y * zr0, radius * z0);

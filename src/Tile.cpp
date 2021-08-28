@@ -83,12 +83,12 @@ void Tile::setRotation(Matrix rotationMatrix) {
 
 void Tile::drawObject(bool drawHalfWhite, int frame) {
     if (!draw) return;
-    Point pos = replayMode ? positions[frame] : position;
-    float* mat = (replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix();
+
 
     glPushMatrix();
+    Point pos = replayMode ? positions[frame] : position;
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(mat);
+    glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
     glColor3ub(color.getR(), color.getG(), color.getB());
     glBegin(GL_QUADS);
     glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);

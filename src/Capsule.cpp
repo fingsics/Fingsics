@@ -63,12 +63,11 @@ void Capsule::drawObject(bool drawHalfWhite, int frame) {
     Color white = Color(255, 255, 255);
     glColor3ub(color.getR(), color.getG(), color.getB());
 
-    Point pos = replayMode ? positions[frame] : position;
-    float* mat = (replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix();
 
     glPushMatrix();
+    Point pos = replayMode ? positions[frame] : position;
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(mat);
+    glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
     glTranslatef(0, 0,-length / 2.0);
 
     float evenLats = (lats % 2 == 0) ? lats : lats + 1;
