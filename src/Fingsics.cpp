@@ -98,18 +98,29 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int fps = 0;
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
+    static GLubyte* pixels = NULL;
+    if (config.isRunningOnRecordVideoMode() && (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")))
+        filesystem::create_directory("recordings");
+    
     while (!quit && (config.isRunningOnNormalMode() || frame < config.numFramesPerRun)) {
-        if (config.isRunningOnNormalMode()) {
+
+        if (config.isRunningOnRecordVideoMode()) {
+            char filename[25];
+            snprintf(filename, 25, "recordings\\tmp.%d.ppm", frame);
+            screenshot_ppm(filename, config.windowWidth, config.windowHeight, &pixels);
+        }
+
+        if (config.isRunningOnNormalMode() || config.isRunningOnRecordVideoMode()) {
             setupFrame();
             camera->lookAt();
             setLighting();
         }
 
         // Draw objects
-        if (draw && config.isRunningOnNormalMode()) {
+        if (draw && (config.isRunningOnNormalMode() || config.isRunningOnRecordVideoMode())) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
-            drawFPSCounter(fps);
+            if (config.isRunningOnNormalMode()) drawFPSCounter(fps);
         }
 
         // Apply physics and movement
@@ -156,7 +167,7 @@ void runTestScenes(Config config) {
 
     if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
     if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");
-    SDL_Window* window = initializeSDL();
+    SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
 
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
@@ -170,7 +181,7 @@ void runTestScenes(Config config) {
 
 void runSceneBenchmark(Config config) {
     list<SimulationResults> benchmarkResults = list<SimulationResults>();
-    SDL_Window* window = initializeSDL();
+    SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
     for (int i = 0; i < config.numRuns; i++) {
         SimulationResults* results = runSimulation(config, window);
         if (results) {
@@ -192,7 +203,7 @@ int main(int argc, char* argv[]) {
             runSceneBenchmark(config);
         }
         else {
-            SimulationResults* results = runSimulation(config, initializeSDL());
+            SimulationResults* results = runSimulation(config, initializeSDL(config.windowWidth, config.windowHeight));
             if (results && config.log) {
                 if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
                 LoggingManager::logRunResults("output", config.logOutputFile, *results);

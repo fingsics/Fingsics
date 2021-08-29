@@ -305,3 +305,26 @@ void drawFPSCounter(int fps) {
 
     glEnable(GL_LIGHTING);
 }
+
+void screenshot_ppm(const char* filename, unsigned int width, unsigned int height, GLubyte** pixels) {
+    ofstream f;
+    unsigned int i, j;
+    size_t cur;
+    const size_t format_nchannels = 3;
+    char tmp[13];
+
+    f.open(filename);
+    f << "P3\n" << width << " " << height << "\n" << 255 << "\n";
+
+    *pixels = (GLubyte*)realloc(*pixels, format_nchannels * sizeof(GLubyte) * width * height);
+    glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, *pixels);
+    for (i = 0; i < height; i++) {
+        for (j = 0; j < width; j++) {
+            cur = format_nchannels * ((height - i - 1) * width + j);
+            snprintf(tmp, 13, "%d %d %d ", (*pixels)[cur], (*pixels)[cur + 1], (*pixels)[cur + 2]);
+            f << tmp;
+        }
+        f << "\n";
+    }
+    f.close();
+}

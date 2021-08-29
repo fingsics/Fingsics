@@ -47,7 +47,7 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-SDL_Window* initializeSDL() {
+SDL_Window* initializeSDL(int width, int height) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
         exit(1);
@@ -55,7 +55,7 @@ SDL_Window* initializeSDL() {
 
     atexit(SDL_Quit);
 
-    SDL_Window* window = SDL_CreateWindow("Fingsics", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_OPENGL);
+    SDL_Window* window = SDL_CreateWindow("Fingsics", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
     if (window == NULL) {
         cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
         exit(1);

@@ -402,3 +402,4 @@ output/
 testing/results
 benchmarks/
 enc_temp_folder/
+recordings/

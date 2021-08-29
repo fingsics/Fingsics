@@ -2,6 +2,8 @@
 
 Config::Config(map<string, string> config) {
     fps = 60;
+    windowWidth = 1280;
+    windowHeight = 720;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::normal;
@@ -16,6 +18,16 @@ Config::Config(map<string, string> config) {
     auto it = config.find("FPS");
     if (it != config.end()) {
         fps = stoi(it->second);
+    }
+
+    it = config.find("WINDOW_WIDTH");
+    if (it != config.end()) {
+        windowWidth = stoi(it->second);
+    }
+
+    it = config.find("WINDOW_HEIGHT");
+    if (it != config.end()) {
+        windowHeight = stoi(it->second);
     }
 
     it = config.find("NUM_LAT_LONGS");
@@ -50,6 +62,7 @@ Config::Config(map<string, string> config) {
         if (!it->second.compare("NORMAL")) runMode = RunMode::normal;
         else if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
+        else if (!it->second.compare("RECORD_VIDEO")) runMode = RunMode::recordVideo;
     }
 
     it = config.find("NUM_RUNS");
@@ -75,6 +88,10 @@ Config::Config(map<string, string> config) {
 
 bool Config::isRunningOnNormalMode() {
     return runMode == RunMode::normal;
+}
+
+bool Config::isRunningOnRecordVideoMode() {
+    return runMode == RunMode::recordVideo;
 }
 
 bool Config::isRunningOnBenchmarkMode() {
