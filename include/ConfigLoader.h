@@ -50,4 +50,4 @@ public:
 	Config getConfig();
 };
 
-#endif CONFLOADER_H
+#endif
