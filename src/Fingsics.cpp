@@ -104,22 +104,13 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     VideoRecorder* recorder = new VideoRecorder();
     if (config.isRunningOnRecordVideoMode()) {
         if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
-        recorder->ffmpeg_encoder_start("tmp.mpg", 25, config.windowWidth, config.windowHeight);
+        string fileName = "recordings\\" + config.sceneName + ".mpg";
+        recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
     }
         
     
     while (!quit && (config.isRunningOnNormalMode() || nframe < config.numFramesPerRun)) {
-
         if (config.isRunningOnRecordVideoMode()) {
-
-            // sin dependencias
-            // 
-            //char filename[25];
-            //snprintf(filename, 25, "recordings\\tmp.%d.ppm", frame);
-            //screenshot_ppm(filename, config.windowWidth, config.windowHeight, &pixels);
-
-            // ffmpeg
-
             recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
             recorder->ffmpeg_encoder_encode_frame(rgb);
         }
