@@ -99,6 +99,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int fps = 0;
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
+    // Video recording
     GLubyte* pixels = NULL;
     uint8_t* rgb = NULL;
     VideoRecorder* recorder = new VideoRecorder();
@@ -107,7 +108,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         string fileName = "recordings\\" + config.sceneName + ".mpg";
         recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
     }
-        
     
     while (!quit && (config.isRunningOnNormalMode() || nframe < config.numFramesPerRun)) {
         if (config.isRunningOnRecordVideoMode()) {
@@ -166,6 +166,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     if (config.isRunningOnRecordVideoMode()) {
         recorder->ffmpeg_encoder_finish();
         free(pixels);
+        free(rgb);
     }
 
     return results;

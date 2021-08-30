@@ -13,20 +13,21 @@ extern "C"
 
 using namespace std;
 
+// Most of the code is from https://stackoverflow.com/a/14324292
+
 class VideoRecorder {
 private:
 	AVCodecContext* c;
 	AVPacket pkt;
-
 	AVFrame* frame;
 	FILE* file;
 	struct SwsContext* sws_context;
-	void ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t* rgb);
+	void ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t*);
 public:
 	VideoRecorder();
-	void ffmpeg_encoder_start(const char* filename, int fps, int width, int height);
-	void ffmpeg_encoder_encode_frame(uint8_t* rgb);
-	void ffmpeg_encoder_glread_rgb(uint8_t** rgb, GLubyte** pixels, unsigned int width, unsigned int height, int frame);
+	void ffmpeg_encoder_start(const char*, int, int, int);
+	void ffmpeg_encoder_encode_frame(uint8_t*);
+	void ffmpeg_encoder_glread_rgb(uint8_t**, GLubyte**, unsigned int, unsigned int, int);
 	void ffmpeg_encoder_finish();
 };
 

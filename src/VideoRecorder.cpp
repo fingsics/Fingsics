@@ -1,5 +1,7 @@
 #include "../include/VideoRecorder.h"
 
+// Most of the code is from https://stackoverflow.com/a/14324292
+
 VideoRecorder::VideoRecorder() {
     c = NULL;
     sws_context = NULL;
@@ -8,19 +10,14 @@ VideoRecorder::VideoRecorder() {
 
 void VideoRecorder::ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t* rgb) {
     const int in_linesize[1] = { 4 * c->width };
-    sws_context = sws_getCachedContext(sws_context,
-        c->width, c->height, AV_PIX_FMT_RGB32,
-        c->width, c->height, AV_PIX_FMT_YUV420P,
-        0, NULL, NULL, NULL);
-    sws_scale(sws_context, (const uint8_t* const*)&rgb, in_linesize, 0,
-        c->height, frame->data, frame->linesize);
+    sws_context = sws_getCachedContext(sws_context, c->width, c->height, AV_PIX_FMT_RGB32, c->width, c->height, AV_PIX_FMT_YUV420P, 0, NULL, NULL, NULL);
+    sws_scale(sws_context, (const uint8_t* const*)&rgb, in_linesize, 0, c->height, frame->data, frame->linesize);
 }
 
 void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int width, int height) {
     const AVCodec* codec;
     int ret;
     AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO;
-    //avcodec_register_all();
     codec = avcodec_find_encoder(codec_id);
     if (!codec) {
         fprintf(stderr, "Codec not found\n");
@@ -71,10 +68,6 @@ void VideoRecorder::ffmpeg_encoder_finish() {
     do {
         fflush(stdout);
         ret = avcodec_receive_packet(c, &pkt);
-        if (ret < 0) {
-            fprintf(stderr, "Error encoding frame\n");
-            exit(1);
-        }
         if (ret >= 0) {
             fwrite(pkt.data, 1, pkt.size, file);
             av_packet_unref(&pkt);
