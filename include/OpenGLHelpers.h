@@ -13,6 +13,5 @@ void drawObjects(Object**, int, bool, bool, bool);
 void drawAxis();
 void setLighting();
 void drawFPSCounter(int);
-void screenshot_ppm(const char*, unsigned int, unsigned int, GLubyte**);
 
 #endif

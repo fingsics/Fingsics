@@ -16,6 +16,7 @@
 #include "../include/NarrowPhaseAlgorithm.h"
 #include "../include/CollisionResponseAlgorithm.h"
 #include "../include/LoggingManager.h"
+#include "../include/VideoRecorder.h"
 #include <iostream>
 #include <thread>
 #include <map>
@@ -56,7 +57,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // FPS management
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
-    int frame = 0;
+    int nframe = 0;
 
     // Scene
     vector<Object*> objectsVector = xmlReader.getObjects();
@@ -98,16 +99,29 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int fps = 0;
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
-    static GLubyte* pixels = NULL;
-    if (config.isRunningOnRecordVideoMode() && (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")))
-        filesystem::create_directory("recordings");
+    GLubyte* pixels = NULL;
+    uint8_t* rgb = NULL;
+    VideoRecorder* recorder = new VideoRecorder();
+    if (config.isRunningOnRecordVideoMode()) {
+        if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
+        recorder->ffmpeg_encoder_start("tmp.mpg", 25, config.windowWidth, config.windowHeight);
+    }
+        
     
-    while (!quit && (config.isRunningOnNormalMode() || frame < config.numFramesPerRun)) {
+    while (!quit && (config.isRunningOnNormalMode() || nframe < config.numFramesPerRun)) {
 
         if (config.isRunningOnRecordVideoMode()) {
-            char filename[25];
-            snprintf(filename, 25, "recordings\\tmp.%d.ppm", frame);
-            screenshot_ppm(filename, config.windowWidth, config.windowHeight, &pixels);
+
+            // sin dependencias
+            // 
+            //char filename[25];
+            //snprintf(filename, 25, "recordings\\tmp.%d.ppm", frame);
+            //screenshot_ppm(filename, config.windowWidth, config.windowHeight, &pixels);
+
+            // ffmpeg
+
+            recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
+            recorder->ffmpeg_encoder_encode_frame(rgb);
         }
 
         if (config.isRunningOnNormalMode() || config.isRunningOnRecordVideoMode()) {
@@ -139,7 +153,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                 moveEnd = std::chrono::system_clock::now();
                 results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
             }
-            frame++;
+            nframe++;
         }
 
         // Process events
@@ -156,6 +170,11 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         }
 
         SDL_GL_SwapWindow(window);
+    }
+
+    if (config.isRunningOnRecordVideoMode()) {
+        recorder->ffmpeg_encoder_finish();
+        free(pixels);
     }
 
     return results;
