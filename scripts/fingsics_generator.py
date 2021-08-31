@@ -21,32 +21,32 @@ def create_ball(pos, mass, rad, vel, color):
 def horizontal(x, y, z, color):
     objects = ""
     for i in range(0,3):
-            objects += create_capsule2(f"{x},{y + i},{z}", "1", "0.5", "3", "0,0,20", color)
-            objects += create_capsule2(f"{x-1},{y + i},{z}", "1", "0.5", "3", "0,0,20", color)
+            objects += create_capsule2(f"{x},{y + i},{z}", "1", "0.5", "3", "0,0,15", color)
+            objects += create_capsule2(f"{x-1},{y + i},{z}", "1", "0.5", "3", "0,0,15", color)
     return objects
 
 def vertical3(x, y, z, color):
     objects = ""
     for i in range(0,3):
         for j in range(0,3):
-                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
-                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
+                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
+                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
     return objects
 
 def vertical2(x, y, z, color):
     objects = ""
     for i in range(0,3):
         for j in range(0,2):
-                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
-                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
+                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
+                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
     return objects
 
 def vertical1(x, y, z, color):
     objects = ""
     for i in range(0,3):
         for j in range(0,1):
-                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
-                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,20", color)
+                objects += create_capsule(f"{x},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
+                objects += create_capsule(f"{x-1},{y + 4*j},{z + i}", "1", "0.5", "3", "0,0,15", color)
     return objects
 
 
@@ -54,8 +54,8 @@ def tilted(x, y, z, color):
     objects = ""
     for i in range(0,2):
         for j in range(0,3):
-                objects += create_capsule3(f"{x},{y + 4*j},{z + i - j}", "1", "0.5", "3", "0,0,20", color)
-                objects += create_capsule3(f"{x-1},{y + 4*j},{z + i - j}", "1", "0.5", "3", "0,0,20", color)
+                objects += create_capsule3(f"{x},{y + 4*j},{z + i - j}", "1", "0.5", "3", "0,0,15", color)
+                objects += create_capsule3(f"{x-1},{y + 4*j},{z + i - j}", "1", "0.5", "3", "0,0,15", color)
     return objects  
 
 
@@ -63,7 +63,7 @@ objects = ""
 
 xInit = 36
 yInit = -5
-zInit = -140
+zInit = -125
 
 blue_color = "0,96,255"
 white_color = "220,220,220"
@@ -75,7 +75,7 @@ objects += horizontal(xInit, yInit + 3.5, zInit + 4.5, blue_color)
 
 #i
 objects += vertical2(xInit, yInit, zInit + 9, blue_color)
-objects += create_ball(f"{xInit},{yInit + 9},{zInit + 10}", "1", "1.7", "0,0,20", blue_color)
+objects += create_ball(f"{xInit},{yInit + 9},{zInit + 10}", "1", "1.7", "0,0,15", blue_color)
 
 #n
 objects += vertical3(xInit, yInit, zInit + 14, blue_color)
@@ -97,7 +97,7 @@ objects += vertical2(xInit, yInit, zInit + 43, white_color)
 
 #i
 objects += vertical2(xInit, yInit, zInit + 48, white_color)
-objects += create_ball(f"{xInit},{yInit + 9},{zInit + 49}", "1", "1.7", "0,0,20", white_color)
+objects += create_ball(f"{xInit},{yInit + 9},{zInit + 49}", "1", "1.7", "0,0,15", white_color)
 
 #c
 objects += vertical3(xInit, yInit, zInit + 53, white_color)
@@ -111,8 +111,8 @@ objects += horizontal(xInit, yInit + -1.5, zInit + 63.5, white_color)
 objects += vertical2(xInit, yInit, zInit + 66, white_color)
 
 
-objects += create_capsule2_static(f"{xInit},{yInit + 6},{zInit + 280}", "1000", "2", "10", "0,0,-20", "70,70,70")
-objects += create_capsule2_static(f"{xInit},{yInit + 1},{zInit + 280}", "1000", "2", "10", "0,0,-20", "70,70,70")
+objects += create_capsule2_static(f"{xInit},{yInit + 6},{zInit + 240}", "1000", "2", "10", "0,0,-15", "70,70,70")
+objects += create_capsule2_static(f"{xInit},{yInit + 1},{zInit + 240}", "1000", "2", "10", "0,0,-15", "70,70,70")
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
