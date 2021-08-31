@@ -6,6 +6,7 @@ VideoRecorder::VideoRecorder() {
     c = NULL;
     sws_context = NULL;
     frame = NULL;
+    errorFound = false;
 }
 
 void VideoRecorder::ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t* rgb) {
@@ -17,18 +18,20 @@ void VideoRecorder::ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t* rgb) {
 void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int width, int height) {
     const AVCodec* codec;
     int ret;
-    AVCodecID codec_id = AV_CODEC_ID_MPEG1VIDEO;
+    AVCodecID codec_id = AV_CODEC_ID_MPEG2VIDEO;
     codec = avcodec_find_encoder(codec_id);
     if (!codec) {
         fprintf(stderr, "Codec not found\n");
-        exit(1);
+        errorFound = true;
+        return;
     }
     c = avcodec_alloc_context3(codec);
     if (!c) {
         fprintf(stderr, "Could not allocate video codec context\n");
-        exit(1);
+        errorFound = true;
+        return;
     }
-    c->bit_rate = 400000;
+    c->bit_rate = 3000000;
     c->width = width;
     c->height = height;
     c->time_base.num = 1;
@@ -40,17 +43,20 @@ void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int widt
         av_opt_set(c->priv_data, "preset", "slow", 0);
     if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
-        exit(1);
+        errorFound = true;
+        return;
     }
     file = fopen(filename, "wb");
     if (!file) {
         fprintf(stderr, "Could not open %s\n", filename);
-        exit(1);
+        errorFound = true;
+        return;
     }
     frame = av_frame_alloc();
     if (!frame) {
         fprintf(stderr, "Could not allocate video frame\n");
-        exit(1);
+        errorFound = true;
+        return;
     }
     frame->format = c->pix_fmt;
     frame->width = c->width;
@@ -58,11 +64,13 @@ void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int widt
     ret = av_image_alloc(frame->data, frame->linesize, c->width, c->height, c->pix_fmt, 32);
     if (ret < 0) {
         fprintf(stderr, "Could not allocate raw picture buffer\n");
-        exit(1);
+        errorFound = true;
+        return;
     }
 }
 
 void VideoRecorder::ffmpeg_encoder_finish() {
+    if (errorFound) return;
     uint8_t endcode[] = { 0, 0, 1, 0xb7 };
     int got_output, ret;
     do {
@@ -82,6 +90,7 @@ void VideoRecorder::ffmpeg_encoder_finish() {
 }
 
 void VideoRecorder::ffmpeg_encoder_encode_frame(uint8_t* rgb) {
+    if (errorFound) return;
     int ret, got_output;
     ffmpeg_encoder_set_frame_yuv_from_rgb(rgb);
     pkt.data = NULL;
@@ -95,6 +104,7 @@ void VideoRecorder::ffmpeg_encoder_encode_frame(uint8_t* rgb) {
 }
 
 void VideoRecorder::ffmpeg_encoder_glread_rgb(uint8_t** rgb, GLubyte** pixels, unsigned int width, unsigned int height, int nframes) {
+    if (errorFound) return;
     size_t i, j, k, cur_gl, cur_rgb, nvals;
     const size_t format_nchannels = 4;
     nvals = format_nchannels * width * height;

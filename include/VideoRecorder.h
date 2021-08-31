@@ -23,6 +23,7 @@ private:
 	FILE* file;
 	struct SwsContext* sws_context;
 	void ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t*);
+	bool errorFound;
 public:
 	VideoRecorder();
 	void ffmpeg_encoder_start(const char*, int, int, int);
