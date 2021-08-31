@@ -4,11 +4,12 @@ Config::Config(map<string, string> config) {
     fps = 60;
     windowWidth = 1280;
     windowHeight = 720;
+    recordVideo = false;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::normal;
     numRuns = 10;
-    numFramesPerRun = 300;
+    stopAtFrame = 300;
     useMidPhase = false;
     bpAlgorithm = BPAlgorithmChoice::none;
     drawHalfWhite = false;
@@ -28,6 +29,11 @@ Config::Config(map<string, string> config) {
     it = config.find("WINDOW_HEIGHT");
     if (it != config.end()) {
         windowHeight = stoi(it->second);
+    }
+
+    it = config.find("RECORD_VIDEO");
+    if (it != config.end()) {
+        recordVideo = !it->second.compare("true");
     }
 
     it = config.find("NUM_LAT_LONGS");
@@ -62,17 +68,16 @@ Config::Config(map<string, string> config) {
         if (!it->second.compare("NORMAL")) runMode = RunMode::normal;
         else if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
-        else if (!it->second.compare("RECORD_VIDEO")) runMode = RunMode::recordVideo;
     }
 
-    it = config.find("NUM_RUNS");
+    it = config.find("NUM_RUNS_FOR_BENCHMARK");
     if (it != config.end()) {
         numRuns = stoi(it->second);
     }
 
-    it = config.find("NUM_FRAMES_PER_RUN");
+    it = config.find("STOP_AT_FRAME");
     if (it != config.end()) {
-        numFramesPerRun = stoi(it->second);
+        stopAtFrame = stoi(it->second);
     }
 
     it = config.find("SCENE_FILE_NAME");
@@ -90,8 +95,8 @@ bool Config::isRunningOnNormalMode() {
     return runMode == RunMode::normal;
 }
 
-bool Config::isRunningOnRecordVideoMode() {
-    return runMode == RunMode::recordVideo;
+bool Config::shouldRecordVideo() {
+    return recordVideo;
 }
 
 bool Config::isRunningOnBenchmarkMode() {

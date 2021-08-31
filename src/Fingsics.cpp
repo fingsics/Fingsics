@@ -103,29 +103,29 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     GLubyte* pixels = NULL;
     uint8_t* rgb = NULL;
     VideoRecorder* recorder = new VideoRecorder();
-    if (config.isRunningOnRecordVideoMode()) {
+    if (config.shouldRecordVideo()) {
         if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
         string fileName = "recordings\\" + config.sceneName + ".mpg";
         recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
     }
     
-    while (!quit && (config.isRunningOnNormalMode() || nframe < config.numFramesPerRun)) {
-        if (config.isRunningOnRecordVideoMode()) {
+    while (!quit && (config.stopAtFrame == -1 || nframe < config.stopAtFrame)) {
+        if (config.shouldRecordVideo() && !pause) {
             recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
             recorder->ffmpeg_encoder_encode_frame(rgb);
         }
 
-        if (config.isRunningOnNormalMode() || config.isRunningOnRecordVideoMode()) {
+        if (config.isRunningOnNormalMode()) {
             setupFrame();
             camera->lookAt();
             setLighting();
         }
 
         // Draw objects
-        if (draw && (config.isRunningOnNormalMode() || config.isRunningOnRecordVideoMode())) {
+        if (draw && config.isRunningOnNormalMode()) {
             drawAxis();
             drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
-            if (config.isRunningOnNormalMode()) drawFPSCounter(fps);
+            if (!config.shouldRecordVideo()) drawFPSCounter(fps);
         }
 
         // Apply physics and movement
@@ -163,7 +163,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.isRunningOnRecordVideoMode()) {
+    if (config.shouldRecordVideo()) {
         recorder->ffmpeg_encoder_finish();
         free(pixels);
         free(rgb);
