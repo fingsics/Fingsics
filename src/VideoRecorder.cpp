@@ -11,7 +11,7 @@ VideoRecorder::VideoRecorder() {
 
 void VideoRecorder::ffmpeg_encoder_set_frame_yuv_from_rgb(uint8_t* rgb) {
     const int in_linesize[1] = { 4 * c->width };
-    sws_context = sws_getCachedContext(sws_context, c->width, c->height, AV_PIX_FMT_RGB32, c->width, c->height, AV_PIX_FMT_YUV420P, 0, NULL, NULL, NULL);
+    sws_context = sws_getCachedContext(sws_context, c->width, c->height, AV_PIX_FMT_BGR32, c->width, c->height, AV_PIX_FMT_YUV420P, 0, NULL, NULL, NULL);
     sws_scale(sws_context, (const uint8_t* const*)&rgb, in_linesize, 0, c->height, frame->data, frame->linesize);
 }
 
