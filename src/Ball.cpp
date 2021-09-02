@@ -37,7 +37,7 @@ void Ball::drawObject(bool drawHalfWhite, int frame) {
 
     Point pos = replayMode ? positions[frame] : position;
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
+    //glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
 
     for (int i = 0; i <= lats; i++) {
         float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);

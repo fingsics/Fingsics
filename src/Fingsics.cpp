@@ -60,7 +60,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Scene
     vector<Object*> objectsVector;
-    if (config.runMode == RunMode::replay) objectsVector = SceneRecorder(config.sceneName + ".dat").importRecordedScene();
+    if (config.runMode == RunMode::replay) objectsVector = SceneRecorder(config.sceneName + ".dat").importRecordedScene(config);
     else objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
@@ -91,8 +91,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
 
-    initializeOpenGL();
-
     // Collision collections
     map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
     map<string, Collision> collisions;
@@ -102,15 +100,13 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
     while (!quit && (config.runMode == RunMode::normal || frame < config.numFramesPerRun)) {
-        if (config.runMode == RunMode::normal) {
+        if (config.runMode == RunMode::normal || config.runMode == RunMode::replay) {
             setupFrame();
             camera->lookAt();
             setLighting();
-        }
 
-        // Draw objects
-        if (draw && config.runMode == RunMode::normal) {
             drawAxis();
+            // Draw objects
             for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite, frame);
             drawFPSCounter(fps);
         }
@@ -145,7 +141,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::normal);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::normal || config.runMode == RunMode::replay);
 
         if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
             lastFPSDrawTime = std::chrono::system_clock::now();
@@ -193,6 +189,8 @@ int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
         SDL_Window* window = initializeSDL();
+
+        initializeOpenGL();
 
         if (config.runMode == RunMode::test) {
             runTestScenes(config, window);

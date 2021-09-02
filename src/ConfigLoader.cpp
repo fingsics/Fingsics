@@ -50,7 +50,7 @@ Config::Config(map<string, string> config) {
         if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
         else if (!it->second.compare("RECORDER")) runMode = RunMode::recorder;
-        else if (!it->second.compare("REPLAY")) runMode = RunMode::recorder;
+        else if (!it->second.compare("REPLAY")) runMode = RunMode::replay;
     }
 
     it = config.find("NUM_RUNS");

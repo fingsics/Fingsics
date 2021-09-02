@@ -50,7 +50,7 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
         serializedObject->type = TILE;
         serializedObject->dim1 = reinterpret_cast<uint32_t&>(length1);
         serializedObject->dim2 = reinterpret_cast<uint32_t&>(length2);
-        serializedObject->draw = tile->getDraw();
+        serializedObject->draw = tile->getDraw() ? DRAW : NODRAW;
     }
 }
 
@@ -73,7 +73,7 @@ void SceneRecorder::serializeRotationMatrix(Matrix rotationMatrix, SerializedMat
 
 // Deserializers
 
-void SceneRecorder::deserializeObject(SerializedObject serializedObject, SerializedPosition* serializedPositions, SerializedMatrix* serializedRotationMatrices, int frames, string id, Object* object) {
+Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, SerializedPosition* serializedPositions, SerializedMatrix* serializedRotationMatrices, int frames, string id, int numLatLongs) {
     Color color = Color(serializedObject.r, serializedObject.g, serializedObject.b);
     Point* positions = new Point[frames];
     Matrix* rotationMatrices = new Matrix[frames];
@@ -85,11 +85,11 @@ void SceneRecorder::deserializeObject(SerializedObject serializedObject, Seriali
 
     // TODO: Fix lats and longs
     if (serializedObject.type == BALL)
-        object = new Ball(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), 5, 5);
+        return new Ball(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), numLatLongs, numLatLongs);
     else if (serializedObject.type == CAPSULE)
-        object = new Capsule(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), 5, 5);
+        return new Capsule(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), numLatLongs, numLatLongs);
     else if (serializedObject.type == TILE)
-        object = new Tile(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), serializedObject.draw == DRAW);
+        return new Tile(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), serializedObject.draw != NODRAW);
 }
 
 void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, Point* position) {
@@ -99,9 +99,12 @@ void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, P
 }
 
 void SceneRecorder::deserializeRotationMatrix(SerializedMatrix serializedRotationMatrix, Matrix* rotationMatrix) {
-    memcpy(&rotationMatrix[0], &serializedRotationMatrix.values[0], sizeof(uint32_t) * 3);
-    memcpy(&rotationMatrix[1], &serializedRotationMatrix.values[3], sizeof(uint32_t) * 3);
-    memcpy(&rotationMatrix[2], &serializedRotationMatrix.values[6], sizeof(uint32_t) * 3);
+    for (int i = 0; i < 9; i++) {
+        rotationMatrix->set(i / 3, i % 3, reinterpret_cast<float&>(serializedRotationMatrix.values[i]));
+    }
+    //memcpy(&rotationMatrix[0], &serializedRotationMatrix.values[0], sizeof(uint32_t) * 3);
+    //memcpy(&rotationMatrix[1], &serializedRotationMatrix.values[3], sizeof(uint32_t) * 3);
+    //memcpy(&rotationMatrix[2], &serializedRotationMatrix.values[6], sizeof(uint32_t) * 3);
 }
 
 void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
@@ -123,23 +126,29 @@ void SceneRecorder::storeRecordedData() {
     file.write((char*)&frames, sizeof(uint32_t));
 
     // Objects
-    file.write((char*)&objects, sizeof(SerializedObject) * numObjects);
+    for (int i = 0; i < numObjects; i++) {
+        file.write((char*)&objects[i], sizeof(SerializedObject));
+    }
 
     // Positions
     for (int i = 0; i < numObjects; i++) {
-        file.write((char*)&positions[i], sizeof(SerializedPosition) * frames);
+        for (int j = 0; j < frames; j++) {
+            file.write((char*)&positions[i][j], sizeof(SerializedPosition));
+        }
     }
     
     // Rotation matrices
     for (int i = 0; i < numObjects; i++) {
-        file.write((char*)&rotationMatrices[i], sizeof(SerializedMatrix) * frames);
+        for (int j = 0; j < frames; j++) {
+            file.write((char*)&rotationMatrices[i][j], sizeof(SerializedMatrix));
+        }
     }
 
     file.close();
     if (!file.good()) throw "Error occurred at writing time!";
 }
 
-vector<Object*> SceneRecorder::importRecordedScene() {
+vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
     ifstream file("recordings\\" + path, ios::out | ios::binary);
     if (!file) throw "Cannot open file!";
@@ -154,25 +163,32 @@ vector<Object*> SceneRecorder::importRecordedScene() {
     SerializedMatrix** serializedRotationMatrices = new SerializedMatrix*[numObjects];
 
     // Objects
-    file.read((char*)&serializedObjects, sizeof(SerializedObject) * numObjects);
+    for (int i = 0; i < numObjects; i++) {
+        file.read((char*)&serializedObjects[i], sizeof(SerializedObject));
+    }
 
     // Positions
     for (int i = 0; i < numObjects; i++) {
         serializedPositions[i] = new SerializedPosition[frames];
-        file.read((char*)&positions[i], sizeof(SerializedPosition) * frames);
+        for (int j = 0; j < frames; j++) {
+            file.read((char*)&serializedPositions[i][j], sizeof(SerializedPosition));
+        }
     }
 
     // Rotation matrices
     for (int i = 0; i < numObjects; i++) {
         serializedRotationMatrices[i] = new SerializedMatrix[frames];
-        file.read((char*)&rotationMatrices[i], sizeof(SerializedMatrix) * frames);
+        for (int j = 0; j < frames; j++) {
+            file.read((char*)&serializedRotationMatrices[i][j], sizeof(SerializedMatrix));
+        }
     }
 
     // Deserializations
     vector<Object*> res = vector<Object*>(numObjects, NULL);
     for (int i = 0; i < numObjects; i++) {
-        deserializeObject(serializedObjects[i], serializedPositions[i], serializedRotationMatrices[i], frames, to_string(i), res[i]);
+        res[i] = deserializeObject(serializedObjects[i], serializedPositions[i], serializedRotationMatrices[i], frames, to_string(i), config.numLatLongs);
     }
+    config.numFramesPerRun = frames;
 
     file.close();
     if (!file.good()) throw "Error occurred at reading time!";
@@ -186,4 +202,5 @@ vector<Object*> SceneRecorder::importRecordedScene() {
     delete[] serializedRotationMatrices;
 
     return res;
+    //return vector<Object*>();
 }

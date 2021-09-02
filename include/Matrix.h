@@ -23,6 +23,7 @@ class Matrix {
         GLfloat* getOpenGLRotationMatrix();
         Point col(int);
         Point row(int);
+        void set(int, int, float);
         Matrix operator*(float);
         Matrix operator/(float);
         Point operator*(Point);

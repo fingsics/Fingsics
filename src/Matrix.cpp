@@ -114,6 +114,10 @@ Point Matrix::col(int i) {
     }
 }
 
+void Matrix::set(int row, int col, float value) {
+    values[row][col] = value;
+}
+
 Matrix Matrix::operator*(float scalar) {
     return Matrix(values[0][0] * scalar, values[0][1] * scalar, values[0][2] * scalar,
                   values[1][0] * scalar, values[1][1] * scalar, values[1][2] * scalar,

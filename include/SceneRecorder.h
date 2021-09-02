@@ -1,6 +1,7 @@
 #ifndef SCENERECORDER_H
 #define SCENERECORDER_H
 
+#include "ConfigLoader.h"
 #include "Object.h"
 #include "Ball.h"
 #include "Capsule.h"
@@ -14,8 +15,8 @@
 using namespace std;
 
 constexpr uint32_t BALL = 0;
-constexpr uint32_t CAPSULE = 0;
-constexpr uint32_t TILE = 0;
+constexpr uint32_t CAPSULE = 1;
+constexpr uint32_t TILE = 2;
 
 constexpr uint8_t NODRAW = 0b00000000;
 constexpr uint8_t DRAW = 0b11111111;
@@ -49,7 +50,7 @@ private:
     SerializedMatrix** rotationMatrices;
     string path;
     void serializeObject(Object*, SerializedObject*);
-    void deserializeObject(SerializedObject, SerializedPosition*, SerializedMatrix*, int, string, Object*);
+    Object* deserializeObject(SerializedObject, SerializedPosition*, SerializedMatrix*, int, string, int);
     void serializePosition(Point, SerializedPosition*);
     void deserializePosition(SerializedPosition, Point*);
     void serializeRotationMatrix(Matrix, SerializedMatrix*);
@@ -59,7 +60,7 @@ public:
     SceneRecorder(string); // Loader
     void recordFrame(Object**, int, int);
     void storeRecordedData();
-    vector<Object*> importRecordedScene();
+    vector<Object*> importRecordedScene(Config);
 };
 
 
