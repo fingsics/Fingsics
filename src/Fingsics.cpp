@@ -100,6 +100,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
     while (!quit && (config.runMode == RunMode::normal || frame < config.numFramesPerRun)) {
+        if (config.runMode == RunMode::replay) {
+            for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(frame);
+        }
+
         if (config.runMode == RunMode::normal || config.runMode == RunMode::replay) {
             setupFrame();
             camera->lookAt();
@@ -107,7 +111,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
             drawAxis();
             // Draw objects
-            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite, frame);
+            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite);
             drawFPSCounter(fps);
         }
 

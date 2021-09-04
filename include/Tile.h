@@ -18,11 +18,10 @@ class Tile : public Object {
         Point end2;
         Point end3;
         Point end4;
-        void updateEnds();
     public:
         Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, bool);
         Tile(string, Color, Point*, Matrix*, int, float, float, bool);
-        void drawObject(bool, int);
+        void drawObject(bool);
         Point getNormal();
         Matrix getInertiaTensor();
         void setRotation(Matrix);

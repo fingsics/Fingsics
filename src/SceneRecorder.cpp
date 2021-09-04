@@ -202,5 +202,4 @@ vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     delete[] serializedRotationMatrices;
 
     return res;
-    //return vector<Object*>();
 }

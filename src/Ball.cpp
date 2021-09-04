@@ -9,7 +9,7 @@ Ball::Ball(string id, Color color, Point* positions, Matrix* rotationMatrices, i
 
     this->baseInertiaTensor = Matrix();
     this->invertedInertiaTensor = Point();
-    this->obb = OBB();
+    this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, radius), rotationMatrices[0]) : OBB();
 }
 
 Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, int lats, int longs) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
@@ -28,16 +28,14 @@ float Ball::getRadius() {
     return radius;
 }
 
-void Ball::drawObject(bool drawHalfWhite, int frame) {
+void Ball::drawObject(bool drawHalfWhite) {
     Color white = Color(255, 255, 255);
     glColor3ub(color.getR(), color.getG(), color.getB());
 
-
     glPushMatrix();
 
-    Point pos = replayMode ? positions[frame] : position;
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    //glMultMatrixf((replayMode ? rotationMatrices[frame] : rotationMatrix).getOpenGLRotationMatrix());
+    glTranslatef(position.getX(), position.getY(), position.getZ());
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
 
     for (int i = 0; i <= lats; i++) {
         float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);

@@ -15,7 +15,7 @@ class Ball : public Object {
     public:
         Ball(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, int, int);
         Ball(string, Color, Point*, Matrix*, int, float, int, int);
-        void drawObject(bool, int);
+        void drawObject(bool);
         float getRadius();
         Matrix getInertiaTensorInverse();
         float getMinX();

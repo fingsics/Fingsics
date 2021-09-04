@@ -118,6 +118,10 @@ void Object::setAABB(AABB* aabb) {
     this->aabb = aabb;
 }
 
+void Object::goToFrame(int frame) {
+    setPos(positions[frame]);
+    setRotation(rotationMatrices[frame]);
+}
 
 void Object::updatePosAndVel(float secondsElapsed) {
     if (!velocity.isZero()) setPos(position + velocity * secondsElapsed);
@@ -157,8 +161,8 @@ void Object::applyImpulse(Point normal, Point tangent) {
     setAngularVelocity(angularVelocity + angVelDiff);
 }
 
-void Object::draw(bool drawOBB, bool drawAABB, bool drawHalfWhite, int frame) {
-    this->drawObject(drawHalfWhite, frame);
+void Object::draw(bool drawOBB, bool drawAABB, bool drawHalfWhite) {
+    this->drawObject(drawHalfWhite);
     if (drawOBB) this->drawOBB();
     if (drawAABB) this->drawAABB();
 }

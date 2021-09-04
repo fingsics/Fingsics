@@ -1,7 +1,7 @@
 #include "../include/CollisionResponseAlgorithm.h"
 
-void CollisionResponseAlgorithm::moveObjects(Object** objects, int numObjects, float frames, bool slowMotion) {
-    float time = slowMotion ? frames / 3 : frames;
+void CollisionResponseAlgorithm::moveObjects(Object** objects, int numObjects, float framesPeroSecond, bool slowMotion) {
+    float time = slowMotion ? framesPeroSecond / 3 : framesPeroSecond;
     for (int i = 0; i < numObjects; i++) objects[i]->updatePosAndVel(time);
 }
 
