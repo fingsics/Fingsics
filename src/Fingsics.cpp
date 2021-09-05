@@ -157,15 +157,27 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                     results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
                 }
             }
-
             nframe++;
         }
 
         // Process events
-        if (config.runMode == RunMode::normal) {
-            checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
-        } else if (config.runMode == RunMode::replay) {
-            checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera); // TODO: Create separate controls
+        checkForInput(
+            slowMotion,
+            pause,
+            quit,
+            draw,
+            drawOBBs,
+            drawAABBs,
+            nframe,
+            camera,
+            freeCamera,
+            centeredCamera,
+            config
+        );
+
+        if (config.runMode == RunMode::replay && (nframe >= config.stopAtFrame || nframe < 0)) {
+            pause = true;
+            nframe = min(config.stopAtFrame - 1, max(0, nframe));
         }
 
         // Force FPS cap

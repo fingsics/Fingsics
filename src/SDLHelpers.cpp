@@ -1,8 +1,9 @@
 #include "../include/SDLHelpers.h";
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, Camera*& camera, Camera* freeCamera, Camera* centeredCamera) {
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
     SDL_Event event;
     int xm, ym;
+
     SDL_GetMouseState(&xm, &ym);
     while (SDL_PollEvent(&event)) {
         camera->eventUpdate(event);
@@ -19,6 +20,9 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
                 quit = true;
                 break;
             case SDLK_p:
+                pause = !pause;
+                break;
+            case SDLK_SPACE:
                 pause = !pause;
                 break;
             case SDLK_m:
@@ -40,6 +44,35 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
             default:
                 break;
             }
+            break;
+        }
+        case SDL_KEYDOWN: {
+            if (config.runMode != RunMode::replay) break;
+            switch (event.key.keysym.sym) {
+            case SDLK_UP:
+                nframe = min(config.stopAtFrame - 1, nframe + 600);
+                break;
+            case SDLK_DOWN:
+                nframe = max(0, nframe - 600);
+                break;
+            case SDLK_LEFT:
+                nframe = max(0, nframe - 60);
+                break;
+            case SDLK_RIGHT:
+                nframe = min(config.stopAtFrame - 1, nframe + 60);
+                break;
+            case SDLK_COMMA:
+                pause = true;
+                nframe = max(0, nframe - 1);
+                break;
+            case SDLK_PERIOD:
+                pause = true;
+                nframe = min(config.stopAtFrame - 1, nframe + 1);
+                break;
+            default:
+                break;
+            }
+            break;
         }
         default:
             break;
