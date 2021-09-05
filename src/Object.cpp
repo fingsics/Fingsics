@@ -95,12 +95,12 @@ Color Object::getColor() {
     return color;
 }
 
-void Object::setPos(Point pos) {
+void Object::setPosition(Point pos) {
     this->position = pos;
     obb.setPosition(pos);
 }
 
-void Object::setVel(Point vel) {
+void Object::setVelocity(Point vel) {
     this->velocity = vel;
 }
 
@@ -119,14 +119,14 @@ void Object::setAABB(AABB* aabb) {
 }
 
 void Object::goToFrame(int frame) {
-    setPos(positions[frame]);
+    setPosition(positions[frame]);
     setRotation(rotationMatrices[frame]);
 }
 
-void Object::updatePosAndVel(float secondsElapsed) {
-    if (!velocity.isZero()) setPos(position + velocity * secondsElapsed);
+void Object::updatePositionAndVelocity(float secondsElapsed) {
+    if (!velocity.isZero()) setPosition(position + velocity * secondsElapsed);
     if (!angularVelocity.isZero()) setRotation(Matrix(angularVelocity * secondsElapsed) * rotationMatrix);
-    if (!acceleration.isZero()) setVel(velocity + acceleration * secondsElapsed);
+    if (!acceleration.isZero()) setVelocity(velocity + acceleration * secondsElapsed);
 }
 
 Matrix Object::getInertiaTensorInverse() {
@@ -157,7 +157,7 @@ void Object::applyImpulse(Point normal, Point tangent) {
     Point velDiff = normal / mass;
     Point angVelDiff = getInertiaTensorInverse() * tangent;
 
-    setVel(velocity + velDiff);
+    setVelocity(velocity + velDiff);
     setAngularVelocity(angularVelocity + angVelDiff);
 }
 

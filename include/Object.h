@@ -56,12 +56,12 @@ class Object {
         Color getColor();
         
         float getElasticity();
-        void setPos(Point);
-        void setVel(Point);
+        void setPosition(Point);
+        void setVelocity(Point);
         void setAngularVelocity(Point);
         virtual void setRotation(Matrix);
         void setAABB(AABB*);
-        void updatePosAndVel(float);
+        void updatePositionAndVelocity(float);
         void goToFrame(int);
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
