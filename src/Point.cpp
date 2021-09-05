@@ -26,6 +26,18 @@ float Point::getZ() {
   return z;
 }
 
+void Point::setX(float value) {
+  x = value;
+}
+
+void Point::setY(float value) {
+  y = value;
+}
+
+void Point::setZ(float value) {
+  z = value;
+}
+
 Point Point::normalize() {
     float magnitude = getMagnitude();
     if (magnitude == 0) throw std::runtime_error("Can't normalize a null vector");

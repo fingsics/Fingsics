@@ -183,6 +183,7 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\OpenGLHelpers.cpp" />
     <ClCompile Include="src\Point.cpp" />
+    <ClCompile Include="src\SceneRecorder.cpp" />
     <ClCompile Include="src\VideoRecorder.cpp" />
     <ClCompile Include="src\XmlReader.cpp" />
     <ClCompile Include="src\Tile.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\OpenGLHelpers.h" />
     <ClInclude Include="include\Point.h" />
+    <ClInclude Include="include\SceneRecorder.h" />
     <ClInclude Include="include\VideoRecorder.h" />
     <ClInclude Include="include\XmlReader.h" />
     <ClInclude Include="include\Tile.h" />

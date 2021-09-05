@@ -2,12 +2,35 @@
 
 using namespace std;
 
+// Draw only object
+Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames) {
+    this->id = id;
+    this->replayMode = true;
+    this->positions = positions;
+    this->rotationMatrices = rotationMatrices;
+    this->frames = frames;
+    this->color = color;
+
+    this->isStatic = false;
+    this->position = Point();
+    this->mass = 0;
+    this->elasticityCoef = 0;
+    this->velocity = Point();
+    this->angularVelocity = Point();
+    this->acceleration = Point();
+    this->rotationMatrix = Matrix();
+    this->queuedImpulses = list<Impulse>();
+    this->velCollisionMassPerAxis = Point();
+    this->angVelCollisionMassPerAxis = Point();
+    this->aabb = NULL;
+}
+
 Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color) {
     this->isStatic = isStatic;
-    this->pos = pos;
+    this->position = pos;
     this->mass = mass;
     this->elasticityCoef = elasticityCoef;
-    this->vel = vel;
+    this->velocity = vel;
     this->angularVelocity = angularVelocity;
     this->acceleration = acceleration;
     this->color = color;
@@ -17,6 +40,11 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
+
+    this->replayMode = false;
+    this->positions = NULL;
+    this->rotationMatrices = NULL;
+    this->frames = -1;
 }
 
 float Object::getMass() {
@@ -31,20 +59,16 @@ Matrix Object::getRotationMatrix() {
     return rotationMatrix;
 }
 
-float* Object::getOpenGLRotationMatrix() {
-    return rotationMatrix.getOpenGLRotationMatrix();
-}
-
 Point Object::getAngularVelocity() {
     return angularVelocity;
 }
 
-Point Object::getPos() {
-    return pos;
+Point Object::getPosition() {
+    return position;
 }
 
-Point Object::getVel() {
-    return vel;
+Point Object::getVelocity() {
+    return velocity;
 }
 
 Point Object::getAcceleration() {
@@ -67,13 +91,17 @@ AABB* Object::getAABB() {
     return aabb;
 }
 
-void Object::setPos(Point pos) {
-    this->pos = pos;
+Color Object::getColor() {
+    return color;
+}
+
+void Object::setPosition(Point pos) {
+    this->position = pos;
     obb.setPosition(pos);
 }
 
-void Object::setVel(Point vel) {
-    this->vel = vel;
+void Object::setVelocity(Point vel) {
+    this->velocity = vel;
 }
 
 void Object::setAngularVelocity(Point angularVelocity) {
@@ -90,11 +118,15 @@ void Object::setAABB(AABB* aabb) {
     this->aabb = aabb;
 }
 
+void Object::goToFrame(int frame) {
+    setPosition(positions[frame]);
+    setRotation(rotationMatrices[frame]);
+}
 
-void Object::updatePosAndVel(float secondsElapsed) {
-    if (!vel.isZero()) setPos(pos + vel * secondsElapsed);
+void Object::updatePositionAndVelocity(float secondsElapsed) {
+    if (!velocity.isZero()) setPosition(position + velocity * secondsElapsed);
     if (!angularVelocity.isZero()) setRotation(Matrix(angularVelocity * secondsElapsed) * rotationMatrix);
-    if (!acceleration.isZero()) setVel(vel + acceleration * secondsElapsed);
+    if (!acceleration.isZero()) setVelocity(velocity + acceleration * secondsElapsed);
 }
 
 Matrix Object::getInertiaTensorInverse() {
@@ -125,7 +157,7 @@ void Object::applyImpulse(Point normal, Point tangent) {
     Point velDiff = normal / mass;
     Point angVelDiff = getInertiaTensorInverse() * tangent;
 
-    setVel(vel + velDiff);
+    setVelocity(velocity + velDiff);
     setAngularVelocity(angularVelocity + angVelDiff);
 }
 
@@ -146,7 +178,7 @@ void Object::drawOBB() {
     glPushMatrix();
 
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix()); // TODO: Fix OOBBs in replay mode
     glTranslatef(-dimensions.getX() / 2.0, -dimensions.getY() / 2.0, -dimensions.getZ() / 2.0);
 
     glBegin(GL_QUAD_STRIP);
@@ -167,7 +199,7 @@ void Object::drawOBB() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void Object::drawAABB() {
+void Object::drawAABB() { // TODO: Fix AABBs in replay mode
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor3ub(220, 0, 220);
     glDisable(GL_LIGHTING);

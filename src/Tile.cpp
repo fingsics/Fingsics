@@ -2,6 +2,17 @@
 
 using namespace std;
 
+Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float length, float width, bool draw) : Object(id, color, positions, rotationMatrices, frames) {
+    this->axis1Length = length;
+    this->axis2Length = width;
+    this->draw = draw;
+    if (frames > 0) {
+        this->position = positions[0];
+        this->setRotation(rotationMatrices[0]);
+        this->obb = OBB(positions[0], Point(width, EPSILON, length), rotationMatrices[0]);
+    }
+}
+
 Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float length, float width, bool draw) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -9,9 +20,7 @@ Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point an
     this->axis2Length = width;
     this->draw = draw;
     this->obb = OBB(pos, Point(width, EPSILON, length), rotationMatrix);
-    this->axis1 = rotationMatrix * Point(1, 0, 0);
-    this->axis2 = rotationMatrix * Point(0, 0, 1);
-    this->updateEnds();
+    this->setRotation(rotationMatrix);
 }
 
 Point Tile::getAxis1() {
@@ -50,11 +59,8 @@ Point Tile::getNormal() {
     return rotationMatrix * Point(0, 1, 0);
 }
 
-void Tile::updateEnds() {
-    end1 = pos + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
-    end2 = pos - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
-    end3 = pos + axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
-    end4 = pos - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
+bool Tile::getDraw() {
+    return draw;
 }
 
 void Tile::setRotation(Matrix rotationMatrix) {
@@ -62,15 +68,17 @@ void Tile::setRotation(Matrix rotationMatrix) {
     obb.setRotation(rotationMatrix);
     axis1 = rotationMatrix * Point(1, 0, 0);
     axis2 = rotationMatrix * Point(0, 0, 1);
-    updateEnds();
+    end1 = position + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
+    end2 = position - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
+    end3 = position + axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
+    end4 = position - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
 }
 
-void Tile::drawObject(bool) {
+void Tile::drawObject(bool drawHalfWhite) {
     if (!draw) return;
-
     glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glTranslatef(position.getX(), position.getY(), position.getZ());
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
     glColor3ub(color.getR(), color.getG(), color.getB());
     glBegin(GL_QUADS);
     glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);

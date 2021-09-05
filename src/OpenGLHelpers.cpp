@@ -13,10 +13,6 @@ void setupFrame() {
     glLoadIdentity();
 }
 
-void drawObjects(Object** objects, int numObjects, bool drawOBBs, bool drawAABBs, bool drawHalfWhite) {
-    for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, drawHalfWhite);
-}
-
 void drawAxis() {
     glColor3ub(255, 0, 0);
     glBegin(GL_LINES);

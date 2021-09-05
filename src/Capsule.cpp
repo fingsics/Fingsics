@@ -2,6 +2,17 @@
 
 using namespace std;
 
+Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float radius, float length, int lats, int longs) : Object(id, color, positions, rotationMatrices, frames) {
+    this->length = length;
+    this->radius = radius;
+    this->lats = lats;
+    this->longs = longs;
+
+    this->baseInertiaTensor = Matrix();
+    this->invertedInertiaTensor = Point();
+    this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, length / 2 + radius), rotationMatrices[0]) : OBB();
+}
+
 Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, float length, int lats, int longs) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->length = length;
     this->radius = radius;
@@ -41,20 +52,21 @@ float Capsule::getLength() {
 }
 
 Point Capsule::getCylinderPositiveEnd() {
-    return pos + axisDirection * length / 2;
+    return position + axisDirection * length / 2;
 }
 
 Point Capsule::getCylinderNegativeEnd() {
-    return pos - axisDirection * length / 2;
+    return position - axisDirection * length / 2;
 }
 
 void Capsule::drawObject(bool drawHalfWhite) {
     Color white = Color(255, 255, 255);
     glColor3ub(color.getR(), color.getG(), color.getB());
 
+
     glPushMatrix();
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glTranslatef(position.getX(), position.getY(), position.getZ());
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
     glTranslatef(0, 0,-length / 2.0);
 
     float evenLats = (lats % 2 == 0) ? lats : lats + 1;

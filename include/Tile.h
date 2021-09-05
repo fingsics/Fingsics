@@ -1,13 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 #define _USE_MATH_DEFINES
+
 #include "SDL_opengl.h"
-#include "Color.h"
-#include "Point.h"
 #include "Object.h"
-#include <vector>
-#include <math.h>
-#include <string>
 
 using namespace std;
 
@@ -22,9 +18,9 @@ class Tile : public Object {
         Point end2;
         Point end3;
         Point end4;
-        void updateEnds();
     public:
         Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, bool);
+        Tile(string, Color, Point*, Matrix*, int, float, float, bool);
         void drawObject(bool);
         Point getNormal();
         Matrix getInertiaTensor();
@@ -44,6 +40,7 @@ class Tile : public Object {
         float getMaxX();
         float getMaxY();
         float getMaxZ();
+        bool getDraw();
 };
 
 #endif

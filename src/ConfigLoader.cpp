@@ -65,9 +65,10 @@ Config::Config(map<string, string> config) {
 
     it = config.find("RUN_MODE");
     if (it != config.end()) {
-        if (!it->second.compare("NORMAL")) runMode = RunMode::normal;
-        else if (!it->second.compare("TEST")) runMode = RunMode::test;
+        if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
+        else if (!it->second.compare("RECORDER")) runMode = RunMode::recorder;
+        else if (!it->second.compare("REPLAY")) runMode = RunMode::replay;
     }
 
     it = config.find("NUM_RUNS_FOR_BENCHMARK");
@@ -91,24 +92,12 @@ Config::Config(map<string, string> config) {
     }
 }
 
-bool Config::isRunningOnNormalMode() {
-    return runMode == RunMode::normal;
-}
-
 bool Config::shouldRecordVideo() {
     return recordVideo;
 }
 
-bool Config::isRunningOnBenchmarkMode() {
-    return runMode == RunMode::benchmark;
-}
-
-bool Config::isRunningOnTestMode() {
-    return runMode == RunMode::test;
-}
-
 bool Config::shouldLog() {
-    return isRunningOnBenchmarkMode() || isRunningOnTestMode() || log;
+    return runMode == RunMode::benchmark || runMode == RunMode::test || runMode == RunMode::recorder || log;
 }
 
 string Config::getMPCDDescription() {

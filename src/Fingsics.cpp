@@ -5,6 +5,7 @@
 #include "../include/OpenGlHelpers.h";
 #include "../include/XmlReader.h"
 #include "../include/ConfigLoader.h"
+#include "../include/SceneRecorder.h"
 #include "../include/CenteredCamera.h"
 #include "../include/FreeCamera.h"
 #include "../include/BroadPhaseAlgorithms.h"
@@ -25,6 +26,7 @@
 #define _USE_MATH_DEFINES
 
 using namespace std;
+
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
     float minFrameTime = 1.0 / fps;
@@ -48,8 +50,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Program options
     bool quit = false;
-    bool pause = config.isRunningOnNormalMode();
-    bool draw = true;
+    bool pause = config.runMode == RunMode::normal || config.runMode == RunMode::replay;
+    bool draw = config.runMode != RunMode::recorder;
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
@@ -60,9 +62,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int nframe = 0;
 
     // Scene
-    vector<Object*> objectsVector = xmlReader.getObjects();
+    vector<Object*> objectsVector;
+    if (config.runMode == RunMode::replay) objectsVector = SceneRecorder(config.sceneName + ".dat").importRecordedScene(config);
+    else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
+    SceneRecorder* sceneRecorder = config.runMode == RunMode::recorder ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
 
     // Collision detection algorithms
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
@@ -89,8 +94,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // Logging
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
 
-    initializeOpenGL();
-
     // Collision collections
     map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
     map<string, Collision> collisions;
@@ -113,47 +116,53 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         if (config.shouldRecordVideo() && !pause) {
             recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
             recorder->ffmpeg_encoder_encode_frame(rgb);
+        } else if (config.runMode == RunMode::recorder) {
+            sceneRecorder->recordFrame(objects, numObjects, nframe);
+        } else if (config.runMode == RunMode::replay) {
+            for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
         }
 
-        if (config.isRunningOnNormalMode()) {
+        if (config.runMode == RunMode::normal || config.runMode == RunMode::replay) {
             setupFrame();
             camera->lookAt();
             setLighting();
-        }
 
-        // Draw objects
-        if (draw && config.isRunningOnNormalMode()) {
             drawAxis();
-            drawObjects(objects, numObjects, drawOBBs, drawAABBs, config.drawHalfWhite);
+            // Draw objects
+            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite);
             if (!config.shouldRecordVideo()) drawFPSCounter(fps);
         }
 
         // Apply physics and movement
         if (!pause) {
-            if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
-            broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-            if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
-            midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-            if (config.shouldLog()) midEnd = std::chrono::system_clock::now();
-            collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
-            if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
-            CollisionResponseAlgorithm::collisionResponse(collisions);
-            if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-            CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
-            if (config.shouldLog()) {
-                moveEnd = std::chrono::system_clock::now();
-                results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
+            if (config.runMode != RunMode::replay) {
+                if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
+                broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
+                if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
+                midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+                if (config.shouldLog()) midEnd = std::chrono::system_clock::now();
+                collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
+                if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
+                CollisionResponseAlgorithm::collisionResponse(collisions);
+                if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
+                CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
+                if (config.shouldLog()) {
+                    moveEnd = std::chrono::system_clock::now();
+                    results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
+                }
             }
             nframe++;
         }
 
         // Process events
-        if (config.isRunningOnNormalMode()) {
+        if (config.runMode == RunMode::normal) {
             checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera);
+        } else if (config.runMode == RunMode::replay) {
+            checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, camera, freeCamera, centeredCamera); // TODO: Create separate controls
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.isRunningOnNormalMode());
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::normal || config.runMode == RunMode::replay);
 
         if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
             lastFPSDrawTime = std::chrono::system_clock::now();
@@ -163,7 +172,9 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.shouldRecordVideo()) {
+    if (config.runMode == RunMode::recorder) {
+        sceneRecorder->storeRecordedData();
+    } else if (config.shouldRecordVideo()) {
         recorder->ffmpeg_encoder_finish();
         free(pixels);
         free(rgb);
@@ -172,13 +183,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     return results;
 }
 
-void runTestScenes(Config config) {
+void runTestScenes(Config config, SDL_Window* window) {
     list<string> testSceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
         "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
 
     if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
     if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");
-    SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
 
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
@@ -190,9 +200,8 @@ void runTestScenes(Config config) {
     }
 }
 
-void runSceneBenchmark(Config config) {
+void runSceneBenchmark(Config config, SDL_Window* window) {
     list<SimulationResults> benchmarkResults = list<SimulationResults>();
-    SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
     for (int i = 0; i < config.numRuns; i++) {
         SimulationResults* results = runSimulation(config, window);
         if (results) {
@@ -204,17 +213,27 @@ void runSceneBenchmark(Config config) {
 }
 
 int main(int argc, char* argv[]) {
-    //try {
+   // try {
         Config config = ConfigLoader().getConfig();
 
-        if (config.isRunningOnTestMode()) {
-            runTestScenes(config);
+        SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
+        initializeOpenGL();
+
+        if (config.runMode == RunMode::test) {
+            runTestScenes(config, window);
         }
-        else if (config.isRunningOnBenchmarkMode()) {
-            runSceneBenchmark(config);
+        if (config.runMode == RunMode::benchmark) {
+            runSceneBenchmark(config, window);
         }
-        else {
-            SimulationResults* results = runSimulation(config, initializeSDL(config.windowWidth, config.windowHeight));
+        if (config.runMode == RunMode::recorder) {
+            runSimulation(config, window);
+            config.runMode = RunMode::replay; // Replay the scene after recording
+        }
+        if (config.runMode == RunMode::replay) {
+            runSimulation(config, window);
+        }
+        if (config.runMode == RunMode::normal) {
+            SimulationResults* results = runSimulation(config, window);
             if (results && config.log) {
                 if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
                 LoggingManager::logRunResults("output", config.logOutputFile, *results);

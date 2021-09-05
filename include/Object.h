@@ -7,6 +7,7 @@
 #include "AABB.h"
 #include "Impulse.h"
 #include <string>
+#include <vector>
 #include <list>
 
 using namespace std;
@@ -14,8 +15,8 @@ using namespace std;
 class Object {
     protected:
         string id;
-        Point pos;
-        Point vel;
+        Point position;
+        Point velocity;
         Point acceleration;
         Matrix rotationMatrix;
         Point angularVelocity;
@@ -33,27 +34,35 @@ class Object {
         virtual void drawOBB();
         virtual void drawAABB();
         virtual void drawObject(bool) = 0;
+
+        // Draw only
+        bool replayMode;
+        Point* positions;
+        Matrix* rotationMatrices;
+        int frames;
     public:
         Object(string, bool, Point, Point, Point, Point, Point, float, float, Color);
+        Object(string, Color, Point*, Matrix*, int);
         float getMass();
         string getId();
-        Point getPos();
-        Point getVel();
+        Point getPosition();
+        Point getVelocity();
         Point getAcceleration();
         Matrix getRotationMatrix();
-        float* getOpenGLRotationMatrix();
         Point getAngularVelocity();
         bool getIsStatic();
         OBB getOBB();
         AABB* getAABB();
+        Color getColor();
         
         float getElasticity();
-        void setPos(Point);
-        void setVel(Point);
+        void setPosition(Point);
+        void setVelocity(Point);
         void setAngularVelocity(Point);
         virtual void setRotation(Matrix);
         void setAABB(AABB*);
-        void updatePosAndVel(float);
+        void updatePositionAndVelocity(float);
+        void goToFrame(int);
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);

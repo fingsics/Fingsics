@@ -16,7 +16,7 @@ struct KeyValue {
 };
 
 enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune, multithreadSweepAndPrune };
-enum class RunMode { normal, test, benchmark };
+enum class RunMode { normal, test, benchmark, recorder, replay };
 
 struct Config {
 	string sceneName;
@@ -33,9 +33,6 @@ struct Config {
 	int numRuns;
 	int stopAtFrame;
 	string logOutputFile;
-	bool isRunningOnNormalMode();
-	bool isRunningOnTestMode();
-	bool isRunningOnBenchmarkMode();
 	bool shouldRecordVideo();
 	bool shouldLog();
 	string getMPCDDescription();

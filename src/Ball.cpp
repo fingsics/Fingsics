@@ -2,6 +2,16 @@
 
 using namespace std;
 
+Ball::Ball(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float radius, int lats, int longs) : Object(id, color, positions, rotationMatrices, frames) {
+    this->radius = radius;
+    this->lats = lats;
+    this->longs = longs;
+
+    this->baseInertiaTensor = Matrix();
+    this->invertedInertiaTensor = Point();
+    this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, radius), rotationMatrices[0]) : OBB();
+}
+
 Ball::Ball(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, int lats, int longs) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
     this->lats = lats;
     this->longs = longs;
@@ -24,34 +34,34 @@ void Ball::drawObject(bool drawHalfWhite) {
 
     glPushMatrix();
 
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(getOpenGLRotationMatrix());
+    glTranslatef(position.getX(), position.getY(), position.getZ());
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
 
-    for(int i = 0; i <= lats; i++) {
-        float lat0 = M_PI * (-0.5 + (float) (i - 1) / lats);
+    for (int i = 0; i <= lats; i++) {
+        float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
         float z0 = sin(lat0);
         float zr0 = cos(lat0);
 
-        float lat1 = M_PI * (-0.5 + (float) i / lats);
+        float lat1 = M_PI * (-0.5 + (float)i / lats);
         float z1 = sin(lat1);
         float zr1 = cos(lat1);
 
         glBegin(GL_QUAD_STRIP);
-        for(int j = 0; j <= longs; j++)
+        for (int j = 0; j <= longs; j++)
         {
             if (drawHalfWhite) {
                 if (j > longs / 2) glColor3ub(color.getR(), color.getG(), color.getB());
                 else glColor3ub(white.getR(), white.getG(), white.getB());
             }
-            
-            float lng = 2 * M_PI * (float) (j - 1) / longs;
+
+            float lng = 2 * M_PI * (float)(j - 1) / longs;
             float x = cos(lng);
             float y = sin(lng);
 
             float s1, s2, t;
-            s1 = ((float) i) / lats;
-            s2 = ((float) i + 1) / lats;
-            t = ((float) j) / longs;
+            s1 = ((float)i) / lats;
+            s2 = ((float)i + 1) / lats;
+            t = ((float)j) / longs;
 
             glNormal3d(x * zr0, y * zr0, z0);
             glVertex3d(radius * x * zr0, radius * y * zr0, radius * z0);
@@ -70,25 +80,25 @@ Matrix Ball::getInertiaTensorInverse() {
 }
 
 float Ball::getMinX() {
-    return pos.getX() - radius;
+    return position.getX() - radius;
 }
 
 float Ball::getMinY() {
-    return pos.getY() - radius;
+    return position.getY() - radius;
 }
 
 float Ball::getMinZ() {
-    return pos.getZ() - radius;
+    return position.getZ() - radius;
 }
 
 float Ball::getMaxX() {
-    return pos.getX() + radius;
+    return position.getX() + radius;
 }
 
 float Ball::getMaxY() {
-    return pos.getY() + radius;
+    return position.getY() + radius;
 }
 
 float Ball::getMaxZ() {
-    return pos.getZ() + radius;
+    return position.getZ() + radius;
 }
