@@ -5,6 +5,7 @@ Config::Config(map<string, string> config) {
     windowWidth = 1280;
     windowHeight = 720;
     recordVideo = false;
+    recordData = false;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::normal;
@@ -32,6 +33,11 @@ Config::Config(map<string, string> config) {
     }
 
     it = config.find("RECORD_VIDEO");
+    if (it != config.end()) {
+        recordVideo = !it->second.compare("true");
+    }
+    
+    it = config.find("RECORD_DATA");
     if (it != config.end()) {
         recordVideo = !it->second.compare("true");
     }
@@ -67,7 +73,6 @@ Config::Config(map<string, string> config) {
     if (it != config.end()) {
         if (!it->second.compare("TEST")) runMode = RunMode::test;
         else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
-        else if (!it->second.compare("RECORDER")) runMode = RunMode::recorder;
         else if (!it->second.compare("REPLAY")) runMode = RunMode::replay;
     }
 
@@ -93,11 +98,15 @@ Config::Config(map<string, string> config) {
 }
 
 bool Config::shouldRecordVideo() {
-    return recordVideo;
+    return runMode == RunMode::normal && recordVideo;
+}
+
+bool Config::shouldRecordData() {
+    return runMode == RunMode::normal && recordData;
 }
 
 bool Config::shouldLog() {
-    return runMode == RunMode::benchmark || runMode == RunMode::test || runMode == RunMode::recorder || log;
+    return runMode == RunMode::benchmark || runMode == RunMode::test || log;
 }
 
 string Config::getMPCDDescription() {

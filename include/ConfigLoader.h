@@ -16,7 +16,7 @@ struct KeyValue {
 };
 
 enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune, multithreadSweepAndPrune };
-enum class RunMode { normal, test, benchmark, recorder, replay };
+enum class RunMode { normal, test, benchmark, replay };
 
 struct Config {
 	string sceneName;
@@ -25,6 +25,7 @@ struct Config {
 	int windowWidth;
 	int windowHeight;
 	bool recordVideo;
+	bool recordData;
 	bool drawHalfWhite;
 	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
@@ -34,6 +35,7 @@ struct Config {
 	int stopAtFrame;
 	string logOutputFile;
 	bool shouldRecordVideo();
+	bool shouldRecordData();
 	bool shouldLog();
 	string getMPCDDescription();
 	string getBPCDDescription();

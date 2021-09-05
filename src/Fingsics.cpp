@@ -51,7 +51,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // Program options
     bool quit = false;
     bool pause = config.runMode == RunMode::normal || config.runMode == RunMode::replay;
-    bool draw = config.runMode != RunMode::recorder;
+    bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
@@ -67,7 +67,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
-    SceneRecorder* sceneRecorder = config.runMode == RunMode::recorder ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
+    SceneRecorder* sceneRecorder = config.shouldRecordData() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
 
     // Collision detection algorithms
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
@@ -113,12 +113,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     }
     
     while (!quit && (config.stopAtFrame == -1 || nframe < config.stopAtFrame)) {
-        if (config.shouldRecordVideo() && !pause) {
-            recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
-            recorder->ffmpeg_encoder_encode_frame(rgb);
-        } else if (config.runMode == RunMode::recorder) {
-            sceneRecorder->recordFrame(objects, numObjects, nframe);
-        } else if (config.runMode == RunMode::replay) {
+        if (config.runMode == RunMode::replay) {
             for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
         }
 
@@ -133,8 +128,19 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             if (!config.shouldRecordVideo()) drawFPSCounter(fps);
         }
 
-        // Apply physics and movement
         if (!pause) {
+            // Record video
+            if (config.shouldRecordVideo()) {
+                recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
+                recorder->ffmpeg_encoder_encode_frame(rgb);
+            }
+
+            // Record data
+            if (config.shouldRecordData()) {
+                sceneRecorder->recordFrame(objects, numObjects, nframe);
+            }
+
+            // Compute next frame
             if (config.runMode != RunMode::replay) {
                 if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
                 broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
@@ -151,6 +157,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                     results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
                 }
             }
+
             nframe++;
         }
 
@@ -172,12 +179,16 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.runMode == RunMode::recorder) {
-        sceneRecorder->storeRecordedData();
-    } else if (config.shouldRecordVideo()) {
+    // Store video
+    if (config.shouldRecordVideo()) {
         recorder->ffmpeg_encoder_finish();
         free(pixels);
         free(rgb);
+    }
+
+    // Store data
+    if (config.shouldRecordData()) {
+        sceneRecorder->storeRecordedData();
     }
 
     return results;
@@ -225,13 +236,6 @@ int main(int argc, char* argv[]) {
         if (config.runMode == RunMode::benchmark) {
             runSceneBenchmark(config, window);
         }
-        if (config.runMode == RunMode::recorder) {
-            runSimulation(config, window);
-            config.runMode = RunMode::replay; // Replay the scene after recording
-        }
-        if (config.runMode == RunMode::replay) {
-            runSimulation(config, window);
-        }
         if (config.runMode == RunMode::normal) {
             SimulationResults* results = runSimulation(config, window);
             if (results && config.log) {
@@ -239,6 +243,9 @@ int main(int argc, char* argv[]) {
                 LoggingManager::logRunResults("output", config.logOutputFile, *results);
                 delete results;
             }
+        }
+        if (config.runMode == RunMode::replay) {
+            runSimulation(config, window);
         }
     //}
     //catch (const std::exception& ex) {
