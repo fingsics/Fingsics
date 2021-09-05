@@ -188,7 +188,7 @@ vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     for (int i = 0; i < numObjects; i++) {
         res[i] = deserializeObject(serializedObjects[i], serializedPositions[i], serializedRotationMatrices[i], frames, to_string(i), config.numLatLongs);
     }
-    config.numFramesPerRun = frames;
+    config.stopAtFrame = frames;
 
     file.close();
     if (!file.good()) throw "Error occurred at reading time!";

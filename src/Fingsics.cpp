@@ -67,7 +67,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
-    SceneRecorder* sceneRecorder = config.runMode == RunMode::recorder ? new SceneRecorder(objects, numObjects, config.numFramesPerRun, config.sceneName + ".dat") : NULL;
+    SceneRecorder* sceneRecorder = config.runMode == RunMode::recorder ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
 
     // Collision detection algorithms
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
@@ -117,9 +117,9 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
             recorder->ffmpeg_encoder_encode_frame(rgb);
         } else if (config.runMode == RunMode::recorder) {
-            sceneRecorder->recordFrame(objects, numObjects, frame);
+            sceneRecorder->recordFrame(objects, numObjects, nframe);
         } else if (config.runMode == RunMode::replay) {
-            for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(frame);
+            for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
         }
 
         if (config.runMode == RunMode::normal || config.runMode == RunMode::replay) {
