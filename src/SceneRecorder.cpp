@@ -83,7 +83,6 @@ Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, Seri
         deserializeRotationMatrix(serializedRotationMatrices[i], &rotationMatrices[i]);
     }
 
-    // TODO: Fix lats and longs
     if (serializedObject.type == BALL)
         return new Ball(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), numLatLongs, numLatLongs);
     else if (serializedObject.type == CAPSULE)
@@ -102,9 +101,6 @@ void SceneRecorder::deserializeRotationMatrix(SerializedMatrix serializedRotatio
     for (int i = 0; i < 9; i++) {
         rotationMatrix->set(i / 3, i % 3, reinterpret_cast<float&>(serializedRotationMatrix.values[i]));
     }
-    //memcpy(&rotationMatrix[0], &serializedRotationMatrix.values[0], sizeof(uint32_t) * 3);
-    //memcpy(&rotationMatrix[1], &serializedRotationMatrix.values[3], sizeof(uint32_t) * 3);
-    //memcpy(&rotationMatrix[2], &serializedRotationMatrix.values[6], sizeof(uint32_t) * 3);
 }
 
 void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {

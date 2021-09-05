@@ -178,7 +178,7 @@ void Object::drawOBB() {
     glPushMatrix();
 
     glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix()); // TODO: Fix OOBBs in replay mode
+    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
     glTranslatef(-dimensions.getX() / 2.0, -dimensions.getY() / 2.0, -dimensions.getZ() / 2.0);
 
     glBegin(GL_QUAD_STRIP);
@@ -199,7 +199,7 @@ void Object::drawOBB() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void Object::drawAABB() { // TODO: Fix AABBs in replay mode
+void Object::drawAABB() {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor3ub(220, 0, 220);
     glDisable(GL_LIGHTING);
