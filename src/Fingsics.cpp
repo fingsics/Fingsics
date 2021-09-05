@@ -3,7 +3,7 @@
 
 #include "../include/SDLHelpers.h";
 #include "../include/OpenGlHelpers.h";
-#include "../include/ObjectLoader.h"
+#include "../include/XmlReader.h"
 #include "../include/ConfigLoader.h"
 #include "../include/SceneRecorder.h"
 #include "../include/CenteredCamera.h"
@@ -17,6 +17,7 @@
 #include "../include/NarrowPhaseAlgorithm.h"
 #include "../include/CollisionResponseAlgorithm.h"
 #include "../include/LoggingManager.h"
+#include "../include/VideoRecorder.h"
 #include <iostream>
 #include <thread>
 #include <map>
@@ -39,11 +40,13 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
 
 SimulationResults* runSimulation(Config config, SDL_Window* window) {
     SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
+    XmlReader xmlReader = XmlReader(config.sceneName + ".xml", config.numLatLongs);
 
     // Camera
     Camera* centeredCamera = new CenteredCamera();
-    Camera* freeCamera = new FreeCamera();
-    Camera* camera = centeredCamera;
+    Camera* settingsCamera = xmlReader.getCamera();
+    Camera* freeCamera = settingsCamera ? settingsCamera : new FreeCamera();
+    Camera* camera = settingsCamera ? freeCamera : centeredCamera;
 
     // Program options
     bool quit = false;
@@ -56,12 +59,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     // FPS management
     clock_t lastFrameTime = clock();
     float timeSinceLastFrame = 0;
-    int frame = 0;
+    int nframe = 0;
 
     // Scene
     vector<Object*> objectsVector;
     if (config.runMode == RunMode::replay) objectsVector = SceneRecorder(config.sceneName + ".dat").importRecordedScene(config);
-    else objectsVector = ObjectLoader(config.sceneName + ".xml", config.numLatLongs).getObjects();
+    else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
     SceneRecorder* sceneRecorder = config.runMode == RunMode::recorder ? new SceneRecorder(objects, numObjects, config.numFramesPerRun, config.sceneName + ".dat") : NULL;
@@ -99,8 +102,23 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     int fps = 0;
     chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
 
-    while (!quit && (config.runMode == RunMode::normal || frame < config.numFramesPerRun)) {
-        if (config.runMode == RunMode::replay) {
+    // Video recording
+    GLubyte* pixels = NULL;
+    uint8_t* rgb = NULL;
+    VideoRecorder* recorder = new VideoRecorder();
+    if (config.shouldRecordVideo()) {
+        if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
+        string fileName = "recordings\\" + config.sceneName + ".mpg";
+        recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
+    }
+    
+    while (!quit && (config.stopAtFrame == -1 || nframe < config.stopAtFrame)) {
+        if (config.shouldRecordVideo() && !pause) {
+            recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
+            recorder->ffmpeg_encoder_encode_frame(rgb);
+        } else if (config.runMode == RunMode::recorder) {
+            sceneRecorder->recordFrame(objects, numObjects, frame);
+        } else if (config.runMode == RunMode::replay) {
             for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(frame);
         }
 
@@ -112,7 +130,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             drawAxis();
             // Draw objects
             for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite);
-            drawFPSCounter(fps);
+            if (!config.shouldRecordVideo()) drawFPSCounter(fps);
         }
 
         // Apply physics and movement
@@ -133,8 +151,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                     results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
                 }
             }
-            if (config.runMode == RunMode::recorder) sceneRecorder->recordFrame(objects, numObjects, frame);
-            frame++;
+            nframe++;
         }
 
         // Process events
@@ -155,7 +172,13 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         SDL_GL_SwapWindow(window);
     }
 
-    if (config.runMode == RunMode::recorder) sceneRecorder->storeRecordedData();
+    if (config.runMode == RunMode::recorder) {
+        sceneRecorder->storeRecordedData();
+    } else if (config.shouldRecordVideo()) {
+        recorder->ffmpeg_encoder_finish();
+        free(pixels);
+        free(rgb);
+    }
 
     return results;
 }
@@ -192,8 +215,8 @@ void runSceneBenchmark(Config config, SDL_Window* window) {
 int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
-        SDL_Window* window = initializeSDL();
 
+        SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
         initializeOpenGL();
 
         if (config.runMode == RunMode::test) {

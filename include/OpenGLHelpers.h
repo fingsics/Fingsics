@@ -3,6 +3,7 @@
 
 #include "Object.h"
 #include <freeglut.h>
+#include <fstream>
 
 using namespace std;
 

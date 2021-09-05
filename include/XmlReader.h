@@ -7,6 +7,7 @@
 #include "Capsule.h"
 #include "Tile.h"
 #include "Object.h"
+#include "FreeCamera.h"
 #include "tinyxml2.h"
 #include <filesystem>
 #include <iostream>
@@ -27,7 +28,7 @@ struct CommonFields {
 	CommonFields(Point, Point, Point, Point, Point, float, float, Color, bool);
 };
 
-class ObjectLoader {
+class XmlReader {
 private:
 	string scene;
 	int numLatLongs;
@@ -39,9 +40,11 @@ private:
 	vector<float> parseTriplet(const char* charPoint);
 	Point parsePoint(const char*);
 	Color parseColor(const char*);
+	void checkFileExists();
 public:
-	ObjectLoader(string, int);
+	XmlReader(string, int);
 	vector<Object*> getObjects();
+	FreeCamera* getCamera();
 };
 
 #endif OBJLOADER_H

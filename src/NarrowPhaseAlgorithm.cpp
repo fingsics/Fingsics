@@ -184,49 +184,47 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
     Point edge3Center = tile->getPosition() + UB34 * tile->getAxis2Length() / 2;
     Point edge4Center = tile->getPosition() - UB34 * tile->getAxis2Length() / 2;
 
-    Point capsuleCenter = capsule->getPosition();
-    Point capsuleAxis = capsule->getAxisDirection();
-    float capsuleLength = capsule->getLength();
-
     tuple<Point, Point>* collision1 = NULL;
     tuple<Point, Point>* collision2 = NULL;
     tuple<Point, Point>* collision3 = NULL;
     tuple<Point, Point>* collision4 = NULL;
 
-    if (capsuleAxis.parallel(UB34)) {
+    if (capsule->getAxisDirection().parallel(UB34)) {
+        // The capsule is parallel to two of the plane's edges
         tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
-        if (UB34.crossProduct(capsuleCenter - edge1Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
-            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd3(), capsuleCenter, capsuleAxis, capsuleLength);
+        if (UB34.crossProduct(capsule->getPosition() - edge1Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd3(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision1 = get<0>(collisions);
             collision2 = get<1>(collisions);
-        } else if (UB34.crossProduct(capsuleCenter - edge2Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
-            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd2(), tile->getEnd4(), capsuleCenter, capsuleAxis, capsuleLength);
+        } else if (UB34.crossProduct(capsule->getPosition() - edge2Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd2(), tile->getEnd4(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision1 = get<0>(collisions);
             collision2 = get<1>(collisions);
         }
     } else {
         Point UC34 = UB34.crossProduct(UA).normalize();
-        tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge1Center, UB34, UC34);
-        tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge2Center, UB34, UC34);
+        tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge1Center, UB34, UC34);
+        tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge2Center, UB34, UC34);
         collision1 = calculateCylinderLineCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
         collision2 = calculateCylinderLineCollision(capsule, edge2Center, UB34, tile->getAxis2Length(), edge2Solution);
     }
 
-    if (capsuleAxis.parallel(UB12)) {
+    if (capsule->getAxisDirection().parallel(UB12)) {
+        // The capsule is parallel to two of the plane's edges
         tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
-        if (UB12.crossProduct(capsuleCenter - edge3Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
-            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd2(), capsuleCenter, capsuleAxis, capsuleLength);
+        if (UB12.crossProduct(capsule->getPosition() - edge3Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd2(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision3 = get<0>(collisions);
             collision4 = get<1>(collisions);
-        } else if (UB12.crossProduct(capsuleCenter - edge4Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
-            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd3(), tile->getEnd4(), capsuleCenter, capsuleAxis, capsuleLength);
+        } else if (UB12.crossProduct(capsule->getPosition() - edge4Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
+            collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd3(), tile->getEnd4(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision3 = get<0>(collisions);
             collision4 = get<1>(collisions);
         }
     } else {
         Point UC12 = UB12.crossProduct(UA).normalize();
-        tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge3Center, UB12, UC12);
-        tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsuleCenter, UA, edge4Center, UB12, UC12);
+        tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge3Center, UB12, UC12);
+        tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge4Center, UB12, UC12);
         collision3 = calculateCylinderLineCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
         collision4 = calculateCylinderLineCollision(capsule, edge4Center, UB12, tile->getAxis1Length(), edge4Solution);
     }

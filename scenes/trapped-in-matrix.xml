@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
 	<objects>
-		<tile pos="0,-17.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" />
-		<tile pos="0,11.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" />
-		<tile pos="10.7,2,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="30" width="30" />
-		<tile pos="0,2,-12.7" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="30" width="30" />
-		<tile pos="0,2,10.7" mass="1" elasticityCoef="1" ang="-90,0,0" color="220,220,220" static="true" length="30" width="30" />
-		<tile pos="-12.7,2,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,220,220" static="true" length="30" width="30" />
+		<tile pos="0,-17.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" draw="false" />
+		<tile pos="0,11.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" draw="false" />
+		<tile pos="10.7,0,0" mass="1" elasticityCoef="1" ang="0,0,90" color="220,220,220" static="true" length="40" width="30" draw="false" />
+		<tile pos="0,0,-12.7" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="30" width="40" draw="false" />
+		<tile pos="0,0,10.7" mass="1" elasticityCoef="1" ang="-90,0,0" color="220,220,220" static="true" length="30" width="40" draw="false" />
+		<tile pos="-12.7,0,0" mass="1" elasticityCoef="1" ang="0,0,-90" color="220,220,220" static="true" length="40" width="30" draw="false" />
 	
 		<sphere pos="0,0,0" vel="15,15,3" mass="1" elasticityCoef="1" ang="0,0,0" color="200,200,200" radius="0.4" />
 		<sphere pos="6,0,-4" vel="10,5,10" mass="1" elasticityCoef="1" ang="0,0,0" color="200,200,200" radius="0.4" />

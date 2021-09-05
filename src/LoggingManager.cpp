@@ -126,7 +126,7 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     summaryFile << "BPCD Algorithm: " + config.getBPCDDescription() + "\n";
     summaryFile << "MPCD Algorithm: " + config.getMPCDDescription() + "\n";
     summaryFile << "Number of runs: " + to_string(config.numRuns) + "\n";
-    summaryFile << "Number of frames per run: " + to_string(config.numFramesPerRun) + "\n\n";
+    summaryFile << "Number of frames per run: " + to_string(config.stopAtFrame) + "\n\n";
     
     summaryFile << "Avg. BPCD time: " + to_string(avgBpcdTime) + " ms\n";
     summaryFile << "Avg. MPCD time: " + to_string(avgMpcdTime) + " ms\n";

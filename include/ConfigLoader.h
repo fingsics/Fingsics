@@ -22,14 +22,18 @@ struct Config {
 	string sceneName;
 	int fps;
 	int numLatLongs;
+	int windowWidth;
+	int windowHeight;
+	bool recordVideo;
 	bool drawHalfWhite;
 	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;
 	RunMode runMode;
 	int numRuns;
-	int numFramesPerRun;
+	int stopAtFrame;
 	string logOutputFile;
+	bool shouldRecordVideo();
 	bool shouldLog();
 	string getMPCDDescription();
 	string getBPCDDescription();
@@ -44,4 +48,4 @@ public:
 	Config getConfig();
 };
 
-#endif CONFLOADER_H
+#endif

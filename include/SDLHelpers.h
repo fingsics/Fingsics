@@ -9,6 +9,6 @@
 using namespace std;
 
 void checkForInput(bool&, bool&, bool&, bool&, bool&, bool&, Camera*&, Camera*, Camera*);
-SDL_Window* initializeSDL();
+SDL_Window* initializeSDL(int, int);
 
 #endif

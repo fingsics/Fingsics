@@ -21,7 +21,6 @@ private:
     Collision* ballBall(Point, float, Point, float);
     Collision* ballCylinder(Point, float, Point, float, float, Point);
     Collision* ballCapsule(Point, float, Point, float, float, Point, Point, Point);
-    Collision* cylinderLine(Point, float, float, Point, Point, Point, float);
     Collision* ballTile(Point, float, Point, Point, Point, Point, float, float, Point, Point, Point, Point);
     Collision* ballBall(Ball*, Ball*);
     Collision* ballTile(Ball*, Tile*);
