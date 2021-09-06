@@ -35,10 +35,11 @@ def make_capsule_cube_horizontal(num_x, num_y, num_z, dist_1, dist_2):
     return objects
 
 def make_capsule_cube_vertical(num_x, num_y, num_z, dist_1, dist_2):
+    objects = ""
     for i in range(0, num_x):
         for j in range(0, num_y):
             for k in range(0, num_z):
-                objects += create_capsule_vertical(f"{-12.5 + dist_1 * i},{-16 + dist_1 * j},{50 - dist_2 * k}", "1", "0.5", "4", "0,0,-15", "0,0,220")
+                objects += create_capsule_vertical(f"{-(num_x * dist_2 / 2) + dist_2 * i},{-(num_y * dist_1 / 2) + dist_1 * j},{-(num_z * dist_2 / 2) + dist_2 * k}", "1", "0.5", "4", "0,0,0", "0,220,0")
     return objects
 
 def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_colors):
@@ -111,7 +112,17 @@ def make_balls_in_box_scene():
     objects += create_plane(f"0,-{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}")
     return objects
 
-objects = make_two_waves_scene()
+def make_matrix_scene():
+    dist_xz = 2.3
+    dist_y = 5.5
+    num_x = 37
+    num_y = 18
+    num_z = 38
+    objects = make_capsule_cube_vertical(num_x, num_y, num_z, dist_y, dist_xz)
+    objects += create_ball(f"{num_x / 2 * dist_xz + 10},{num_y / 2 * dist_y + 10},{num_z / 2 * dist_xz + 10}", "1000", "4", "-20,-20,-20", "200,200,200")
+    return objects
+
+objects = make_matrix_scene()
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
