@@ -54,18 +54,18 @@ def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_co
                     random_disturbance_3 = random.choice(possible_disturbances)
                     vel = get_random_velocity() if use_velocities else "0,0,0"
                     color = get_random_color() if use_random_colors else "220,0,0"
-                    objects += create_ball(f"{-((num_x - 1) * dist / 2) + dist * i + random_disturbance_1},{-((num_y - 1) * dist / 2) + dist * j + random_disturbance_2},{-((num_z - 1) * dist / 2) + dist * k + random_disturbance_3}", "1", f"{rad}", f"{vel}", color)
+                    objects += create_ball(f"{-((num_x - 1) * dist / 2) + dist * i + random_disturbance_1},{-((num_y - 1) * dist / 2) + dist * j + random_disturbance_2},{0.4 + dist * k + random_disturbance_3}", "1", f"{rad}", f"{vel}", color)
     return objects
 
 
 def make_two_waves_scene():
     objects = ""
-    num_x = 80
+    num_x = 120
     num_y = 1
-    num_z = 40
-    dist = 0.8
+    num_z = 80
+    dist = 0.38
 
-    objects += make_ball_cube(num_x, num_y, num_z, dist, 0.3, False, False)
+    objects += make_ball_cube(num_x, num_y, num_z, dist, 0.1, False, False)
 
     objects += create_ball("13,0,-30", "25", "6", "0,0,20", "220,220,220")
     objects += create_ball("-13,0,-30", "25", "6", "0,0,20", "220,220,220")
@@ -73,19 +73,13 @@ def make_two_waves_scene():
     plane_length_x = num_x * dist + 0.5
     plane_length_z = num_z * dist + 0.5
 
-    objects += create_plane(f"{plane_length_x / 2},0,0", "0,0,90", "220,220,220", "4", f"{plane_length_z}")
-    objects += create_plane(f"0,0,{plane_length_z / 2}", "-90,0,0", "220,220,220", f"{plane_length_x}", "4")
-    objects += create_plane(f"-{plane_length_x / 2},0,0", "0,0,-90", "220,220,220", "4", f"{plane_length_z}")
     
     mid_rect_width_div = 4
     rect_width_div = 4.5
     
-    objects += create_tile(f"{plane_length_x / 2 - plane_length_x / rect_width_div + plane_length_x / rect_width_div / 2},0,-{plane_length_z / 2}",
-               "90,0,0", "220,220,220", f"{plane_length_x / rect_width_div}", "20")
-    objects += create_tile(f"{-plane_length_x / 2 + plane_length_x / rect_width_div - plane_length_x / rect_width_div / 2 },0,-{plane_length_z / 2}",
-               "90,0,0", "220,220,220", f"{plane_length_x / rect_width_div}", "20")
-               
-    objects += create_tile(f"0,0,-{plane_length_z / 2}", "90,0,0", "220,220,220", f"{plane_length_x / mid_rect_width_div}", "20")
+    objects += create_tile("25,0,0", "90,0,0", "220,220,220", "14.33", "20")
+    objects += create_tile("-25,0,0", "90,0,0", "220,220,220", "14.33", "20")
+    objects += create_tile(f"0,0,0", "90,0,0", "220,220,220", "16.125", "20")
                
     return objects
 
@@ -122,7 +116,7 @@ def make_matrix_scene():
     objects += create_ball(f"{num_x / 2 * dist_xz + 10},{num_y / 2 * dist_y + 10},{num_z / 2 * dist_xz + 10}", "1000", "4", "-20,-20,-20", "200,200,200")
     return objects
 
-objects = make_matrix_scene()
+objects = make_two_waves_scene()
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
