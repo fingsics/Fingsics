@@ -50,10 +50,10 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
             if (config.runMode != RunMode::replay) break;
             switch (event.key.keysym.sym) {
             case SDLK_UP:
-                nframe = min(config.stopAtFrame - 1, nframe + 600);
+                nframe = max(0, nframe - 600);
                 break;
             case SDLK_DOWN:
-                nframe = max(0, nframe - 600);
+                nframe = min(config.stopAtFrame - 1, nframe + 600);
                 break;
             case SDLK_LEFT:
                 nframe = max(0, nframe - 60);

@@ -59,7 +59,7 @@ public:
     SceneRecorder(Object**, int, int, string); // Recorder
     SceneRecorder(string); // Loader
     void recordFrame(Object**, int, int);
-    void storeRecordedData();
+    void storeRecordedData(int);
     vector<Object*> importRecordedScene(Config);
 };
 

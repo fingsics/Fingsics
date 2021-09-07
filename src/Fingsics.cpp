@@ -70,25 +70,27 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     SceneRecorder* sceneRecorder = config.shouldRecordData() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
 
     // Collision detection algorithms
-    NarrowPhaseAlgorithm* narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
-    MidPhaseAlgorithm* midPhaseAlgorithm;
-    if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
-    else midPhaseAlgorithm = new NoMidPhase();
-
-    BroadPhaseAlgorithm* broadPhaseAlgorithm;
-    switch (config.bpAlgorithm) {
-    case BPAlgorithmChoice::bruteForce:
-        broadPhaseAlgorithm = new BruteForceBroadPhase();
-        break;
-    case BPAlgorithmChoice::sweepAndPrune:
-        broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
-        break;
-    case BPAlgorithmChoice::multithreadSweepAndPrune:
-        broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
-        break;
-    default:
-        broadPhaseAlgorithm = new NoBroadPhase();
-        break;
+    BroadPhaseAlgorithm* broadPhaseAlgorithm = NULL;
+    MidPhaseAlgorithm* midPhaseAlgorithm = NULL;
+    NarrowPhaseAlgorithm* narrowPhaseAlgorithm = NULL;
+    if (config.runMode != RunMode::replay) {
+        narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
+        if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
+        else midPhaseAlgorithm = new NoMidPhase();
+        switch (config.bpAlgorithm) {
+        case BPAlgorithmChoice::bruteForce:
+            broadPhaseAlgorithm = new BruteForceBroadPhase();
+            break;
+        case BPAlgorithmChoice::sweepAndPrune:
+            broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+            break;
+        case BPAlgorithmChoice::multithreadSweepAndPrune:
+            broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
+            break;
+        default:
+            broadPhaseAlgorithm = new NoBroadPhase();
+            break;
+        }
     }
 
     // Logging
@@ -200,7 +202,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Store data
     if (config.shouldRecordData()) {
-        sceneRecorder->storeRecordedData();
+        sceneRecorder->storeRecordedData(nframe);
     }
 
     return results;

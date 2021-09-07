@@ -38,7 +38,7 @@ Config::Config(map<string, string> config) {
     
     it = config.find("RECORD_DATA");
     if (it != config.end()) {
-        recordVideo = !it->second.compare("true");
+        recordData = !it->second.compare("true");
     }
 
     it = config.find("NUM_LAT_LONGS");

@@ -110,32 +110,32 @@ void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
     }
 }
 
-void SceneRecorder::storeRecordedData() {
+void SceneRecorder::storeRecordedData(int actualFrameCount) {
     if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
 
     ofstream file("recordings\\" + path, ios::out | ios::binary);
     if (!file) throw "Cannot open file!";
 
-    uint32_t numObjects = this->numObjects;
-    uint32_t frames = this->frames;
+    uint32_t numObjects = reinterpret_cast<uint32_t&>(this->numObjects);
+    uint32_t frames = reinterpret_cast<uint32_t&>(actualFrameCount);
     file.write((char*)&numObjects, sizeof(uint32_t));
     file.write((char*)&frames, sizeof(uint32_t));
 
     // Objects
-    for (int i = 0; i < numObjects; i++) {
+    for (int i = 0; i < this->numObjects; i++) {
         file.write((char*)&objects[i], sizeof(SerializedObject));
     }
 
     // Positions
-    for (int i = 0; i < numObjects; i++) {
-        for (int j = 0; j < frames; j++) {
+    for (int i = 0; i < this->numObjects; i++) {
+        for (int j = 0; j < actualFrameCount; j++) {
             file.write((char*)&positions[i][j], sizeof(SerializedPosition));
         }
     }
     
     // Rotation matrices
-    for (int i = 0; i < numObjects; i++) {
-        for (int j = 0; j < frames; j++) {
+    for (int i = 0; i < this->numObjects; i++) {
+        for (int j = 0; j < actualFrameCount; j++) {
             file.write((char*)&rotationMatrices[i][j], sizeof(SerializedMatrix));
         }
     }
@@ -154,10 +154,12 @@ vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     
     ifstream file(fileName, ios::out | ios::binary);
 
-    uint32_t numObjects;
-    uint32_t frames;
-    file.read((char*)&numObjects, sizeof(uint32_t));
-    file.read((char*)&frames, sizeof(uint32_t));
+    uint32_t serializedNumObjects;
+    uint32_t serializedFrames;
+    file.read((char*)&serializedNumObjects, sizeof(uint32_t));
+    file.read((char*)&serializedFrames, sizeof(uint32_t));
+    int numObjects = reinterpret_cast<int&>(serializedNumObjects);
+    int frames = reinterpret_cast<int&>(serializedFrames);
 
     SerializedObject* serializedObjects = new SerializedObject[numObjects];
     SerializedPosition** serializedPositions = new SerializedPosition*[numObjects];
