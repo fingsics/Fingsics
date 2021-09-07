@@ -25,7 +25,7 @@ public:
     Point getCylinderNegativeEnd();
     Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, int, int);
     Capsule(string, Color, Point*, Matrix*, int, float, float, int, int);
-    void drawObject(bool);
+    void drawObject();
     float getMinX();
     float getMinY();
     float getMinZ();

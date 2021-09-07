@@ -124,7 +124,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
             drawAxis();
             // Draw objects
-            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs, config.drawHalfWhite);
+            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs);
             if (!config.shouldRecordVideo()) drawFPSCounter(fps);
         }
 

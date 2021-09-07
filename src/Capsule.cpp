@@ -65,11 +65,10 @@ Point Capsule::getCylinderNegativeEnd() {
     return position - axisDirection * length / 2;
 }
 
-void Capsule::drawObject(bool drawHalfWhite) {
-    Color white = Color(255, 255, 255);
-    glColor3ub(color.getR(), color.getG(), color.getB());
-
+void Capsule::drawObject() {
     glPushMatrix();
+
+    glColor3ub(color.getR(), color.getG(), color.getB());
     glTranslatef(position.getX(), position.getY(), position.getZ());
     glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
     glTranslatef(0, 0,-length / 2.0);
@@ -86,12 +85,7 @@ void Capsule::drawObject(bool drawHalfWhite) {
         float z1 = sin(lat1);
         float zr1 = cos(lat1);
 
-        for (int j = 0; j <= longs; j++)
-        {
-            if (drawHalfWhite) {
-                if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
-                else glColor3ub(white.getR(), white.getG(), white.getB());
-            }
+        for (int j = 0; j <= longs; j++) {
             
             float lng = 2 * M_PI * (float)(j - 1) / longs;
             float x = cos(lng);
@@ -119,17 +113,9 @@ void Capsule::drawObject(bool drawHalfWhite) {
 
             arrayIndex += 6;
         }
-        //glEnd();
 
         if (i == lats / 2) {
-            //glBegin(GL_QUAD_STRIP);
-            for (int j = 0; j <= longs; j++)
-            {
-                if (drawHalfWhite) {
-                    if (j > longs / 2 == 0) glColor3ub(color.getR(), color.getG(), color.getB());
-                    else glColor3ub(white.getR(), white.getG(), white.getB());
-                }
-
+            for (int j = 0; j <= longs; j++) {
                 float lng = 2 * M_PI * (float)(j - 1) / longs;
                 float x = cos(lng);
                 float y = sin(lng);
@@ -156,7 +142,6 @@ void Capsule::drawObject(bool drawHalfWhite) {
 
                 arrayIndex += 6;
             }
-
             zDisplacement = length;
         }
     }

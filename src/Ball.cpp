@@ -33,9 +33,7 @@ float Ball::getRadius() {
     return radius;
 }
 
-void Ball::drawObject(bool drawHalfWhite) {
-    Color white = Color(255, 255, 255);
-
+void Ball::drawObject() {
     glPushMatrix();
 
     glTranslatef(position.getX(), position.getY(), position.getZ());
@@ -52,9 +50,7 @@ void Ball::drawObject(bool drawHalfWhite) {
         float z1 = sin(lat1);
         float zr1 = cos(lat1);
 
-        for (int j = 0; j <= longs; j++)
-        {
-
+        for (int j = 0; j <= longs; j++) {
             float lng = 2 * M_PI * (float)(j - 1) / longs;
             float x = cos(lng);
             float y = sin(lng);
@@ -91,7 +87,6 @@ void Ball::drawObject(bool drawHalfWhite) {
     glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength / 3);
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
-
 
     glPopMatrix();
  }
