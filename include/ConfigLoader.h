@@ -26,7 +26,6 @@ struct Config {
 	int windowHeight;
 	bool recordVideo;
 	bool recordData;
-	bool drawHalfWhite;
 	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;

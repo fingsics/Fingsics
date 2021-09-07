@@ -8,7 +8,6 @@ RECORD_DATA=true
 
 # Object drawing
 NUM_LAT_LONGS=8
-DRAW_HALF_WHITE=false
 
 # Algorithms (BROAD_PHASE options are NONE, BF, SAP or MTSAP)
 BROAD_PHASE=SAP

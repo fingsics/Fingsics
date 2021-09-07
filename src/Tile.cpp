@@ -74,7 +74,7 @@ void Tile::setRotation(Matrix rotationMatrix) {
     end4 = position - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
 }
 
-void Tile::drawObject(bool drawHalfWhite) {
+void Tile::drawObject() {
     if (!draw) return;
     glPushMatrix();
     glTranslatef(position.getX(), position.getY(), position.getZ());

@@ -33,7 +33,7 @@ class Object {
         AABB* aabb;
         virtual void drawOBB();
         virtual void drawAABB();
-        virtual void drawObject(bool) = 0;
+        virtual void drawObject() = 0;
 
         // Draw only
         bool replayMode;
@@ -66,7 +66,7 @@ class Object {
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
         void applyImpulse(Point, Point);
-        void draw(bool, bool, bool);
+        void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual float getMinX() = 0;
         virtual float getMinY() = 0;
