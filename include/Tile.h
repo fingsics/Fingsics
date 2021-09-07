@@ -21,7 +21,7 @@ class Tile : public Object {
     public:
         Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, bool);
         Tile(string, Color, Point*, Matrix*, int, float, float, bool);
-        void drawObject(bool);
+        void drawObject();
         Point getNormal();
         Matrix getInertiaTensor();
         void setRotation(Matrix);
