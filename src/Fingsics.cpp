@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
         Config config = ConfigLoader().getConfig();
 
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
-        initializeOpenGL();
+        initializeOpenGL(config.windowWidth, config.windowHeight);
 
         if (config.runMode == RunMode::test) {
             runTestScenes(config, window);

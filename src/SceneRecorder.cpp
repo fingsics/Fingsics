@@ -145,9 +145,14 @@ void SceneRecorder::storeRecordedData() {
 }
 
 vector<Object*> SceneRecorder::importRecordedScene(Config config) {
+    string fileName = "recordings\\" + path;
     if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
-    ifstream file("recordings\\" + path, ios::out | ios::binary);
-    if (!file) throw "Cannot open file!";
+    if (!filesystem::exists(fileName) || !filesystem::is_regular_file(fileName)) {
+        string error = "Couldn't load the replay file ";
+        throw std::runtime_error(error + fileName);
+    }
+    
+    ifstream file(fileName, ios::out | ios::binary);
 
     uint32_t numObjects;
     uint32_t frames;

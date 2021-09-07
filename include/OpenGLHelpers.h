@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void initializeOpenGL();
+void initializeOpenGL(int, int);
 void setupFrame();
 void drawAxis();
 void setLighting();

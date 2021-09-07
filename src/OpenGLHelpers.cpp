@@ -1,9 +1,9 @@
 #include "../include/OpenGLHelpers.h";
 
-void initializeOpenGL() {
+void initializeOpenGL(int resolutionWidth, int resolutionHeight) {
     glMatrixMode(GL_PROJECTION);
     glClearColor(0, 0, 0, 1);
-    gluPerspective(45, 1280 / 720.f, 0.1, 100);
+    gluPerspective(45, (float)resolutionWidth / (float)resolutionHeight, 0.1, 500);
     glEnable(GL_DEPTH_TEST);
     glMatrixMode(GL_MODELVIEW);
 }
