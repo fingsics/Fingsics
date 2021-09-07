@@ -9601,8 +9601,8 @@
 		<sphere pos="22.509999999999998,0.0,29.68" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.1" />
 		<sphere pos="22.669999999999998,0.0,29.939999999999998" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.1" />
 		<sphere pos="22.7,0.0,30.419999999999998" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.1" />
-		<sphere pos="13,0,-30" vel="0,0,20" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
-		<sphere pos="-13,0,-30" vel="0,0,20" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
+		<sphere pos="13,0,-10" vel="0,0,5" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
+		<sphere pos="-13,0,-10" vel="0,0,5" mass="25" elasticityCoef="1" ang="0,0,0" color="220,220,220" radius="6" />
 		<tile pos="25,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="14.33" width="20" />
 		<tile pos="-25,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="14.33" width="20" />
 		<tile pos="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="220,220,220" static="true" length="16.125" width="20" />
