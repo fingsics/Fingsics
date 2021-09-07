@@ -14,6 +14,9 @@ private:
     int lats;
     int longs;
     Point axisDirection;
+    float* openGLVertices;
+    float* openGLNormals;
+    int openGLArrayLength;
 public:
     Point getAxisDirection();
     float getRadius();
