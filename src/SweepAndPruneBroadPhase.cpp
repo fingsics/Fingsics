@@ -1,51 +1,98 @@
 #include "../include/SweepAndPruneBroadPhase.h"
 
 SweepAndPruneBroadPhase::SweepAndPruneBroadPhase(Object** objects, int numObjects) {
-    this->pointsPerAxis = 0;
+    this->pointsPerAxis = numObjects * 2;
     this->xPoints = new AABBPoint[2 * numObjects];
     this->yPoints = new AABBPoint[2 * numObjects];
     this->zPoints = new AABBPoint[2 * numObjects];
-    for (int i = 0; i < numObjects; i++) insertObject(objects[i]);
+    int inserted = 0;
+
+    // Create AABBs, insert values in AABBPoint arrays
+    for (int i = 0; i < numObjects; i++) {
+        insertObject(objects[i], i);
+    }
+
+    // Sort
+    stable_sort(this->xPoints, this->xPoints + this->pointsPerAxis, [](const AABBPoint& a, const AABBPoint& b) { return a.value < b.value; });
+    stable_sort(this->yPoints, this->yPoints + this->pointsPerAxis, [](const AABBPoint& a, const AABBPoint& b) { return a.value < b.value; });
+    stable_sort(this->zPoints, this->zPoints + this->pointsPerAxis, [](const AABBPoint& a, const AABBPoint& b) { return a.value < b.value; });
+
+    // Fix references to AABBPoints in AABBs
+    for (int i = 0; i < this->pointsPerAxis; i++) {
+        fixAABBReference(&xPoints[i], xPoints);
+        fixAABBReference(&yPoints[i], yPoints);
+        fixAABBReference(&zPoints[i], zPoints);
+    };
+
+    // Initialize collision collection
+    unordered_set<Object*> openXObjects;
+    unordered_set<Object*> openYObjects;
+    unordered_set<Object*> openZObjects;
+    for (int i = 0; i < this->pointsPerAxis; i++) {
+        checkAABBPointForCollisions(&xPoints[i], xPoints, openXObjects);
+        checkAABBPointForCollisions(&yPoints[i], yPoints, openYObjects);
+        checkAABBPointForCollisions(&zPoints[i], zPoints, openZObjects);
+    }
 }
 
-void SweepAndPruneBroadPhase::insertObject(Object* object) {
-    AABB* newAABB = new AABB(object);
+void SweepAndPruneBroadPhase::insertObject(Object* object, int index) {
+    object->setAABB(new AABB(object));
+    AABB* aabb = object->getAABB();
 
     // MinX
-    xPoints[this->pointsPerAxis].isMin = true;
-    xPoints[this->pointsPerAxis].aabb = newAABB;
-    newAABB->minX = &xPoints[this->pointsPerAxis];
+    xPoints[2 * index].isMin = true;
+    xPoints[2 * index].aabb = aabb;
+    xPoints[2 * index].value = object->getMinX();
 
     // MaxX
-    xPoints[this->pointsPerAxis + 1].isMin = false;
-    xPoints[this->pointsPerAxis + 1].aabb = newAABB;
-    newAABB->maxX = &xPoints[this->pointsPerAxis + 1];
+    xPoints[2 * index + 1].isMin = false;
+    xPoints[2 * index + 1].aabb = aabb;
+    xPoints[2 * index + 1].value = object->getMaxX();
 
     // MinY
-    yPoints[this->pointsPerAxis].isMin = true;
-    yPoints[this->pointsPerAxis].aabb = newAABB;
-    newAABB->minY = &yPoints[this->pointsPerAxis];
+    yPoints[2 * index].isMin = true;
+    yPoints[2 * index].aabb = aabb;
+    yPoints[2 * index].value = object->getMinY();
 
     // MaxY
-    yPoints[this->pointsPerAxis + 1].isMin = false;
-    yPoints[this->pointsPerAxis + 1].aabb = newAABB;
-    newAABB->maxY = &yPoints[this->pointsPerAxis + 1];
+    yPoints[2 * index + 1].isMin = false;
+    yPoints[2 * index + 1].aabb = aabb;
+    yPoints[2 * index + 1].value = object->getMaxY();
 
     // MinZ
-    zPoints[this->pointsPerAxis].isMin = true;
-    zPoints[this->pointsPerAxis].aabb = newAABB;
-    newAABB->minZ = &zPoints[this->pointsPerAxis];
+    zPoints[2 * index].isMin = true;
+    zPoints[2 * index].aabb = aabb;
+    zPoints[2 * index].value = object->getMinZ();
 
     // MaxZ
-    zPoints[this->pointsPerAxis + 1].isMin = false;
-    zPoints[this->pointsPerAxis + 1].aabb = newAABB;
-    newAABB->maxZ = &zPoints[this->pointsPerAxis + 1];
+    zPoints[2 * index + 1].isMin = false;
+    zPoints[2 * index + 1].aabb = aabb;
+    zPoints[2 * index + 1].value = object->getMaxZ();
+}
 
-    object->setAABB(newAABB);
+void SweepAndPruneBroadPhase::fixAABBReference(AABBPoint* pointPointer, AABBPoint* pointArray) {
+    if (pointPointer->isMin) {
+        if (pointArray == xPoints) pointPointer->aabb->minX = pointPointer;
+        if (pointArray == yPoints) pointPointer->aabb->minY = pointPointer;
+        if (pointArray == zPoints) pointPointer->aabb->minZ = pointPointer;
+    } else {
+        if (pointArray == xPoints) pointPointer->aabb->maxX = pointPointer;
+        if (pointArray == yPoints) pointPointer->aabb->maxY = pointPointer;
+        if (pointArray == zPoints) pointPointer->aabb->maxZ = pointPointer;
+    }
+}
 
-    this->pointsPerAxis += 2;
-
-    updateObject(object);
+void SweepAndPruneBroadPhase::checkAABBPointForCollisions(AABBPoint* pointPointer, AABBPoint* pointArray, unordered_set<Object*>& openObjectsCollection) {
+    if (openObjectsCollection.find(pointPointer->aabb->object) != openObjectsCollection.end()) {
+        // Already open
+        openObjectsCollection.erase(pointPointer->aabb->object);
+    } else {
+        // Not open
+        for (unordered_set<Object*>::iterator it = openObjectsCollection.begin(); it != openObjectsCollection.end(); ++it) {
+            if (AABBOverlapTest(pointPointer->aabb, (*it)->getAABB(), pointArray)) addCollision(pointPointer->aabb->object, *it);
+        }
+        openObjectsCollection.insert(pointPointer->aabb->object);
+    }
 }
 
 void SweepAndPruneBroadPhase::updateObject(Object* object) {
