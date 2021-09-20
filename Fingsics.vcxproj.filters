@@ -126,9 +126,6 @@
     <ClCompile Include="src\BruteForceBroadPhase.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
-    <ClCompile Include="src\MultithreadSweepAndPruneBroadPhase.cpp">
-      <Filter>Source Files\Algorithms\BroadPhase</Filter>
-    </ClCompile>
     <ClCompile Include="src\SweepAndPruneBroadPhase.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
@@ -228,9 +225,6 @@
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
     <ClInclude Include="include\SweepAndPruneBroadPhase.h">
-      <Filter>Header Files\Algorithms\BroadPhase</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MultithreadSweepAndPruneBroadPhase.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
     <ClInclude Include="include\LoggingManager.h">

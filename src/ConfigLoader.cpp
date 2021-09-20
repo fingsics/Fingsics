@@ -55,7 +55,6 @@ Config::Config(map<string, string> config) {
     if (it != config.end()) {
         if (!it->second.compare("BF")) bpAlgorithm = BPAlgorithmChoice::bruteForce;
         else if (!it->second.compare("SAP")) bpAlgorithm = BPAlgorithmChoice::sweepAndPrune;
-        else if (!it->second.compare("MTSAP")) bpAlgorithm = BPAlgorithmChoice::multithreadSweepAndPrune;
     }
 
     it = config.find("LOG");

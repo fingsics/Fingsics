@@ -12,7 +12,6 @@
 #include "../include/NoBroadPhase.h"
 #include "../include/BruteForceBroadPhase.h"
 #include "../include/SweepAndPruneBroadPhase.h"
-#include "../include/MultithreadSweepAndPruneBroadPhase.h"
 #include "../include/MidPhaseAlgorithms.h"
 #include "../include/NarrowPhaseAlgorithm.h"
 #include "../include/CollisionResponseAlgorithm.h"
@@ -83,9 +82,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             break;
         case BPAlgorithmChoice::sweepAndPrune:
             broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
-            break;
-        case BPAlgorithmChoice::multithreadSweepAndPrune:
-            broadPhaseAlgorithm = new MultithreadSweepAndPruneBroadPhase(objects, numObjects);
             break;
         default:
             broadPhaseAlgorithm = new NoBroadPhase();
