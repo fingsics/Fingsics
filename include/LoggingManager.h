@@ -1,7 +1,7 @@
 #ifndef SIMRESULTS_H
 #define SIMRESULTS_H
 
-#include "ConfigLoader.h"
+#include "Config.h"
 #include <chrono>
 #include <list>
 #include <iostream>

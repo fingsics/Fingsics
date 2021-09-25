@@ -31,6 +31,9 @@ class Object {
         bool isStatic;
         OBB obb;
         AABB* aabb;
+
+        void applyImpulse(Point, Point);
+
         virtual void drawOBB();
         virtual void drawAABB();
         virtual void drawObject() = 0;
@@ -65,7 +68,6 @@ class Object {
         void goToFrame(int);
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
-        void applyImpulse(Point, Point);
         void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual float getMinX() = 0;

@@ -1,11 +1,11 @@
 #ifndef CENTERED_CAMERA_H
 #define CENTERED_CAMERA_H
+
 #define _USE_MATH_DEFINES
-#include <string>
-#include <math.h>
 #include "Camera.h"
 #include "Point.h"
-
+#include <string>
+#include <math.h>
 
 using namespace std;
 
@@ -19,7 +19,7 @@ public:
     CenteredCamera(float, float, float);
     CenteredCamera();
     void lookAt();
-    void eventUpdate(SDL_Event);
+    void update(SDL_Event);
 };
 
 #endif

@@ -6,7 +6,7 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
 
     SDL_GetMouseState(&xm, &ym);
     while (SDL_PollEvent(&event)) {
-        camera->eventUpdate(event);
+        camera->update(event);
         switch (event.type) {
         case SDL_QUIT:
             quit = true;

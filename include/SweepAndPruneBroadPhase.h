@@ -1,9 +1,7 @@
 #ifndef SWEEPANDPRUNEBP_H
 #define SWEEPANDPRUNEBP_H
 
-#include "BroadPhaseAlgorithms.h"
-#include "AABB.h"
-#include "Helpers.h"
+#include "BroadPhaseAlgorithm.h"
 
 using namespace std;
 

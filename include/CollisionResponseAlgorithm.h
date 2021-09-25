@@ -4,8 +4,6 @@
 #include "Object.h"
 #include "Point.h"
 #include "Collision.h"
-#include "Ball.h"
-#include "Capsule.h"
 #include <map>
 
 using namespace std;

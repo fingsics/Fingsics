@@ -8,7 +8,7 @@
 #include "../include/SceneRecorder.h"
 #include "../include/CenteredCamera.h"
 #include "../include/FreeCamera.h"
-#include "../include/BroadPhaseAlgorithms.h"
+#include "../include/BroadPhaseAlgorithm.h"
 #include "../include/NoBroadPhase.h"
 #include "../include/BruteForceBroadPhase.h"
 #include "../include/SweepAndPruneBroadPhase.h"

@@ -27,8 +27,8 @@ void FreeCamera::lookAt() {
     gluLookAt(eyeX,eyeY,eyeZ,center.getX(),center.getY(),center.getZ(),upX,upY,upZ);
 }
 
-void FreeCamera::eventUpdate(SDL_Event event) {
-    Camera::eventUpdate(event);
+void FreeCamera::update(SDL_Event event) {
+    Camera::update(event);
     Point lookingDirection = getCenter() - eye;
     Point perpendicularLookingDirection = lookingDirection.crossProduct(Point(0,1,0)).normalize();
     switch (event.type) {

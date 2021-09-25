@@ -1,10 +1,11 @@
 #ifndef FREE_CAMERA_H
 #define FREE_CAMERA_H
+
 #define _USE_MATH_DEFINES
-#include <string>
-#include <math.h>
 #include "Camera.h"
 #include "Point.h"
+#include <string>
+#include <math.h>
 
 
 using namespace std;
@@ -19,7 +20,7 @@ public:
     FreeCamera(Point, float, float);
     FreeCamera();
     void lookAt();
-    void eventUpdate(SDL_Event);
+    void update(SDL_Event);
 };
 
 #endif

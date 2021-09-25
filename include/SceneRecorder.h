@@ -1,7 +1,7 @@
 #ifndef SCENERECORDER_H
 #define SCENERECORDER_H
 
-#include "ConfigLoader.h"
+#include "Config.h"
 #include "Object.h"
 #include "Ball.h"
 #include "Capsule.h"

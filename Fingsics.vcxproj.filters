@@ -147,6 +147,9 @@
     <ClCompile Include="src\VideoRecorder.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Config.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h">
@@ -215,7 +218,7 @@
     <ClInclude Include="include\Impulse.h">
       <Filter>Header Files\Data Structures</Filter>
     </ClInclude>
-    <ClInclude Include="include\BroadPhaseAlgorithms.h">
+    <ClInclude Include="include\BroadPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
     <ClInclude Include="include\NoBroadPhase.h">
@@ -241,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="include\VideoRecorder.h">
       <Filter>Header Files\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Config.h">
+      <Filter>Header Files\Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

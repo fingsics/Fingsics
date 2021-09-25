@@ -23,8 +23,8 @@ void CenteredCamera::lookAt() {
     gluLookAt(eye.getX(),eye.getY(),eye.getZ(),centerX,centerY,centerZ,upX,upY,upZ);
 }
 
-void CenteredCamera::eventUpdate(SDL_Event event) {
-    Camera::eventUpdate(event);
+void CenteredCamera::update(SDL_Event event) {
+    Camera::update(event);
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {

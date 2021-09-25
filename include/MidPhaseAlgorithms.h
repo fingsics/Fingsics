@@ -1,7 +1,7 @@
 #ifndef MPALG_H
 #define MPALG_H
+
 #include "Object.h"
-#include "Ball.h"
 #include "Point.h"
 #include "Matrix.h"
 #include "Helpers.h"

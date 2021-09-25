@@ -1,5 +1,6 @@
 #ifndef NARROWPHASEALG_H
 #define NARROWPHASEALG_H
+
 #include "Object.h"
 #include "Ball.h"
 #include "Capsule.h"

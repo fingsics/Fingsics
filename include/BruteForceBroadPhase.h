@@ -1,9 +1,7 @@
 #ifndef BRUTEFORCEBP_H
 #define BRUTEFORCEBP_H
 
-#include "BroadPhaseAlgorithms.h"
-#include "AABB.h"
-#include "Helpers.h"
+#include "BroadPhaseAlgorithm.h"
 
 using namespace std;
 

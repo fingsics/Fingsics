@@ -2,9 +2,10 @@
 #define BPALG_H
 
 #include "Object.h"
+#include "Helpers.h"
+#include "AABB.h"
 #include <map>
 #include <string>
-#include "Helpers.h"
 
 using namespace std;
 
