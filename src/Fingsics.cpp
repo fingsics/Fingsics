@@ -49,7 +49,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Program options
     bool quit = false;
-    bool pause = config.runMode == RunMode::normal || config.runMode == RunMode::replay;
+    bool pause = config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay;
     bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
@@ -115,7 +115,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
         }
 
-        if (config.runMode == RunMode::normal || config.runMode == RunMode::replay) {
+        if (config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) {
             setupFrame();
             camera->lookAt();
             setLighting();
@@ -179,7 +179,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::normal || config.runMode == RunMode::replay);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay);
 
         if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
             lastFPSDrawTime = std::chrono::system_clock::now();
@@ -246,7 +246,7 @@ int main(int argc, char* argv[]) {
         if (config.runMode == RunMode::benchmark) {
             runSceneBenchmark(config, window);
         }
-        if (config.runMode == RunMode::normal) {
+        if (config.runMode == RunMode::defaultMode) {
             SimulationResults* results = runSimulation(config, window);
             if (results && config.log) {
                 if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");

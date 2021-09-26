@@ -10,7 +10,7 @@
 using namespace std;
 
 enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune };
-enum class RunMode { normal, test, benchmark, replay };
+enum class RunMode { defaultMode, test, benchmark, replay };
 
 struct Config {
 	string sceneName;

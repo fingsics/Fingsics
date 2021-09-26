@@ -17,8 +17,8 @@ USE_MID_PHASE=false
 LOG=true
 LOG_OUTPUT_FILE_NAME=output.csv
 
-# Run mode (options are NORMAL, TEST, BENCHMARK, REPLAY)
-RUN_MODE=NORMAL
+# Run mode (options are DEFAULT, TEST, BENCHMARK, REPLAY)
+RUN_MODE=DEFAULT
 NUM_RUNS_FOR_BENCHMARK=5
 
 # Use -1 to run indefinitely

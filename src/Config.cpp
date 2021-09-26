@@ -10,7 +10,7 @@ Config::Config(map<string, string> config) {
     recordData = false;
     numLatLongs = 8;
     log = false;
-    runMode = RunMode::normal;
+    runMode = RunMode::defaultMode;
     numRuns = 10;
     stopAtFrame = 300;
     useMidPhase = false;
@@ -93,11 +93,11 @@ Config::Config(map<string, string> config) {
 }
 
 bool Config::shouldRecordVideo() {
-    return runMode == RunMode::normal && recordVideo;
+    return runMode == RunMode::defaultMode && recordVideo;
 }
 
 bool Config::shouldRecordData() {
-    return runMode == RunMode::normal && recordData;
+    return runMode == RunMode::defaultMode && recordData;
 }
 
 bool Config::shouldLog() {
