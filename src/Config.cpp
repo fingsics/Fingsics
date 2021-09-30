@@ -13,7 +13,6 @@ Config::Config(map<string, string> config) {
     runMode = RunMode::defaultMode;
     numRuns = 10;
     stopAtFrame = 300;
-    useMidPhase = false;
     bpAlgorithm = BPAlgorithmChoice::none;
     sceneName = "";
     logOutputFile = "";
@@ -48,15 +47,13 @@ Config::Config(map<string, string> config) {
         numLatLongs = stoi(it->second);
     }
 
-    it = config.find("USE_MID_PHASE");
-    if (it != config.end()) {
-        useMidPhase = !it->second.compare("true");
-    }
-
     it = config.find("BROAD_PHASE");
     if (it != config.end()) {
-        if (!it->second.compare("BF")) bpAlgorithm = BPAlgorithmChoice::bruteForce;
+        if (!it->second.compare("NONE")) bpAlgorithm = BPAlgorithmChoice::none;
+        else if (!it->second.compare("AABB")) bpAlgorithm = BPAlgorithmChoice::aabbBruteForce;
+        else if (!it->second.compare("OBB")) bpAlgorithm = BPAlgorithmChoice::obbBruteForce;
         else if (!it->second.compare("SAP")) bpAlgorithm = BPAlgorithmChoice::sweepAndPrune;
+        else if (!it->second.compare("SAPOBB")) bpAlgorithm = BPAlgorithmChoice::SAPAndOBBs;
     }
 
     it = config.find("LOG");
@@ -104,19 +101,18 @@ bool Config::shouldLog() {
     return runMode == RunMode::benchmark || runMode == RunMode::test || log;
 }
 
-string Config::getMPCDDescription() {
-    if (useMidPhase) return "OBB";
-    else return "None";
-}
-
 string Config::getBPCDDescription() {
     switch (bpAlgorithm) {
-    case BPAlgorithmChoice::bruteForce:
-        return "BF";
     case BPAlgorithmChoice::none:
         return "None";
+    case BPAlgorithmChoice::aabbBruteForce:
+        return "AABB";
+    case BPAlgorithmChoice::obbBruteForce:
+        return "OBB";
     case BPAlgorithmChoice::sweepAndPrune:
         return "SAP";
+    case BPAlgorithmChoice::SAPAndOBBs:
+        return "SAPOBB";
     }
     return "None";
 }

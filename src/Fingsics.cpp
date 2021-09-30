@@ -9,10 +9,11 @@
 #include "../include/CenteredCamera.h"
 #include "../include/FreeCamera.h"
 #include "../include/BroadPhaseAlgorithm.h"
-#include "../include/NoBroadPhase.h"
-#include "../include/BruteForceBroadPhase.h"
-#include "../include/SweepAndPruneBroadPhase.h"
-#include "../include/MidPhaseAlgorithms.h"
+#include "../include/NoBPCD.h"
+#include "../include/AABBBruteForce.h"
+#include "../include/OBBBruteForce.h"
+#include "../include/SweepAndPrune.h"
+#include "../include/SAPAndOBBs.h"
 #include "../include/NarrowPhaseAlgorithm.h"
 #include "../include/CollisionResponseAlgorithm.h"
 #include "../include/LoggingManager.h"
@@ -70,21 +71,24 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = NULL;
-    MidPhaseAlgorithm* midPhaseAlgorithm = NULL;
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = NULL;
     if (config.runMode != RunMode::replay) {
         narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
-        if (config.useMidPhase) midPhaseAlgorithm = new OBBMidPhase();
-        else midPhaseAlgorithm = new NoMidPhase();
         switch (config.bpAlgorithm) {
-        case BPAlgorithmChoice::bruteForce:
-            broadPhaseAlgorithm = new BruteForceBroadPhase();
+        case BPAlgorithmChoice::aabbBruteForce:
+            broadPhaseAlgorithm = new AABBBruteForce();
+            break;
+        case BPAlgorithmChoice::obbBruteForce:
+            broadPhaseAlgorithm = new OBBBruteForce();
             break;
         case BPAlgorithmChoice::sweepAndPrune:
-            broadPhaseAlgorithm = new SweepAndPruneBroadPhase(objects, numObjects);
+            broadPhaseAlgorithm = new SweepAndPrune(objects, numObjects);
+            break;
+        case BPAlgorithmChoice::SAPAndOBBs:
+            broadPhaseAlgorithm = new SAPAndOBBs(objects, numObjects);
             break;
         default:
-            broadPhaseAlgorithm = new NoBroadPhase();
+            broadPhaseAlgorithm = new NoBPCD();
             break;
         }
     }
@@ -93,7 +97,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
 
     // Collision collections
-    map<string, pair<Object*, Object*>> broadPhaseCollisions, midPhaseCollisions;
+    map<string, pair<Object*, Object*>> broadPhaseCollisions;
     map<string, Collision> collisions;
 
     // FPS drawing
@@ -143,16 +147,14 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
                 if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
                 broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
                 if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
-                midPhaseCollisions = midPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-                if (config.shouldLog()) midEnd = std::chrono::system_clock::now();
-                collisions = narrowPhaseAlgorithm->getCollisions(midPhaseCollisions);
+                collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
                 if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
                 CollisionResponseAlgorithm::collisionResponse(collisions);
                 if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
                 CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
                 if (config.shouldLog()) {
                     moveEnd = std::chrono::system_clock::now();
-                    results->addFrameResults(broadPhaseCollisions.size(), midPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd);
+                    results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, narrowEnd, responseEnd, moveEnd);
                 }
             }
             nframe++;

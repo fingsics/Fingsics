@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class BruteForceBroadPhase : public BroadPhaseAlgorithm {
+class AABBBruteForce : public BroadPhaseAlgorithm {
 private:
     bool AABBOverlapTest(Object*, Object*);
 public:

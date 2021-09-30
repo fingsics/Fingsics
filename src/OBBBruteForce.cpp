@@ -1,24 +1,31 @@
-#include "../include/MidPhaseAlgorithms.h"
+#include "../include/OBBBruteForce.h"
 
-using namespace std;
+map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(Object** objects, int numObjects) {
+    map<string, pair<Object*, Object*>> collisions = map<string, pair<Object*, Object*>>();
 
-map<string, pair<Object*, Object*>> NoMidPhase::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
-    return possibleCollisions;
+    for (int i = 0; i < numObjects; i++) {
+        for (int j = i + 1; j < numObjects; j++) {
+            if (OBBOverlapTest(objects[i]->getOBB(), objects[j]->getOBB()))
+                collisions.insert(getObjectPairWithId(objects[i], objects[j]));
+        }
+    }
+
+    return collisions;
 }
 
-map<string, pair<Object*, Object*>> OBBMidPhase::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
-    map<string, pair<Object*, Object*>> obbCollisions = map<string, pair<Object*, Object*>>();
+map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
+    map<string, pair<Object*, Object*>> collisions = map<string, pair<Object*, Object*>>();
     for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
         Object* object1 = it->second.first;
         Object* object2 = it->second.second;
-        if (OBBOverlapTest(object1->getOBB(), object2->getOBB())) obbCollisions.insert(*it);
+        if (OBBOverlapTest(object1->getOBB(), object2->getOBB())) collisions.insert(*it);
     }
-    return obbCollisions;
+    return collisions;
 }
 
 // Ideas from: http://gamma.cs.unc.edu/SSV/obb.pdf
 // Code from: https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=5
-bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
+bool OBBBruteForce::OBBOverlapTest(OBB obb1, OBB obb2) {
     Point a = obb1.getHalfLengths();
     Point pos1 = obb1.getPosition();
     Matrix A = obb1.getNormals();
@@ -108,4 +115,3 @@ bool OBBMidPhase::OBBOverlapTest(OBB obb1, OBB obb2) {
     // No separating axis found
     return true;
 }
-

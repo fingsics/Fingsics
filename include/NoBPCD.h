@@ -5,11 +5,9 @@
 
 using namespace std;
 
-class NoBroadPhase : public BroadPhaseAlgorithm {
+class NoBPCD : public BroadPhaseAlgorithm {
 public:
     map<string, pair<Object*, Object*>> getCollisions(Object**, int);
 };
-
-
 
 #endif

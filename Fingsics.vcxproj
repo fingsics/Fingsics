@@ -162,7 +162,7 @@
     <ClCompile Include="libraries\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\Ball.cpp" />
-    <ClCompile Include="src\BruteForceBroadPhase.cpp" />
+    <ClCompile Include="src\AABBBruteForce.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Capsule.cpp" />
     <ClCompile Include="src\CenteredCamera.cpp" />
@@ -176,26 +176,27 @@
     <ClCompile Include="src\Helpers.cpp" />
     <ClCompile Include="src\Impulse.cpp" />
     <ClCompile Include="src\Matrix.cpp" />
-    <ClCompile Include="src\MidPhaseAlgorithms.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp" />
-    <ClCompile Include="src\NoBroadPhase.cpp" />
+    <ClCompile Include="src\NoBPCD.cpp" />
     <ClCompile Include="src\OBB.cpp" />
+    <ClCompile Include="src\OBBBruteForce.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\OpenGLHelpers.cpp" />
     <ClCompile Include="src\Point.cpp" />
+    <ClCompile Include="src\SAPAndOBBs.cpp" />
     <ClCompile Include="src\SceneRecorder.cpp" />
     <ClCompile Include="src\VideoRecorder.cpp" />
     <ClCompile Include="src\XmlReader.cpp" />
     <ClCompile Include="src\Tile.cpp" />
     <ClCompile Include="src\SDLHelpers.cpp" />
-    <ClCompile Include="src\SweepAndPruneBroadPhase.cpp" />
+    <ClCompile Include="src\SweepAndPrune.cpp" />
     <ClCompile Include="src\LoggingManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AABB.h" />
     <ClInclude Include="include\Ball.h" />
     <ClInclude Include="include\BroadPhaseAlgorithm.h" />
-    <ClInclude Include="include\BruteForceBroadPhase.h" />
+    <ClInclude Include="include\AABBBruteForce.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\Capsule.h" />
     <ClInclude Include="include\CenteredCamera.h" />
@@ -209,19 +210,20 @@
     <ClInclude Include="include\Helpers.h" />
     <ClInclude Include="include\Impulse.h" />
     <ClInclude Include="include\Matrix.h" />
-    <ClInclude Include="include\MidPhaseAlgorithms.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithm.h" />
-    <ClInclude Include="include\NoBroadPhase.h" />
+    <ClInclude Include="include\NoBPCD.h" />
     <ClInclude Include="include\OBB.h" />
+    <ClInclude Include="include\OBBBruteForce.h" />
     <ClInclude Include="include\Object.h" />
     <ClInclude Include="include\OpenGLHelpers.h" />
     <ClInclude Include="include\Point.h" />
+    <ClInclude Include="include\SAPAndOBBs.h" />
     <ClInclude Include="include\SceneRecorder.h" />
     <ClInclude Include="include\VideoRecorder.h" />
     <ClInclude Include="include\XmlReader.h" />
     <ClInclude Include="include\Tile.h" />
     <ClInclude Include="include\SDLHelpers.h" />
-    <ClInclude Include="include\SweepAndPruneBroadPhase.h" />
+    <ClInclude Include="include\SweepAndPrune.h" />
     <ClInclude Include="include\LoggingManager.h" />
     <ClInclude Include="libraries\tinyxml2\tinyxml2.h" />
   </ItemGroup>

@@ -9,7 +9,7 @@ RECORD_DATA=true
 # Object drawing
 NUM_LAT_LONGS=8
 
-# Algorithms (BROAD_PHASE options are NONE, BF or SAP)
+# Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
 BROAD_PHASE=SAP
 USE_MID_PHASE=false
 

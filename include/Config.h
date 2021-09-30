@@ -9,7 +9,7 @@
 
 using namespace std;
 
-enum class BPAlgorithmChoice { none, bruteForce, sweepAndPrune };
+enum class BPAlgorithmChoice { none, aabbBruteForce, obbBruteForce, sweepAndPrune, SAPAndOBBs};
 enum class RunMode { defaultMode, test, benchmark, replay };
 
 struct Config {
@@ -20,7 +20,6 @@ struct Config {
 	int windowHeight;
 	bool recordVideo;
 	bool recordData;
-	bool useMidPhase;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;
 	RunMode runMode;
@@ -30,7 +29,6 @@ struct Config {
 	bool shouldRecordVideo();
 	bool shouldRecordData();
 	bool shouldLog();
-	string getMPCDDescription();
 	string getBPCDDescription();
 	Config(map<string, string>);
 };

@@ -78,9 +78,6 @@
     <ClCompile Include="src\FreeCamera.cpp">
       <Filter>Source Files\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="src\MidPhaseAlgorithms.cpp">
-      <Filter>Source Files\Algorithms</Filter>
-    </ClCompile>
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
@@ -120,13 +117,13 @@
     <ClCompile Include="src\Impulse.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="src\NoBroadPhase.cpp">
+    <ClCompile Include="src\NoBPCD.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
-    <ClCompile Include="src\BruteForceBroadPhase.cpp">
+    <ClCompile Include="src\AABBBruteForce.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
-    <ClCompile Include="src\SweepAndPruneBroadPhase.cpp">
+    <ClCompile Include="src\SweepAndPrune.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
     <ClCompile Include="src\LoggingManager.cpp">
@@ -150,6 +147,12 @@
     <ClCompile Include="src\Config.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
+    <ClCompile Include="src\OBBBruteForce.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SAPAndOBBs.cpp">
+      <Filter>Source Files\Algorithms\BroadPhase</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h">
@@ -172,9 +175,6 @@
     </ClInclude>
     <ClInclude Include="include\FreeCamera.h">
       <Filter>Header Files\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="include\MidPhaseAlgorithms.h">
-      <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
     <ClInclude Include="include\NarrowPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
@@ -221,13 +221,13 @@
     <ClInclude Include="include\BroadPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
-    <ClInclude Include="include\NoBroadPhase.h">
+    <ClInclude Include="include\NoBPCD.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
-    <ClInclude Include="include\BruteForceBroadPhase.h">
+    <ClInclude Include="include\AABBBruteForce.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
-    <ClInclude Include="include\SweepAndPruneBroadPhase.h">
+    <ClInclude Include="include\SweepAndPrune.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
     <ClInclude Include="include\LoggingManager.h">
@@ -247,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="include\Config.h">
       <Filter>Header Files\Data Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OBBBruteForce.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SAPAndOBBs.h">
+      <Filter>Header Files\Algorithms\BroadPhase</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

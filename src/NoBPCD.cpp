@@ -1,7 +1,7 @@
-#include "../include/NoBroadPhase.h"
+#include "../include/NoBPCD.h"
 
 // Adds every posible object pair to the map
-map<string, pair<Object*, Object*>> NoBroadPhase::getCollisions(Object** objects, int numObjects) {
+map<string, pair<Object*, Object*>> NoBPCD::getCollisions(Object** objects, int numObjects) {
     map<string, pair<Object*, Object*>> collisionMap;
     for (int i = 0; i < numObjects; i++) {
         for (int j = i + 1; j < numObjects; j++) {
