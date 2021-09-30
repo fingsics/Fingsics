@@ -3,7 +3,6 @@ import pathlib
 import os
 
 def get_csv_values(file):
-    mpcd_tests = []
     npcd_tests = []
     collisions = []
 
@@ -15,19 +14,15 @@ def get_csv_values(file):
             if first_row:
                 first_row = False
                 continue
-            mpcd_tests.append(int(row[1]))
-            npcd_tests.append(int(row[3]))
-            collisions.append(int(row[5]))
+            npcd_tests.append(int(row[1]))
+            collisions.append(int(row[3]))
             
-    return mpcd_tests, npcd_tests, collisions
+    return npcd_tests, collisions
 
-def evaluate_test(filename, mpcd_tests_1, npcd_tests_1, collisions_1, mpcd_tests_2, npcd_tests_2, collisions_2):
-    equal_mpcd_tests = True
+def evaluate_test(filename, npcd_tests_1, collisions_1, npcd_tests_2, collisions_2):
     equal_npcd_tests = True
     equal_collisions = True
-    for i in range(0, min(len(mpcd_tests_1), len(mpcd_tests_2))):
-        if mpcd_tests_1[i] != mpcd_tests_2[i]:
-            equal_mpcd_tests = False
+    for i in range(0, min(len(npcd_tests_1), len(npcd_tests_2))):
         if npcd_tests_1[i] != npcd_tests_2[i]:
             equal_npcd_tests = False
         if collisions_1[i] != collisions_2[i]:
@@ -36,7 +31,6 @@ def evaluate_test(filename, mpcd_tests_1, npcd_tests_1, collisions_1, mpcd_tests
     print("Results for:   " + filename)
     print("Same collisions: " + str(equal_collisions))
     print("Same NPCD tests: " + str(equal_npcd_tests))
-    print("Same MPCD tests: " + str(equal_mpcd_tests))
     print()
             
         
@@ -45,6 +39,6 @@ results_folder = str(pathlib.Path().resolve()) + "\\testing\\results\\"
 files = os.listdir(expected_results_folder)
 
 for file in files:
-    mpcd_tests_1, npcd_tests_1, collisions_1 = get_csv_values(expected_results_folder + file)
-    mpcd_tests_2, npcd_tests_2, collisions_2 = get_csv_values(results_folder + file)
-    evaluate_test(file, mpcd_tests_1, npcd_tests_1, collisions_1, mpcd_tests_2, npcd_tests_2, collisions_2)
+    npcd_tests_1, collisions_1 = get_csv_values(expected_results_folder + file)
+    npcd_tests_2, collisions_2 = get_csv_values(results_folder + file)
+    evaluate_test(file, npcd_tests_1, collisions_1, npcd_tests_2, collisions_2)

@@ -215,6 +215,7 @@ void runTestScenes(Config config, SDL_Window* window) {
 
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
+        config.stopAtFrame = 300;
         SimulationResults* results = runSimulation(config, window);
         if (results) {
             LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);

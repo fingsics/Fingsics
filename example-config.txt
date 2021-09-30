@@ -11,7 +11,6 @@ NUM_LAT_LONGS=8
 
 # Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
 BROAD_PHASE=SAP
-USE_MID_PHASE=false
 
 # Logging
 LOG=true
