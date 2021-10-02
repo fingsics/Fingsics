@@ -34,10 +34,6 @@ class Object {
 
         void applyImpulse(Point, Point);
 
-        virtual void drawOBB();
-        virtual void drawAABB();
-        virtual void drawObject() = 0;
-
         // Draw only
         bool replayMode;
         Point* positions;
@@ -68,7 +64,6 @@ class Object {
         void goToFrame(int);
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
-        void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual float getMinX() = 0;
         virtual float getMinY() = 0;

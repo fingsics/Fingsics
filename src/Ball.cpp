@@ -33,64 +33,6 @@ float Ball::getRadius() {
     return radius;
 }
 
-void Ball::drawObject() {
-    glPushMatrix();
-
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-
-    int arrayIndex = 0;
-
-    for (int i = 0; i <= lats; i++) {
-        float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
-        float z0 = sin(lat0);
-        float zr0 = cos(lat0);
-
-        float lat1 = M_PI * (-0.5 + (float)i / lats);
-        float z1 = sin(lat1);
-        float zr1 = cos(lat1);
-
-        for (int j = 0; j <= longs; j++) {
-            float lng = 2 * M_PI * (float)(j - 1) / longs;
-            float x = cos(lng);
-            float y = sin(lng);
-
-            float s1, s2, t;
-            s1 = ((float)i) / lats;
-            s2 = ((float)i + 1) / lats;
-            t = ((float)j) / longs;
-
-            openGLNormals[arrayIndex] = x * zr0;
-            openGLNormals[arrayIndex + 1] = y * zr0;
-            openGLNormals[arrayIndex + 2] = z0;
-
-            openGLVertices[arrayIndex] = radius * x * zr0;
-            openGLVertices[arrayIndex + 1] = radius * y * zr0;
-            openGLVertices[arrayIndex + 2] = radius * z0;
-
-            openGLNormals[arrayIndex + 3] = x * zr1;
-            openGLNormals[arrayIndex + 4] = y * zr1;
-            openGLNormals[arrayIndex + 5] = z1;
-
-            openGLVertices[arrayIndex + 3] = radius * x * zr1;
-            openGLVertices[arrayIndex + 4] = radius * y * zr1;
-            openGLVertices[arrayIndex + 5] = radius * z1;
-
-            arrayIndex += 6;
-        }
-    }
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, openGLVertices);
-    glNormalPointer(GL_FLOAT, 0, openGLNormals);
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength / 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    glPopMatrix();
- }
-
 Matrix Ball::getInertiaTensorInverse() {
     return invertedInertiaTensor;
 }
@@ -117,4 +59,12 @@ float Ball::getMaxY() {
 
 float Ball::getMaxZ() {
     return position.getZ() + radius;
+}
+
+int Ball::getLats() {
+    return lats;
+}
+
+int Ball::getLongs() {
+    return longs;
 }

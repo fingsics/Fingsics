@@ -74,26 +74,8 @@ void Tile::setRotation(Matrix rotationMatrix) {
     end4 = position - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
 }
 
-void Tile::drawObject() {
-    if (!draw) return;
-    glPushMatrix();
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glBegin(GL_QUADS);
-    glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glVertex3d(-axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glEnd();
-    glPopMatrix();
- }
-
 Matrix Tile::getInertiaTensor() {
     return baseInertiaTensor;
-}
-
-void Tile::drawOBB() {
 }
 
 float Tile::getMinX() {
