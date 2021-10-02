@@ -60,9 +60,9 @@ def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_co
 
 def make_two_waves_scene():
     objects = ""
-    num_x = 120
+    num_x = 500
     num_y = 1
-    num_z = 80
+    num_z = 500
     dist = 0.38
 
     objects += make_ball_cube(num_x, num_y, num_z, dist, 0.1, False, False)
@@ -79,7 +79,7 @@ def make_two_waves_scene():
     
     objects += create_tile("25,0,0", "90,0,0", "220,220,220", "14.33", "20")
     objects += create_tile("-25,0,0", "90,0,0", "220,220,220", "14.33", "20")
-    objects += create_tile(f"0,0,0", "90,0,0", "220,220,220", "16.125", "20")
+    objects += create_tile("0,0,0", "90,0,0", "220,220,220", "16.125", "20")
                
     return objects
 

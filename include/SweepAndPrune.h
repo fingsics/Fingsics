@@ -2,6 +2,7 @@
 #define SWEEPANDPRUNEBP_H
 
 #include "BroadPhaseAlgorithm.h"
+#include <unordered_set>
 
 using namespace std;
 
@@ -12,7 +13,9 @@ private:
     AABBPoint* xPoints;
     AABBPoint* yPoints;
     AABBPoint* zPoints;
-    void insertObject(Object*);
+    void insertObject(Object*, int);
+    void fixAABBReference(AABBPoint*, AABBPoint*);
+    void checkAABBPointForCollisions(AABBPoint*, AABBPoint*, unordered_set<Object*>&);
     void updateAABBPoint(AABBPoint*, AABBPoint*);
     void insertAABBPoint(AABBPoint, int, AABBPoint*);
     bool AABBOverlapTest(AABB*, AABB*, AABBPoint*);

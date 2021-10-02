@@ -10,7 +10,6 @@ using namespace std;
 
 class CollisionResponseAlgorithm {
 private:
-    static bool handleContact(Object*, Object*, Point, Point, Point);
     static void calculateNonStaticCollision(Object*, Object*, Point, Point);
     static void calculateStaticCollision(Object*, Object*, Point, Point);
 public:
