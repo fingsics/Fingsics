@@ -3,7 +3,7 @@
 using namespace std;
 
 // Draw only object
-Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames) {
+Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw) {
     this->id = id;
     this->replayMode = true;
     this->positions = positions;
@@ -23,9 +23,10 @@ Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrice
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
+    this->draw = draw;
 }
 
-Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color) {
+Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color, bool draw) {
     this->isStatic = isStatic;
     this->position = pos;
     this->mass = mass;
@@ -40,6 +41,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
+    this->draw = draw;
 
     this->replayMode = false;
     this->positions = NULL;
@@ -159,4 +161,8 @@ void Object::applyImpulse(Point normal, Point tangent) {
 
     setVelocity(velocity + velDiff);
     setAngularVelocity(angularVelocity + angVelDiff);
+}
+
+bool Object::getDraw() {
+    return draw;
 }

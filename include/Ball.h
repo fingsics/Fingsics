@@ -10,14 +10,9 @@ using namespace std;
 class Ball : public Object {
     private:
         float radius;
-        int lats;
-        int longs;
-        float* openGLVertices;
-        float* openGLNormals;
-        int openGLArrayLength;
     public:
-        Ball(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, int, int);
-        Ball(string, Color, Point*, Matrix*, int, float, int, int);
+        Ball(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, float);
+        Ball(string, Color, Point*, Matrix*, int, bool, float);
         float getRadius();
         Matrix getInertiaTensorInverse();
         float getMinX();
@@ -26,8 +21,6 @@ class Ball : public Object {
         float getMaxX();
         float getMaxY();
         float getMaxZ();
-        int getLats();
-        int getLongs();
 };
 
 #endif

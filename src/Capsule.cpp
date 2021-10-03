@@ -2,25 +2,18 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float radius, float length, int lats, int longs) : Object(id, color, positions, rotationMatrices, frames) {
+Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw, float radius, float length) : Object(id, color, positions, rotationMatrices, frames, draw) {
     this->length = length;
     this->radius = radius;
-    this->lats = (lats % 2 == 0) ? lats : lats + 1;
-    this->longs = (longs % 2 == 0) ? longs : longs + 1;
 
     this->baseInertiaTensor = Matrix();
     this->invertedInertiaTensor = Point();
     this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, length / 2 + radius), rotationMatrices[0]) : OBB();
-    this->openGLArrayLength = ((this->lats + 1) * (this->longs + 1) + (this->longs + 1)) * 2 * 3;
-    this->openGLVertices = new float[this->openGLArrayLength];
-    this->openGLNormals = new float[this->openGLArrayLength];
 }
 
-Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float radius, float length, int lats, int longs) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, bool draw, float radius, float length) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
     this->length = length;
     this->radius = radius;
-    this->lats = (lats % 2 == 0) ? lats : lats + 1;
-    this->longs = (longs % 2 == 0) ? longs : longs + 1;
     this->axisDirection = rotationMatrix * Point(0, 0, 1);
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
@@ -33,9 +26,6 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     this->baseInertiaTensor = Matrix(x, 0, 0, 0, x, 0, 0, 0, z);
     this->invertedInertiaTensor = (rotationMatrix * baseInertiaTensor * rotationMatrix.transpose()).inverse();
     this->obb = OBB(pos, Point(radius, radius, length / 2 + radius), rotationMatrix);
-    this->openGLArrayLength = ((this->lats + 1) * (this->longs + 1) + (this->longs + 1)) * 2 * 3;
-    this->openGLVertices = new float[this->openGLArrayLength];
-    this->openGLNormals = new float[this->openGLArrayLength];
 }
 
 void Capsule::setRotation(Matrix rotationMatrix) {
@@ -99,12 +89,4 @@ float Capsule::getMaxZ() {
     float z1 = getCylinderPositiveEnd().getZ();
     float z2 = getCylinderNegativeEnd().getZ();
     return (z1 > z2 ? z1 : z2) + radius;
-}
-
-float Capsule::getLats() {
-    return lats;
-}
-
-float Capsule::getLongs() {
-    return longs;
 }

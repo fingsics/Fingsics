@@ -1,6 +1,6 @@
 #include "../include/XmlReader.h"
 
-CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float m, float ec, Color c, bool s) {
+CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float m, float ec, Color c, bool s, bool d) {
     pos = p;
     vel = v;
     ang = a;
@@ -10,6 +10,7 @@ CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float
     elasticityCoef = ec;
     color = c;
     isStatic = s;
+    draw = d;
 }
 
 XmlReader::XmlReader(string scene, int numLatLongs) {
@@ -77,7 +78,7 @@ CommonFields XmlReader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     const char* posChar, * velChar, * angChar, * angVelChar, * accelerationChar, * colorChar;
     Point pos, vel, ang, angVel, acceleration;
     Color color;
-    bool isStatic;
+    bool isStatic, draw;
     float radius, mass, elasticityCoef;
     tinyxml2::XMLError parseError;
 
@@ -99,8 +100,10 @@ CommonFields XmlReader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     color = (parseError == tinyxml2::XML_SUCCESS) ? parseColor(colorChar) : Color(200, 200, 200);
     parseError = xmlObject->QueryBoolAttribute("static", &isStatic);
     isStatic = (parseError == tinyxml2::XML_SUCCESS) ? isStatic : false;
+    parseError = xmlObject->QueryBoolAttribute("draw", &draw);
+    draw = (parseError == tinyxml2::XML_SUCCESS) ? draw : true;
 
-    return CommonFields(pos, vel, ang, angVel, acceleration, mass, elasticityCoef, color, isStatic);
+    return CommonFields(pos, vel, ang, angVel, acceleration, mass, elasticityCoef, color, isStatic, draw);
 }
 
 Ball* XmlReader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
@@ -109,21 +112,18 @@ Ball* XmlReader::loadBall(tinyxml2::XMLElement* xmlObject, string id, int numLat
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryFloatAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
-    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, numLatLongs, numLatLongs);
+    return new Ball(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, commonFields.draw, radius);
 }
 
 Tile* XmlReader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     float length, width;
-    bool draw;
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryFloatAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 30;
     parseError = xmlObject->QueryFloatAttribute("width", &width);
     width = (parseError == tinyxml2::XML_SUCCESS) ? width : 30;
-    parseError = xmlObject->QueryBoolAttribute("draw", &draw);
-    draw = (parseError == tinyxml2::XML_SUCCESS) ? draw : true;
-    return new Tile(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, length, width, draw);
+    return new Tile(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, commonFields.draw, length, width);
 }
 
 Capsule* XmlReader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
@@ -134,7 +134,7 @@ Capsule* XmlReader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int 
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     parseError = xmlObject->QueryFloatAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
-    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, radius, length, numLatLongs, numLatLongs);
+    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, commonFields.draw, radius, length);
 }
 
 vector<float> XmlReader::parseTriplet(const char* input) {

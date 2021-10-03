@@ -5,12 +5,9 @@ SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int lon
     this->capsuleArrayLength = ((lats + 1) * (longs + 1) + (longs + 1)) * 2;
     this->tileArrayLength = 4;
     for (int i = 0; i < numObjects; i++) {
-        if (Ball* ball = dynamic_cast<Ball*>(objects[i]))
-            initializeBallArrays(ball, lats, longs);
-        else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i]))
-            initializeCapsuleArrays(capsule, lats, longs);
-        else if (Tile* tile = dynamic_cast<Tile*>(objects[i]))
-            initializeTileArrays(tile);
+        if (Ball* ball = dynamic_cast<Ball*>(objects[i])) initializeBallArrays(ball, lats, longs);
+        else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i])) initializeCapsuleArrays(capsule, lats, longs);
+        else if (Tile* tile = dynamic_cast<Tile*>(objects[i])) initializeTileArrays(tile);
     }
 }
 
@@ -149,20 +146,17 @@ void SceneRenderer::drawObject(Object* object, bool drawOBB, bool drawAABB) {
     if (drawOBB && !dynamic_cast<Tile*>(object)) this->drawOBB(object);
     if (drawAABB) this->drawAABB(object);
 
-    float* vertices = openGLVertices[object->getId()];
-    float* normals = openGLNormals[object->getId()];
-    int length = openGLArrayLength(object);
-
+    if (!object->getDraw()) return;
 
     glPushMatrix();
     glTranslatef(object->getPosition().getX(), object->getPosition().getY(), object->getPosition().getZ());
     glMultMatrixf(object->getRotationMatrix().getOpenGLRotationMatrix());
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, vertices);
-    glNormalPointer(GL_FLOAT, 0, normals);
+    glVertexPointer(3, GL_FLOAT, 0, openGLVertices[object->getId()]);
+    glNormalPointer(GL_FLOAT, 0, openGLNormals[object->getId()]);
     glColor3ub(object->getColor().getR(), object->getColor().getG(), object->getColor().getB());
-    glDrawArrays(GL_QUAD_STRIP, 0, length);
+    glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength(object));
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
     glPopMatrix();
@@ -226,7 +220,7 @@ void SceneRenderer::initializeCapsuleArrays(Capsule* capsule, int lats, int long
     float* normals = new float[arrayLength];
 
     int arrayIndex = 0;
-    float zDisplacement = 0;
+    float zDisplacement = -length / 2.0;
 
     for (int i = 0; i <= lats; i++) {
         float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
@@ -282,7 +276,7 @@ void SceneRenderer::initializeCapsuleArrays(Capsule* capsule, int lats, int long
 
                 vertices[arrayIndex] = radius * x * zr1;
                 vertices[arrayIndex + 1] = radius * y * zr1;
-                vertices[arrayIndex + 2] = radius * z1;
+                vertices[arrayIndex + 2] = radius * z1 + zDisplacement;
 
                 normals[arrayIndex + 3] = x * zr1;
                 normals[arrayIndex + 4] = y * zr1;
@@ -290,11 +284,11 @@ void SceneRenderer::initializeCapsuleArrays(Capsule* capsule, int lats, int long
 
                 vertices[arrayIndex + 3] = radius * x * zr1;
                 vertices[arrayIndex + 4] = radius * y * zr1;
-                vertices[arrayIndex + 5] = radius * z1 + length;
+                vertices[arrayIndex + 5] = radius * z1 + length + zDisplacement;
 
                 arrayIndex += 6;
             }
-            zDisplacement = length;
+            zDisplacement += length;
         }
     }
 
@@ -334,10 +328,6 @@ void SceneRenderer::initializeTileArrays(Tile* tile) {
     normals[11] = 0;
     this->openGLVertices[tile->getId()] = vertices;
     this->openGLNormals[tile->getId()] = normals;
-    //glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);
-    //glVertex3d(axis1Length / 2.0, 0, axis2Length / 2.0);
-    //glVertex3d(axis1Length / 2.0, 0, -axis2Length / 2.0);
-    //glVertex3d(-axis1Length / 2.0, 0, -axis2Length / 2.0);
 }
 
 void SceneRenderer::drawF(float up, float left, float height, float width, float mid) {

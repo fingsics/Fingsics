@@ -9,7 +9,6 @@ using namespace std;
 
 class Tile : public Object {
     private:
-        bool draw;
         float axis1Length;
         float axis2Length;
         Point axis1;
@@ -19,8 +18,8 @@ class Tile : public Object {
         Point end3;
         Point end4;
     public:
-        Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, bool);
-        Tile(string, Color, Point*, Matrix*, int, float, float, bool);
+        Tile(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, float, float);
+        Tile(string, Color, Point*, Matrix*, int, bool, float, float);
         Point getNormal();
         Matrix getInertiaTensor();
         void setRotation(Matrix);
@@ -38,7 +37,6 @@ class Tile : public Object {
         float getMaxX();
         float getMaxY();
         float getMaxZ();
-        bool getDraw();
 };
 
 #endif
