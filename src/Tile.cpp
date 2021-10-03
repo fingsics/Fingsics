@@ -2,10 +2,9 @@
 
 using namespace std;
 
-Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, float length, float width, bool draw) : Object(id, color, positions, rotationMatrices, frames) {
+Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw, float length, float width) : Object(id, color, positions, rotationMatrices, frames, draw) {
     this->axis1Length = length;
     this->axis2Length = width;
-    this->draw = draw;
     if (frames > 0) {
         this->position = positions[0];
         this->setRotation(rotationMatrices[0]);
@@ -13,12 +12,11 @@ Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, i
     }
 }
 
-Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, float length, float width, bool draw) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color) {
+Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, bool draw, float length, float width) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->axis1Length = length;
     this->axis2Length = width;
-    this->draw = draw;
     this->obb = OBB(pos, Point(width, EPSILON, length), rotationMatrix);
     this->setRotation(rotationMatrix);
 }
@@ -59,10 +57,6 @@ Point Tile::getNormal() {
     return rotationMatrix * Point(0, 1, 0);
 }
 
-bool Tile::getDraw() {
-    return draw;
-}
-
 void Tile::setRotation(Matrix rotationMatrix) {
     this->rotationMatrix = rotationMatrix;
     obb.setRotation(rotationMatrix);
@@ -74,26 +68,8 @@ void Tile::setRotation(Matrix rotationMatrix) {
     end4 = position - axis1 * axis1Length / 2 - axis2 * axis2Length / 2;
 }
 
-void Tile::drawObject() {
-    if (!draw) return;
-    glPushMatrix();
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glBegin(GL_QUADS);
-    glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glVertex3d(-axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glEnd();
-    glPopMatrix();
- }
-
 Matrix Tile::getInertiaTensor() {
     return baseInertiaTensor;
-}
-
-void Tile::drawOBB() {
 }
 
 float Tile::getMinX() {

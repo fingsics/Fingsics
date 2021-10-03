@@ -3,7 +3,7 @@
 using namespace std;
 
 // Draw only object
-Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames) {
+Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw) {
     this->id = id;
     this->replayMode = true;
     this->positions = positions;
@@ -23,9 +23,10 @@ Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrice
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
+    this->draw = draw;
 }
 
-Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color) {
+Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color, bool draw) {
     this->isStatic = isStatic;
     this->position = pos;
     this->mass = mass;
@@ -40,6 +41,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
+    this->draw = draw;
 
     this->replayMode = false;
     this->positions = NULL;
@@ -161,62 +163,6 @@ void Object::applyImpulse(Point normal, Point tangent) {
     setAngularVelocity(angularVelocity + angVelDiff);
 }
 
-void Object::draw(bool drawOBB, bool drawAABB) {
-    this->drawObject();
-    if (drawOBB) this->drawOBB();
-    if (drawAABB) this->drawAABB();
-}
-
-void Object::drawOBB() {
-    Point dimensions = obb.getHalfLengths() * 2;
-    Point pos = obb.getPosition();
-
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor3ub(220, 220, 0);
-    glDisable(GL_LIGHTING);
-
-    glPushMatrix();
-
-    glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-    glTranslatef(-dimensions.getX() / 2.0, -dimensions.getY() / 2.0, -dimensions.getZ() / 2.0);
-
-    glBegin(GL_QUAD_STRIP);
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, dimensions.getZ());
-    glVertex3f(0, dimensions.getY(), 0);
-    glVertex3f(0, dimensions.getY(), dimensions.getZ());
-    glVertex3f(dimensions.getX(), dimensions.getY(), 0);
-    glVertex3f(dimensions.getX(), dimensions.getY(), dimensions.getZ());
-    glVertex3f(dimensions.getX(), 0, 0);
-    glVertex3f(dimensions.getX(), 0, dimensions.getZ());
-    glVertex3f(0, 0, 0);
-    glVertex3f(0, 0, dimensions.getZ());
-    glEnd();
-
-    glPopMatrix();
-    glEnable(GL_LIGHTING);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-}
-
-void Object::drawAABB() {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor3ub(220, 0, 220);
-    glDisable(GL_LIGHTING);
-
-    glBegin(GL_QUAD_STRIP);
-    glVertex3f(getMinX(), getMinY(), getMinZ());
-    glVertex3f(getMaxX(), getMinY(), getMinZ());
-    glVertex3f(getMinX(), getMaxY(), getMinZ());
-    glVertex3f(getMaxX(), getMaxY(), getMinZ());
-    glVertex3f(getMinX(), getMaxY(), getMaxZ());
-    glVertex3f(getMaxX(), getMaxY(), getMaxZ());
-    glVertex3f(getMinX(), getMinY(), getMaxZ());
-    glVertex3f(getMaxX(), getMinY(), getMaxZ());
-    glVertex3f(getMinX(), getMinY(), getMinZ());
-    glVertex3f(getMaxX(), getMinY(), getMinZ());
-    glEnd();
-
-    glEnable(GL_LIGHTING);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+bool Object::getDraw() {
+    return draw;
 }

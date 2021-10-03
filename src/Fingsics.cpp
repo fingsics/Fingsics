@@ -1,8 +1,7 @@
 // Fingsics.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include "../include/SDLHelpers.h";
-#include "../include/OpenGlHelpers.h";
+#include "../include/SceneRenderer.h";
 #include "../include/XmlReader.h"
 #include "../include/ConfigLoader.h"
 #include "../include/SceneRecorder.h"
@@ -18,6 +17,9 @@
 #include "../include/CollisionResponseAlgorithm.h"
 #include "../include/LoggingManager.h"
 #include "../include/VideoRecorder.h"
+
+#include "SDL.h"
+#include "SDL_opengl.h"
 #include <iostream>
 #include <thread>
 #include <map>
@@ -27,6 +29,103 @@
 
 using namespace std;
 
+SDL_Window* initializeSDL(int width, int height) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        cerr << "Failed to initialize SDL: " << SDL_GetError() << endl;
+        exit(1);
+    }
+
+    atexit(SDL_Quit);
+
+    SDL_Window* window = SDL_CreateWindow("Fingsics", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+    if (window == NULL) {
+        cerr << "Failed to initialize view mode: " << SDL_GetError() << endl;
+        exit(1);
+    }
+    SDL_GL_CreateContext(window);
+
+    return window;
+}
+
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
+    SDL_Event event;
+    int xm, ym;
+
+    SDL_GetMouseState(&xm, &ym);
+    while (SDL_PollEvent(&event)) {
+        camera->update(event);
+        switch (event.type) {
+        case SDL_QUIT:
+            quit = true;
+            break;
+        case SDL_KEYUP: {
+            switch (event.key.keysym.sym) {
+            case SDLK_ESCAPE:
+                quit = true;
+                break;
+            case SDLK_q:
+                quit = true;
+                break;
+            case SDLK_p:
+                pause = !pause;
+                break;
+            case SDLK_SPACE:
+                pause = !pause;
+                break;
+            case SDLK_m:
+                slowMotion = !slowMotion;
+                break;
+            case SDLK_f:
+                draw = !draw;
+                break;
+            case SDLK_o:
+                drawOBBs = !drawOBBs;
+                break;
+            case SDLK_i:
+                drawAABBs = !drawAABBs;
+                break;
+            case SDLK_c:
+                if (camera == centeredCamera) camera = freeCamera;
+                else camera = centeredCamera;
+                break;
+            default:
+                break;
+            }
+            break;
+        }
+        case SDL_KEYDOWN: {
+            if (config.runMode != RunMode::replay) break;
+            switch (event.key.keysym.sym) {
+            case SDLK_UP:
+                nframe = max(0, nframe - 600);
+                break;
+            case SDLK_DOWN:
+                nframe = min(config.stopAtFrame - 1, nframe + 600);
+                break;
+            case SDLK_LEFT:
+                nframe = max(0, nframe - 60);
+                break;
+            case SDLK_RIGHT:
+                nframe = min(config.stopAtFrame - 1, nframe + 60);
+                break;
+            case SDLK_COMMA:
+                pause = true;
+                nframe = max(0, nframe - 1);
+                break;
+            case SDLK_PERIOD:
+                pause = true;
+                nframe = min(config.stopAtFrame - 1, nframe + 1);
+                break;
+            default:
+                break;
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
+}
 
 void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
     float minFrameTime = 1.0 / fps;
@@ -68,6 +167,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
     SceneRecorder* sceneRecorder = config.shouldRecordData() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
+
+    SceneRenderer sceneRenderer = SceneRenderer(objects, numObjects, config.numLatLongs, config.numLatLongs);
 
     // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = NULL;
@@ -114,20 +215,22 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
     }
     
+    sceneRenderer.initializeOpenGL(config.windowWidth, config.windowHeight);
+
     while (!quit && (config.stopAtFrame == -1 || nframe < config.stopAtFrame)) {
         if (config.runMode == RunMode::replay) {
             for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
         }
 
         if (config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) {
-            setupFrame();
+            sceneRenderer.setupFrame();
             camera->lookAt();
-            setLighting();
+            sceneRenderer.setLighting();
+            sceneRenderer.drawAxis();
 
-            drawAxis();
             // Draw objects
-            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs);
-            if (!config.shouldRecordVideo()) drawFPSCounter(fps);
+            for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
+            if (!config.shouldRecordVideo()) sceneRenderer.drawFPSCounter(fps);
         }
 
         if (!pause) {
@@ -161,19 +264,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
         }
 
         // Process events
-        checkForInput(
-            slowMotion,
-            pause,
-            quit,
-            draw,
-            drawOBBs,
-            drawAABBs,
-            nframe,
-            camera,
-            freeCamera,
-            centeredCamera,
-            config
-        );
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, camera, freeCamera, centeredCamera, config);
 
         if (config.runMode == RunMode::replay && (nframe >= config.stopAtFrame || nframe < 0)) {
             pause = true;
@@ -241,7 +332,6 @@ int main(int argc, char* argv[]) {
         Config config = ConfigLoader().getConfig();
 
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
-        initializeOpenGL(config.windowWidth, config.windowHeight);
 
         if (config.runMode == RunMode::test) {
             runTestScenes(config, window);

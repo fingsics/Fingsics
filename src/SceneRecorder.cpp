@@ -29,12 +29,12 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
     serializedObject->r = object->getColor().getR();
     serializedObject->g = object->getColor().getG();
     serializedObject->b = object->getColor().getB();
+    serializedObject->draw = object->getDraw() ? DRAW : NODRAW;
     if (Ball* ball = dynamic_cast<Ball*>(object)) {
         float radius = ball->getRadius();
         serializedObject->type = BALL;
         serializedObject->dim1 = reinterpret_cast<uint32_t&>(radius);
         serializedObject->dim2 = 0;
-        serializedObject->draw = 1;
     }
     else if (Capsule* capsule = dynamic_cast<Capsule*>(object)) {
         float radius = capsule->getRadius();
@@ -42,7 +42,6 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
         serializedObject->type = CAPSULE;
         serializedObject->dim1 = reinterpret_cast<uint32_t&>(radius);
         serializedObject->dim2 = reinterpret_cast<uint32_t&>(length);
-        serializedObject->draw = 1;
     }
     else if (Tile* tile = dynamic_cast<Tile*>(object)) {
         float length1 = tile->getAxis1Length();
@@ -50,7 +49,6 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
         serializedObject->type = TILE;
         serializedObject->dim1 = reinterpret_cast<uint32_t&>(length1);
         serializedObject->dim2 = reinterpret_cast<uint32_t&>(length2);
-        serializedObject->draw = tile->getDraw() ? DRAW : NODRAW;
     }
 }
 
@@ -84,11 +82,11 @@ Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, Seri
     }
 
     if (serializedObject.type == BALL)
-        return new Ball(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), numLatLongs, numLatLongs);
+        return new Ball(id, color, positions, rotationMatrices, frames, serializedObject.draw != NODRAW, reinterpret_cast<float&>(serializedObject.dim1));
     else if (serializedObject.type == CAPSULE)
-        return new Capsule(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), numLatLongs, numLatLongs);
+        return new Capsule(id, color, positions, rotationMatrices, frames, serializedObject.draw != NODRAW, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2));
     else if (serializedObject.type == TILE)
-        return new Tile(id, color, positions, rotationMatrices, frames, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2), serializedObject.draw != NODRAW);
+        return new Tile(id, color, positions, rotationMatrices, frames, serializedObject.draw != NODRAW, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2));
 }
 
 void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, Point* position) {

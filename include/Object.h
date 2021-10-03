@@ -31,12 +31,9 @@ class Object {
         bool isStatic;
         OBB obb;
         AABB* aabb;
+        bool draw;
 
         void applyImpulse(Point, Point);
-
-        virtual void drawOBB();
-        virtual void drawAABB();
-        virtual void drawObject() = 0;
 
         // Draw only
         bool replayMode;
@@ -44,8 +41,8 @@ class Object {
         Matrix* rotationMatrices;
         int frames;
     public:
-        Object(string, bool, Point, Point, Point, Point, Point, float, float, Color);
-        Object(string, Color, Point*, Matrix*, int);
+        Object(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool);
+        Object(string, Color, Point*, Matrix*, int, bool);
         float getMass();
         string getId();
         Point getPosition();
@@ -68,7 +65,6 @@ class Object {
         void goToFrame(int);
         void queueImpulse(Point, Point, float, float);
         void applyQueuedImpulses();
-        void draw(bool, bool);
         virtual Matrix getInertiaTensorInverse();
         virtual float getMinX() = 0;
         virtual float getMinY() = 0;
@@ -76,6 +72,7 @@ class Object {
         virtual float getMaxX() = 0;
         virtual float getMaxY() = 0;
         virtual float getMaxZ() = 0;
+        bool getDraw();
 };
 
 #endif

@@ -11,21 +11,15 @@ class Capsule : public Object {
 private:
     float radius;
     float length;
-    int lats;
-    int longs;
     Point axisDirection;
-    float* openGLVertices;
-    float* openGLNormals;
-    int openGLArrayLength;
 public:
     Point getAxisDirection();
     float getRadius();
     float getLength();
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
-    Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, float, float, int, int);
-    Capsule(string, Color, Point*, Matrix*, int, float, float, int, int);
-    void drawObject();
+    Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, float, float);
+    Capsule(string, Color, Point*, Matrix*, int, bool, float, float);
     float getMinX();
     float getMinY();
     float getMinZ();

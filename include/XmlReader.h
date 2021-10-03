@@ -25,7 +25,8 @@ struct CommonFields {
 	float elasticityCoef;
 	Color color;
 	bool isStatic;
-	CommonFields(Point, Point, Point, Point, Point, float, float, Color, bool);
+	bool draw;
+	CommonFields(Point, Point, Point, Point, Point, float, float, Color, bool, bool);
 };
 
 class XmlReader {

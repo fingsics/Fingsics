@@ -81,10 +81,7 @@
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp">
       <Filter>Source Files\Algorithms</Filter>
     </ClCompile>
-    <ClCompile Include="src\SDLHelpers.cpp">
-      <Filter>Source Files\Helpers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\OpenGLHelpers.cpp">
+    <ClCompile Include="src\SceneRenderer.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="src\CollisionResponseAlgorithm.cpp">
@@ -179,10 +176,7 @@
     <ClInclude Include="include\NarrowPhaseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="include\SDLHelpers.h">
-      <Filter>Header Files\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="include\OpenGLHelpers.h">
+    <ClInclude Include="include\SceneRenderer.h">
       <Filter>Header Files\Helpers</Filter>
     </ClInclude>
     <ClInclude Include="include\CollisionResponseAlgorithm.h">
