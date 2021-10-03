@@ -7,16 +7,23 @@
 #include "Tile.h"
 #include <freeglut.h>
 #include <fstream>
+#include <map>
 
 using namespace std;
 
 class SceneRenderer {
 private:
+    int ballArrayLength;
+    int capsuleArrayLength;
+    int tileArrayLength;
+    map<string, float*> openGLVertices;
+    map<string, float*> openGLNormals;
+    int openGLArrayLength(Object*);
     void drawAABB(Object*);
     void drawOBB(Object*);
-    void drawBall(Ball*);
-    void drawCapsule(Capsule*);
-    void drawTile(Tile*);
+    void initializeBallArrays(Ball*, int, int);
+    void initializeCapsuleArrays(Capsule*, int, int);
+    void initializeTileArrays(Tile*);
     void drawF(float, float, float, float, float);
     void drawP(float, float, float, float, float);
     void drawS(float, float, float, float, float);
@@ -31,6 +38,7 @@ private:
     void draw8(float, float, float, float, float);
     void draw9(float, float, float, float, float);
 public:
+    SceneRenderer(Object**, int, int, int);
 	void initializeOpenGL(int, int);
 	void setupFrame();
 	void drawAxis();

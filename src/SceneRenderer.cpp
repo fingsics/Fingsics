@@ -1,5 +1,19 @@
 #include "../include/SceneRenderer.h";
 
+SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int longs) {
+    this->ballArrayLength = ((lats + 1) * (longs + 1)) * 2;
+    this->capsuleArrayLength = ((lats + 1) * (longs + 1) + (longs + 1)) * 2;
+    this->tileArrayLength = 4;
+    for (int i = 0; i < numObjects; i++) {
+        if (Ball* ball = dynamic_cast<Ball*>(objects[i]))
+            initializeBallArrays(ball, lats, longs);
+        else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i]))
+            initializeCapsuleArrays(capsule, lats, longs);
+        else if (Tile* tile = dynamic_cast<Tile*>(objects[i]))
+            initializeTileArrays(tile);
+    }
+}
+
 void SceneRenderer::initializeOpenGL(int resolutionWidth, int resolutionHeight) {
     glMatrixMode(GL_PROJECTION);
     glClearColor(0, 0, 0, 1);
@@ -124,34 +138,43 @@ void SceneRenderer::drawAABB(Object* object) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
+int SceneRenderer::openGLArrayLength(Object* object) {
+    if (dynamic_cast<Ball*>(object)) return ballArrayLength;
+    else if (dynamic_cast<Capsule*>(object)) return capsuleArrayLength;
+    else if (dynamic_cast<Tile*>(object)) return tileArrayLength;
+    return 0;
+}
+
 void SceneRenderer::drawObject(Object* object, bool drawOBB, bool drawAABB) {
     if (drawOBB && !dynamic_cast<Tile*>(object)) this->drawOBB(object);
     if (drawAABB) this->drawAABB(object);
 
-    Ball* ballCast = dynamic_cast<Ball*>(object);
-    Tile* tileCast = dynamic_cast<Tile*>(object);
-    Capsule* capsuleCast = dynamic_cast<Capsule*>(object);
+    float* vertices = openGLVertices[object->getId()];
+    float* normals = openGLNormals[object->getId()];
+    int length = openGLArrayLength(object);
 
-    if (ballCast) drawBall(ballCast);
-    else if (tileCast) drawTile(tileCast);
-    else if (capsuleCast) drawCapsule(capsuleCast);
+
+    glPushMatrix();
+    glTranslatef(object->getPosition().getX(), object->getPosition().getY(), object->getPosition().getZ());
+    glMultMatrixf(object->getRotationMatrix().getOpenGLRotationMatrix());
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
+    glNormalPointer(GL_FLOAT, 0, normals);
+    glColor3ub(object->getColor().getR(), object->getColor().getG(), object->getColor().getB());
+    glDrawArrays(GL_QUAD_STRIP, 0, length);
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glPopMatrix();
 }
 
-void SceneRenderer::drawBall(Ball* ball) {
-    glPushMatrix();
-
-    Color color = ball->getColor();
-    Point position = ball->getPosition();
+void SceneRenderer::initializeBallArrays(Ball* ball, int lats, int longs) {
     float radius = ball->getRadius();
-    Matrix rotationMatrix = ball->getRotationMatrix();
-    int lats = ball->getLats();
-    int longs = ball->getLongs();
-
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
+    int arrayLength = ((lats + 1) * (longs + 1)) * 2 * 3;
+    float* vertices = new float[arrayLength];
+    float* normals = new float[arrayLength];
 
     int arrayIndex = 0;
-
     for (int i = 0; i <= lats; i++) {
         float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
         float z0 = sin(lat0);
@@ -171,73 +194,36 @@ void SceneRenderer::drawBall(Ball* ball) {
             s2 = ((float)i + 1) / lats;
             t = ((float)j) / longs;
 
-            openGLNormals[arrayIndex] = x * zr0;
-            openGLNormals[arrayIndex + 1] = y * zr0;
-            openGLNormals[arrayIndex + 2] = z0;
+            normals[arrayIndex] = x * zr0;
+            normals[arrayIndex + 1] = y * zr0;
+            normals[arrayIndex + 2] = z0;
 
-            openGLVertices[arrayIndex] = radius * x * zr0;
-            openGLVertices[arrayIndex + 1] = radius * y * zr0;
-            openGLVertices[arrayIndex + 2] = radius * z0;
+            vertices[arrayIndex] = radius * x * zr0;
+            vertices[arrayIndex + 1] = radius * y * zr0;
+            vertices[arrayIndex + 2] = radius * z0;
 
-            openGLNormals[arrayIndex + 3] = x * zr1;
-            openGLNormals[arrayIndex + 4] = y * zr1;
-            openGLNormals[arrayIndex + 5] = z1;
+            normals[arrayIndex + 3] = x * zr1;
+            normals[arrayIndex + 4] = y * zr1;
+            normals[arrayIndex + 5] = z1;
 
-            openGLVertices[arrayIndex + 3] = radius * x * zr1;
-            openGLVertices[arrayIndex + 4] = radius * y * zr1;
-            openGLVertices[arrayIndex + 5] = radius * z1;
+            vertices[arrayIndex + 3] = radius * x * zr1;
+            vertices[arrayIndex + 4] = radius * y * zr1;
+            vertices[arrayIndex + 5] = radius * z1;
 
             arrayIndex += 6;
         }
     }
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, openGLVertices);
-    glNormalPointer(GL_FLOAT, 0, openGLNormals);
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength / 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
 
-    glPopMatrix();
+    this->openGLVertices[ball->getId()] = vertices;
+    this->openGLNormals[ball->getId()] = normals;
 }
 
-void SceneRenderer::drawTile(Tile* tile) {
-    if (!tile->getDraw()) return;
-    Color color = tile->getColor();
-    Point position = tile->getPosition();
-    Matrix rotationMatrix = tile->getRotationMatrix();
-    float axis1Length = tile->getAxis1Length();
-    float axis2Length = tile->getAxis2Length();
-
-    glPushMatrix();
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glBegin(GL_QUADS);
-    glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, axis2Length / 2.0);
-    glVertex3d(axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glVertex3d(-axis1Length / 2.0, 0, -axis2Length / 2.0);
-    glEnd();
-    glPopMatrix();
-}
-
-void SceneRenderer::drawCapsule(Capsule* capsule) {
-    glPushMatrix();
-
-    Color color = capsule->getColor();
-    Point position = capsule->getPosition();
+void SceneRenderer::initializeCapsuleArrays(Capsule* capsule, int lats, int longs) {
     float radius = capsule->getRadius();
     float length = capsule->getLength();
-    Matrix rotationMatrix = capsule->getRotationMatrix();
-    int lats = capsule->getLats();
-    int longs = capsule->getLongs();
-
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glTranslatef(position.getX(), position.getY(), position.getZ());
-    glMultMatrixf(rotationMatrix.getOpenGLRotationMatrix());
-    glTranslatef(0, 0, -length / 2.0);
+    int arrayLength = ((lats + 1) * (longs + 1) + (longs + 1)) * 2 * 3;
+    float* vertices = new float[arrayLength];
+    float* normals = new float[arrayLength];
 
     int arrayIndex = 0;
     float zDisplacement = 0;
@@ -261,21 +247,21 @@ void SceneRenderer::drawCapsule(Capsule* capsule) {
             float s2 = ((float)i + 1) / lats;
             float t = ((float)j) / lats;
 
-            openGLNormals[arrayIndex] = x * zr0;
-            openGLNormals[arrayIndex + 1] = y * zr0;
-            openGLNormals[arrayIndex + 2] = z0;
+            normals[arrayIndex] = x * zr0;
+            normals[arrayIndex + 1] = y * zr0;
+            normals[arrayIndex + 2] = z0;
 
-            openGLVertices[arrayIndex] = radius * x * zr0;
-            openGLVertices[arrayIndex + 1] = radius * y * zr0;
-            openGLVertices[arrayIndex + 2] = radius * z0 + zDisplacement;
+            vertices[arrayIndex] = radius * x * zr0;
+            vertices[arrayIndex + 1] = radius * y * zr0;
+            vertices[arrayIndex + 2] = radius * z0 + zDisplacement;
 
-            openGLNormals[arrayIndex + 3] = x * zr1;
-            openGLNormals[arrayIndex + 4] = y * zr1;
-            openGLNormals[arrayIndex + 5] = z1;
+            normals[arrayIndex + 3] = x * zr1;
+            normals[arrayIndex + 4] = y * zr1;
+            normals[arrayIndex + 5] = z1;
 
-            openGLVertices[arrayIndex + 3] = radius * x * zr1;
-            openGLVertices[arrayIndex + 4] = radius * y * zr1;
-            openGLVertices[arrayIndex + 5] = radius * z1 + zDisplacement;
+            vertices[arrayIndex + 3] = radius * x * zr1;
+            vertices[arrayIndex + 4] = radius * y * zr1;
+            vertices[arrayIndex + 5] = radius * z1 + zDisplacement;
 
             arrayIndex += 6;
         }
@@ -290,21 +276,21 @@ void SceneRenderer::drawCapsule(Capsule* capsule) {
                 float s2 = ((float)i + 1) / lats;
                 float t = ((float)j) / longs;
 
-                openGLNormals[arrayIndex] = x * zr1;
-                openGLNormals[arrayIndex + 1] = y * zr1;
-                openGLNormals[arrayIndex + 2] = z1;
+                normals[arrayIndex] = x * zr1;
+                normals[arrayIndex + 1] = y * zr1;
+                normals[arrayIndex + 2] = z1;
 
-                openGLVertices[arrayIndex] = radius * x * zr1;
-                openGLVertices[arrayIndex + 1] = radius * y * zr1;
-                openGLVertices[arrayIndex + 2] = radius * z1;
+                vertices[arrayIndex] = radius * x * zr1;
+                vertices[arrayIndex + 1] = radius * y * zr1;
+                vertices[arrayIndex + 2] = radius * z1;
 
-                openGLNormals[arrayIndex + 3] = x * zr1;
-                openGLNormals[arrayIndex + 4] = y * zr1;
-                openGLNormals[arrayIndex + 5] = z1;
+                normals[arrayIndex + 3] = x * zr1;
+                normals[arrayIndex + 4] = y * zr1;
+                normals[arrayIndex + 5] = z1;
 
-                openGLVertices[arrayIndex + 3] = radius * x * zr1;
-                openGLVertices[arrayIndex + 4] = radius * y * zr1;
-                openGLVertices[arrayIndex + 5] = radius * z1 + length;
+                vertices[arrayIndex + 3] = radius * x * zr1;
+                vertices[arrayIndex + 4] = radius * y * zr1;
+                vertices[arrayIndex + 5] = radius * z1 + length;
 
                 arrayIndex += 6;
             }
@@ -312,16 +298,46 @@ void SceneRenderer::drawCapsule(Capsule* capsule) {
         }
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, openGLVertices);
-    glNormalPointer(GL_FLOAT, 0, openGLNormals);
-    glColor3ub(color.getR(), color.getG(), color.getB());
-    glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength / 3);
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
+    this->openGLVertices[capsule->getId()] = vertices;
+    this->openGLNormals[capsule->getId()] = normals;
+}
 
-    glPopMatrix();
+void SceneRenderer::initializeTileArrays(Tile* tile) {
+    float axis1Length = tile->getAxis1Length() / 2.0;
+    float axis2Length = tile->getAxis2Length() / 2.0;
+    int arrayLength = 12;
+    float* vertices = new float[12];
+    vertices[0] = -axis1Length;
+    vertices[1] = 0;
+    vertices[2] = axis2Length;
+    vertices[3] = axis1Length;
+    vertices[4] = 0;
+    vertices[5] = axis2Length;
+    vertices[6] = -axis1Length;
+    vertices[7] = 0;
+    vertices[8] = -axis2Length;
+    vertices[9] = axis1Length;
+    vertices[10] = 0;
+    vertices[11] = -axis2Length;
+    float* normals = new float[12];
+    normals[0] = 0;
+    normals[1] = 1;
+    normals[2] = 0;
+    normals[3] = 0;
+    normals[4] = 1;
+    normals[5] = 0;
+    normals[6] = 0;
+    normals[7] = 1;
+    normals[8] = 0;
+    normals[9] = 0;
+    normals[10] = 1;
+    normals[11] = 0;
+    this->openGLVertices[tile->getId()] = vertices;
+    this->openGLNormals[tile->getId()] = normals;
+    //glVertex3d(-axis1Length / 2.0, 0, axis2Length / 2.0);
+    //glVertex3d(axis1Length / 2.0, 0, axis2Length / 2.0);
+    //glVertex3d(axis1Length / 2.0, 0, -axis2Length / 2.0);
+    //glVertex3d(-axis1Length / 2.0, 0, -axis2Length / 2.0);
 }
 
 void SceneRenderer::drawF(float up, float left, float height, float width, float mid) {

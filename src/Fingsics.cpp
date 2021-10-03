@@ -140,7 +140,6 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
 SimulationResults* runSimulation(Config config, SDL_Window* window) {
     SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
     XmlReader xmlReader = XmlReader(config.sceneName + ".xml", config.numLatLongs);
-    SceneRenderer sceneRenderer = SceneRenderer();
 
     // Camera
     Camera* centeredCamera = new CenteredCamera();
@@ -168,6 +167,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
     SceneRecorder* sceneRecorder = config.shouldRecordData() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
+
+    SceneRenderer sceneRenderer = SceneRenderer(objects, numObjects, config.numLatLongs, config.numLatLongs);
 
     // Collision detection algorithms
     BroadPhaseAlgorithm* broadPhaseAlgorithm = NULL;
@@ -228,7 +229,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             sceneRenderer.drawAxis();
 
             // Draw objects
-            for (int i = 0; i < numObjects; i++) objects[i]->draw(drawOBBs, drawAABBs);
+            for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
             if (!config.shouldRecordVideo()) sceneRenderer.drawFPSCounter(fps);
         }
 
