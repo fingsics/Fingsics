@@ -15,15 +15,18 @@ class SceneRenderer {
 private:
     int ballArrayLength;
     int capsuleArrayLength;
+    int rocketArrayLength;
     int tileArrayLength;
     map<string, float*> openGLVertices;
     map<string, float*> openGLNormals;
+    uint32_t* rocketColors;
     int openGLArrayLength(Object*);
     void drawAABB(Object*);
     void drawOBB(Object*);
     void initializeBallArrays(Ball*, int, int);
     void initializeCapsuleArrays(Capsule*, int, int);
     void initializeTileArrays(Tile*);
+    void initializeRocketArrays(Capsule*, int, int);
     void drawF(float, float, float, float, float);
     void drawP(float, float, float, float, float);
     void drawS(float, float, float, float, float);
@@ -43,6 +46,7 @@ public:
 	void setupFrame();
 	void drawAxis();
     void drawObject(Object*, bool, bool);
+    void drawRocket(Capsule*);
 	void setLighting();
 	void drawFPSCounter(int);
     void drawCharacter(char, float, float, float, float, float);

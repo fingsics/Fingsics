@@ -6,6 +6,7 @@ Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatri
     this->length = length;
     this->radius = radius;
 
+    this->drawRocket = draw;
     this->baseInertiaTensor = Matrix();
     this->invertedInertiaTensor = Point();
     this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, length / 2 + radius), rotationMatrices[0]) : OBB();
@@ -15,6 +16,7 @@ Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Po
     this->length = length;
     this->radius = radius;
     this->axisDirection = rotationMatrix * Point(0, 0, 1);
+    this->drawRocket = draw;
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
     float extraLengthFactor = 2.0 / 3.0;
@@ -89,4 +91,8 @@ float Capsule::getMaxZ() {
     float z1 = getCylinderPositiveEnd().getZ();
     float z2 = getCylinderNegativeEnd().getZ();
     return (z1 > z2 ? z1 : z2) + radius;
+}
+
+bool Capsule::getDrawRocket() {
+    return drawRocket;
 }

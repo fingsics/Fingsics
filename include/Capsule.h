@@ -11,6 +11,7 @@ class Capsule : public Object {
 private:
     float radius;
     float length;
+    bool drawRocket;
     Point axisDirection;
 public:
     Point getAxisDirection();
@@ -26,6 +27,7 @@ public:
     float getMaxX();
     float getMaxY();
     float getMaxZ();
+    bool getDrawRocket();
     void setRotation(Matrix);
 };
 
