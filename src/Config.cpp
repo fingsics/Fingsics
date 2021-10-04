@@ -7,7 +7,7 @@ Config::Config(map<string, string> config) {
     windowWidth = 1280;
     windowHeight = 720;
     recordVideo = false;
-    recordData = false;
+    recordScene = false;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::defaultMode;
@@ -15,7 +15,7 @@ Config::Config(map<string, string> config) {
     stopAtFrame = 300;
     bpAlgorithm = BPAlgorithmChoice::none;
     sceneName = "";
-    logOutputFile = "";
+    replayName = "";
 
     auto it = config.find("FPS");
     if (it != config.end()) {
@@ -37,9 +37,9 @@ Config::Config(map<string, string> config) {
         recordVideo = !it->second.compare("true");
     }
 
-    it = config.find("RECORD_DATA");
+    it = config.find("RECORD_SCENE");
     if (it != config.end()) {
-        recordData = !it->second.compare("true");
+        recordScene = !it->second.compare("true");
     }
 
     it = config.find("NUM_LAT_LONGS");
@@ -83,9 +83,9 @@ Config::Config(map<string, string> config) {
         sceneName = it->second;
     }
 
-    it = config.find("LOG_OUTPUT_FILE_NAME");
+    it = config.find("SCENE_REPLAY_FOLDER_NAME");
     if (it != config.end()) {
-        logOutputFile = it->second;
+        replayName = it->second;
     }
 }
 
@@ -93,8 +93,8 @@ bool Config::shouldRecordVideo() {
     return runMode == RunMode::defaultMode && recordVideo;
 }
 
-bool Config::shouldRecordData() {
-    return runMode == RunMode::defaultMode && recordData;
+bool Config::shouldRecordScene() {
+    return runMode == RunMode::defaultMode && recordScene;
 }
 
 bool Config::shouldLog() {

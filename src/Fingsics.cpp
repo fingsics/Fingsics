@@ -137,7 +137,7 @@ void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int f
     lastFrameTime = clock();
 }
 
-SimulationResults* runSimulation(Config config, SDL_Window* window) {
+SimulationResults* runSimulation(Config config, SDL_Window* window, string outputsFolder) {
     SimulationResults* results = config.shouldLog() ? new SimulationResults() : NULL;
     XmlReader xmlReader = XmlReader(config.sceneName + ".xml", config.numLatLongs);
 
@@ -162,11 +162,14 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
 
     // Scene
     vector<Object*> objectsVector;
-    if (config.runMode == RunMode::replay) objectsVector = SceneRecorder(config.sceneName + ".dat").importRecordedScene(config);
+    if (config.runMode == RunMode::replay) objectsVector = SceneRecorder("output\\" + config.replayName).importRecordedScene(config);
     else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
     int numObjects = objectsVector.size();
-    SceneRecorder* sceneRecorder = config.shouldRecordData() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, config.sceneName + ".dat") : NULL;
+
+    if (config.shouldRecordScene() && config.stopAtFrame == -1) throw std::runtime_error("To record a scene, please specify a maximum number of frames (STOP_AT_FRAME value in the config file)");
+
+    SceneRecorder* sceneRecorder = config.shouldRecordScene() ? new SceneRecorder(objects, numObjects, config.stopAtFrame, outputsFolder) : NULL;
 
     SceneRenderer sceneRenderer = SceneRenderer(objects, numObjects, config.numLatLongs, config.numLatLongs);
 
@@ -210,8 +213,9 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     uint8_t* rgb = NULL;
     VideoRecorder* recorder = new VideoRecorder();
     if (config.shouldRecordVideo()) {
-        if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
-        string fileName = "recordings\\" + config.sceneName + ".mpg";
+        if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
+        if (!filesystem::is_directory(outputsFolder) || !filesystem::exists(outputsFolder)) filesystem::create_directory(outputsFolder);
+        string fileName = outputsFolder + "\\" + "scene.mpg";
         recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
     }
     
@@ -241,7 +245,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
             }
 
             // Record data
-            if (config.shouldRecordData()) {
+            if (config.shouldRecordScene()) {
                 sceneRecorder->recordFrame(objects, numObjects, nframe);
             }
 
@@ -290,14 +294,14 @@ SimulationResults* runSimulation(Config config, SDL_Window* window) {
     }
 
     // Store data
-    if (config.shouldRecordData()) {
+    if (config.shouldRecordScene()) {
         sceneRecorder->storeRecordedData(nframe);
     }
 
     return results;
 }
 
-void runTestScenes(Config config, SDL_Window* window) {
+void runTestScenes(Config config, SDL_Window* window, string outputsFolder) {
     list<string> testSceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
         "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
 
@@ -307,7 +311,7 @@ void runTestScenes(Config config, SDL_Window* window) {
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
         config.stopAtFrame = 300;
-        SimulationResults* results = runSimulation(config, window);
+        SimulationResults* results = runSimulation(config, window, outputsFolder);
         if (results) {
             LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);
             delete results;
@@ -315,10 +319,10 @@ void runTestScenes(Config config, SDL_Window* window) {
     }
 }
 
-void runSceneBenchmark(Config config, SDL_Window* window) {
+void runSceneBenchmark(Config config, SDL_Window* window, string outputsFolder) {
     list<SimulationResults> benchmarkResults = list<SimulationResults>();
     for (int i = 0; i < config.numRuns; i++) {
-        SimulationResults* results = runSimulation(config, window);
+        SimulationResults* results = runSimulation(config, window, outputsFolder);
         if (results) {
             benchmarkResults.push_back(*results);
             delete results;
@@ -331,24 +335,30 @@ int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
 
+        time_t time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        std::tm* time2 = std::localtime(&time);
+        string timeString = to_string(time2->tm_mday) + "-" + to_string(time2->tm_mon + 1) + "-" + to_string(time2->tm_year + 1900) + "-" + to_string(time2->tm_hour) + "_" + to_string(time2->tm_min);
+        string outputsFolder = "output\\" + config.sceneName + "_" + timeString;
+
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
 
         if (config.runMode == RunMode::test) {
-            runTestScenes(config, window);
+            runTestScenes(config, window, outputsFolder);
         }
         if (config.runMode == RunMode::benchmark) {
-            runSceneBenchmark(config, window);
+            runSceneBenchmark(config, window, outputsFolder);
         }
         if (config.runMode == RunMode::defaultMode) {
-            SimulationResults* results = runSimulation(config, window);
+            SimulationResults* results = runSimulation(config, window, outputsFolder);
             if (results && config.log) {
                 if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
-                LoggingManager::logRunResults("output", config.logOutputFile, *results);
+                if (!filesystem::is_directory(outputsFolder) || !filesystem::exists(outputsFolder)) filesystem::create_directory(outputsFolder);
+                LoggingManager::logRunResults(outputsFolder, "log.csv", *results);
                 delete results;
             }
         }
         if (config.runMode == RunMode::replay) {
-            runSimulation(config, window);
+            runSimulation(config, window, outputsFolder);
         }
     //}
     //catch (const std::exception& ex) {

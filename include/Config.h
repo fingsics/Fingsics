@@ -19,15 +19,15 @@ struct Config {
 	int windowWidth;
 	int windowHeight;
 	bool recordVideo;
-	bool recordData;
+	bool recordScene;
+	string replayName;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;
 	RunMode runMode;
 	int numRuns;
 	int stopAtFrame;
-	string logOutputFile;
 	bool shouldRecordVideo();
-	bool shouldRecordData();
+	bool shouldRecordScene();
 	bool shouldLog();
 	string getBPCDDescription();
 	Config(map<string, string>);

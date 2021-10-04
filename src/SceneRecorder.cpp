@@ -109,9 +109,10 @@ void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
 }
 
 void SceneRecorder::storeRecordedData(int actualFrameCount) {
-    if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
+    if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
+    if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
 
-    ofstream file("recordings\\" + path, ios::out | ios::binary);
+    ofstream file(path + "\\" + "scene.dat", ios::out | ios::binary);
     if (!file) throw "Cannot open file!";
 
     uint32_t numObjects = reinterpret_cast<uint32_t&>(this->numObjects);
@@ -143,8 +144,8 @@ void SceneRecorder::storeRecordedData(int actualFrameCount) {
 }
 
 vector<Object*> SceneRecorder::importRecordedScene(Config config) {
-    string fileName = "recordings\\" + path;
-    if (!filesystem::is_directory("recordings") || !filesystem::exists("recordings")) filesystem::create_directory("recordings");
+    string fileName = path + "\\scene.dat";
+    if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
     if (!filesystem::exists(fileName) || !filesystem::is_regular_file(fileName)) {
         string error = "Couldn't load the replay file ";
         throw std::runtime_error(error + fileName);
