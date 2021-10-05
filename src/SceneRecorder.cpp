@@ -11,7 +11,6 @@ SceneRecorder::SceneRecorder(string path) {
 
 SceneRecorder::SceneRecorder(Object** objects, int numObjects, int frames, string path) {
     this->numObjects = numObjects;
-    this->frames = frames;
     this->objects = new SerializedObject[numObjects];
     this->positions = new SerializedPosition*[numObjects];
     this->rotationMatrices = new SerializedMatrix*[numObjects];
@@ -113,7 +112,7 @@ void SceneRecorder::storeRecordedData(int actualFrameCount) {
     if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
 
     ofstream file(path + "\\" + "scene.dat", ios::out | ios::binary);
-    if (!file) throw "Cannot open file!";
+    if (!file) throw std::runtime_error("Cannot open scene recording file!");
 
     uint32_t numObjects = reinterpret_cast<uint32_t&>(this->numObjects);
     uint32_t frames = reinterpret_cast<uint32_t&>(actualFrameCount);
@@ -140,10 +139,10 @@ void SceneRecorder::storeRecordedData(int actualFrameCount) {
     }
 
     file.close();
-    if (!file.good()) throw "Error occurred at writing time!";
+    if (!file.good()) throw std::runtime_error("Error occurred at reading time!");
 }
 
-vector<Object*> SceneRecorder::importRecordedScene(Config config) {
+pair<vector<Object*>, int> SceneRecorder::importRecordedScene(Config config) {
     string fileName = path + "\\scene.dat";
     if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
     if (!filesystem::exists(fileName) || !filesystem::is_regular_file(fileName)) {
@@ -193,7 +192,7 @@ vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     config.stopAtFrame = frames;
 
     file.close();
-    if (!file.good()) throw "Error occurred at reading time!";
+    if (!file.good()) throw std::runtime_error("Error occurred at reading time!");
 
     delete[] serializedObjects;
     for (int i = 0; i < numObjects; i++) {
@@ -203,5 +202,5 @@ vector<Object*> SceneRecorder::importRecordedScene(Config config) {
     delete[] serializedPositions;
     delete[] serializedRotationMatrices;
 
-    return res;
+    return pair(res, frames);
 }
