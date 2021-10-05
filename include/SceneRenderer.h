@@ -8,6 +8,7 @@
 #include <freeglut.h>
 #include <fstream>
 #include <map>
+#include <cmath>
 
 using namespace std;
 
@@ -15,7 +16,6 @@ class SceneRenderer {
 private:
     int ballArrayLength;
     int capsuleArrayLength;
-    int rocketArrayLength;
     int tileArrayLength;
     map<string, float*> openGLVertices;
     map<string, float*> openGLNormals;
@@ -40,6 +40,10 @@ private:
     void draw7(float, float, float, float, float);
     void draw8(float, float, float, float, float);
     void draw9(float, float, float, float, float);
+
+    int rocketArrayLength1;
+    int rocketArrayLength2;
+    int rocketArrayLength3;
 public:
     SceneRenderer(Object**, int, int, int);
 	void initializeOpenGL(int, int);
