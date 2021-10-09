@@ -14,7 +14,6 @@ enum class RunMode { defaultMode, test, benchmark, replay };
 
 struct Config {
 	string sceneName;
-	int fps;
 	int numLatLongs;
 	int windowWidth;
 	int windowHeight;

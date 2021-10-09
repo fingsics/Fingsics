@@ -26,6 +26,7 @@
 #include <filesystem>
 
 #define _USE_MATH_DEFINES
+#define FPS_CAP 60
 
 using namespace std;
 
@@ -127,8 +128,8 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, int fps, bool shouldSleep) {
-    float minFrameTime = 1.0 / fps;
+void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, bool shouldSleep) {
+    float minFrameTime = 1.0 / FPS_CAP;
     secondsSinceLastFrame = (float)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
     if (secondsSinceLastFrame < minFrameTime && shouldSleep) {
         std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
@@ -220,7 +221,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
         if (!filesystem::is_directory(outputsFolder) || !filesystem::exists(outputsFolder)) filesystem::create_directory(outputsFolder);
         string fileName = outputsFolder + "\\" + "scene.mpg";
-        recorder->ffmpeg_encoder_start(fileName.c_str(), config.fps, config.windowWidth, config.windowHeight);
+        recorder->ffmpeg_encoder_start(fileName.c_str(), FPS_CAP, config.windowWidth, config.windowHeight);
     }
     
     sceneRenderer.initializeOpenGL(config.windowWidth, config.windowHeight);
@@ -262,7 +263,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
                 if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
                 CollisionResponseAlgorithm::collisionResponse(collisions);
                 if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-                CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fps, slowMotion);
+                CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / FPS_CAP, slowMotion);
                 if (config.shouldLog()) {
                     moveEnd = std::chrono::system_clock::now();
                     results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, narrowEnd, responseEnd, moveEnd);
@@ -280,11 +281,11 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         }
 
         // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.fps, config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay);
+        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay);
 
         if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
             lastFPSDrawTime = std::chrono::system_clock::now();
-            fps = (int)(1.0 / timeSinceLastFrame) > config.fps ? config.fps : (int)(1.0 / timeSinceLastFrame);
+            fps = (int)(1.0 / timeSinceLastFrame) > FPS_CAP ? FPS_CAP : (int)(1.0 / timeSinceLastFrame);
         }
 
         SDL_GL_SwapWindow(window);

@@ -3,7 +3,6 @@
 using namespace std;
 
 Config::Config(map<string, string> config) {
-    fps = 60;
     windowWidth = 1280;
     windowHeight = 720;
     recordVideo = false;
@@ -17,12 +16,7 @@ Config::Config(map<string, string> config) {
     sceneName = "";
     replayName = "";
 
-    auto it = config.find("FPS");
-    if (it != config.end()) {
-        fps = stoi(it->second);
-    }
-
-    it = config.find("WINDOW_WIDTH");
+    auto it = config.find("WINDOW_WIDTH");
     if (it != config.end()) {
         windowWidth = stoi(it->second);
     }
@@ -42,7 +36,7 @@ Config::Config(map<string, string> config) {
         recordScene = !it->second.compare("true");
     }
 
-    it = config.find("NUM_LAT_LONGS");
+    it = config.find("OBJECT_DEFINITION");
     if (it != config.end()) {
         numLatLongs = stoi(it->second);
     }

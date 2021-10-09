@@ -1,6 +1,5 @@
 # Main configs
 SCENE_FILE_NAME=scene
-FPS=60
 WINDOW_WIDTH=1280
 WINDOW_HEIGHT=720
 
@@ -10,7 +9,7 @@ RECORD_DATA=false
 LOG=false
 
 # Object drawing
-NUM_LAT_LONGS=8
+OBJECT_DEFINITION=8
 
 # Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
 BROAD_PHASE=SAP
