@@ -239,16 +239,15 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
             // Draw objects
             for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
-            if (!config.shouldRecordVideo()) sceneRenderer.drawFPSCounter(fps);
-        }
-
-        if (!pause) {
-            // Record video
-            if (config.shouldRecordVideo()) {
+            if (!pause && config.shouldRecordVideo()) {
+                // Record video
                 recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
                 recorder->ffmpeg_encoder_encode_frame(rgb);
             }
+            sceneRenderer.drawFPSCounter(fps);
+        }
 
+        if (!pause) {
             // Record data
             if (config.shouldRecordScene()) {
                 sceneRecorder->recordFrame(objects, numObjects, nframe);
