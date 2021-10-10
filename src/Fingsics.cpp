@@ -244,7 +244,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
                 recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
                 recorder->ffmpeg_encoder_encode_frame(rgb);
             }
-            sceneRenderer.drawFPSCounter(fps);
+            if (config.showFPS) sceneRenderer.drawFPSCounter(fps);
         }
 
         if (!pause) {

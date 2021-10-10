@@ -9,8 +9,9 @@ RECORD_VIDEO=false
 RECORD_SCENE=false
 LOG=false
 
-# Object drawing
+# Drawing
 OBJECT_DEFINITION=8
+SHOW_FPS=true
 
 # Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
 BROAD_PHASE=SAP

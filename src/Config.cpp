@@ -8,6 +8,7 @@ Config::Config(map<string, string> config) {
     windowHeight = 720;
     recordVideo = false;
     recordScene = false;
+    showFPS = true;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::defaultMode;
@@ -59,6 +60,11 @@ Config::Config(map<string, string> config) {
     it = config.find("LOG");
     if (it != config.end()) {
         log = !it->second.compare("true");
+    }
+
+    it = config.find("SHOW_FPS");
+    if (it != config.end()) {
+        showFPS = !it->second.compare("true");
     }
 
     it = config.find("RUN_MODE");
