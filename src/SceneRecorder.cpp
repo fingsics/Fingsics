@@ -107,7 +107,7 @@ void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
     }
 }
 
-void SceneRecorder::storeRecordedData(int actualFrameCount) {
+void SceneRecorder::storeRecordedData(int actualFrameCount, int fpsCap) {
     if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
     if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
 
@@ -116,8 +116,10 @@ void SceneRecorder::storeRecordedData(int actualFrameCount) {
 
     uint32_t numObjects = reinterpret_cast<uint32_t&>(this->numObjects);
     uint32_t frames = reinterpret_cast<uint32_t&>(actualFrameCount);
+    uint32_t fps = fpsCap;
     file.write((char*)&numObjects, sizeof(uint32_t));
     file.write((char*)&frames, sizeof(uint32_t));
+    file.write((char*)&fps, sizeof(uint32_t));
 
     // Objects
     for (int i = 0; i < this->numObjects; i++) {
@@ -142,7 +144,7 @@ void SceneRecorder::storeRecordedData(int actualFrameCount) {
     if (!file.good()) throw std::runtime_error("Error occurred at reading time!");
 }
 
-pair<vector<Object*>, int> SceneRecorder::importRecordedScene(Config config) {
+tuple<vector<Object*>, int, int> SceneRecorder::importRecordedScene(Config config) {
     string fileName = path + "\\scene.dat";
     if (!filesystem::is_directory(path) || !filesystem::exists(path)) filesystem::create_directory(path);
     if (!filesystem::exists(fileName) || !filesystem::is_regular_file(fileName)) {
@@ -154,10 +156,13 @@ pair<vector<Object*>, int> SceneRecorder::importRecordedScene(Config config) {
 
     uint32_t serializedNumObjects;
     uint32_t serializedFrames;
+    uint32_t serializedFPS;
     file.read((char*)&serializedNumObjects, sizeof(uint32_t));
     file.read((char*)&serializedFrames, sizeof(uint32_t));
+    file.read((char*)&serializedFPS, sizeof(uint32_t));
     int numObjects = reinterpret_cast<int&>(serializedNumObjects);
     int frames = reinterpret_cast<int&>(serializedFrames);
+    int fps = reinterpret_cast<int&>(serializedFPS);
 
     SerializedObject* serializedObjects = new SerializedObject[numObjects];
     SerializedPosition** serializedPositions = new SerializedPosition*[numObjects];
@@ -202,5 +207,5 @@ pair<vector<Object*>, int> SceneRecorder::importRecordedScene(Config config) {
     delete[] serializedPositions;
     delete[] serializedRotationMatrices;
 
-    return pair(res, frames);
+    return tuple(res, frames, fps);
 }

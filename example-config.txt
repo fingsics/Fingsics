@@ -6,7 +6,7 @@ WINDOW_HEIGHT=720
 
 # Outputs
 RECORD_VIDEO=false
-RECORD_DATA=false
+RECORD_SCENE=false
 LOG=false
 
 # Object drawing

@@ -163,9 +163,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     // Scene
     vector<Object*> objectsVector;
     if (config.runMode == RunMode::replay) {
-        pair<vector<Object*>, int> recordedScene = SceneRecorder("output\\" + config.replayName).importRecordedScene(config);
-        objectsVector = recordedScene.first;
-        config.stopAtFrame = recordedScene.second;
+        tuple<vector<Object*>, int, int> recordedScene = SceneRecorder("output\\" + config.replayName).importRecordedScene(config);
+        objectsVector = get<0>(recordedScene);
+        config.stopAtFrame = get<1>(recordedScene);
+        config.fpsCap = get<2>(recordedScene);
     }
     else objectsVector = xmlReader.getObjects();
     Object** objects = &objectsVector[0];
@@ -298,7 +299,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
     // Store data
     if (config.shouldRecordScene()) {
-        sceneRecorder->storeRecordedData(nframe);
+        sceneRecorder->storeRecordedData(nframe, config.fpsCap);
     }
 
     return results;
