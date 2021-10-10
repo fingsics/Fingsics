@@ -3,6 +3,7 @@
 using namespace std;
 
 Config::Config(map<string, string> config) {
+    fpsCap = 60;
     windowWidth = 1280;
     windowHeight = 720;
     recordVideo = false;
@@ -16,7 +17,12 @@ Config::Config(map<string, string> config) {
     sceneName = "";
     replayName = "";
 
-    auto it = config.find("WINDOW_WIDTH");
+    auto it = config.find("FPS_CAP");
+    if (it != config.end()) {
+        fpsCap = stoi(it->second);
+    }
+
+    it = config.find("WINDOW_WIDTH");
     if (it != config.end()) {
         windowWidth = stoi(it->second);
     }
