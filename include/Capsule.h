@@ -19,8 +19,8 @@ public:
     float getLength();
     Point getCylinderPositiveEnd();
     Point getCylinderNegativeEnd();
-    Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, float, float);
-    Capsule(string, Color, Point*, Matrix*, int, bool, float, float);
+    Capsule(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, bool, float, float);
+    Capsule(string, Color, Point*, Matrix*, int, bool, bool, float, float);
     float getMinX();
     float getMinY();
     float getMinZ();

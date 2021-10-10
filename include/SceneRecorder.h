@@ -17,6 +17,7 @@ using namespace std;
 constexpr uint32_t BALL = 0;
 constexpr uint32_t CAPSULE = 1;
 constexpr uint32_t TILE = 2;
+constexpr uint32_t ROCKET = 3;
 
 constexpr uint8_t NODRAW = 0b00000000;
 constexpr uint8_t DRAW = 0b11111111;

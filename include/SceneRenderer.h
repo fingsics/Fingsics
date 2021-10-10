@@ -19,7 +19,6 @@ private:
     int tileArrayLength;
     map<string, float*> openGLVertices;
     map<string, float*> openGLNormals;
-    uint32_t* rocketColors;
     int openGLArrayLength(Object*);
     void drawAABB(Object*);
     void drawOBB(Object*);
@@ -43,7 +42,6 @@ private:
 
     int rocketArrayLength1;
     int rocketArrayLength2;
-    int rocketArrayLength3;
 public:
     SceneRenderer(Object**, int, int, int);
 	void initializeOpenGL(int, int);

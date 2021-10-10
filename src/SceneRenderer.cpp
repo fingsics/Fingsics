@@ -8,7 +8,6 @@ SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int lon
     int rocketTipRings = round((float)lats * 0.28);
     this->rocketArrayLength1 = ((rocketTipRings) * (longs + 1)) * 2;
     this->rocketArrayLength2 = ((lats + 1 - rocketTipRings) * (longs + 1)) * 2;
-    this->rocketArrayLength3 = 0;
 
     for (int i = 0; i < numObjects; i++) {
         if (Ball* ball = dynamic_cast<Ball*>(objects[i])) initializeBallArrays(ball, lats, longs);
@@ -186,14 +185,14 @@ void SceneRenderer::drawRocket(Capsule* capsule) {
     Point side3 = Point(-capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
     Point side4 = Point(-capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
 
-    Point normal1 = (side2 - up).crossProduct(side1 - up).normalize();
-    Point normal2 = (side3 - up).crossProduct(side2 - up).normalize();
-    Point normal3 = (side4 - up).crossProduct(side3 - up).normalize();
-    Point normal4 = (side1 - up).crossProduct(side4 - up).normalize();
-    Point normal5 = (side1 - down).crossProduct(side2 - down).normalize();
-    Point normal6 = (side2 - down).crossProduct(side3 - down).normalize();
-    Point normal7 = (side3 - down).crossProduct(side4 - down).normalize();
-    Point normal8 = (side4 - down).crossProduct(side1 - down).normalize();
+    Point normal1 = (side2 - up).crossProduct(side1 - up);
+    Point normal2 = (side3 - up).crossProduct(side2 - up);
+    Point normal3 = (side4 - up).crossProduct(side3 - up);
+    Point normal4 = (side1 - up).crossProduct(side4 - up);
+    Point normal5 = (side1 - down).crossProduct(side2 - down);
+    Point normal6 = (side2 - down).crossProduct(side3 - down);
+    Point normal7 = (side3 - down).crossProduct(side4 - down);
+    Point normal8 = (side4 - down).crossProduct(side1 - down);
 
     glBegin(GL_TRIANGLES);
     glVertex3f(up.getX(), up.getY(), up.getZ());
@@ -257,14 +256,14 @@ void SceneRenderer::drawRocket(Capsule* capsule) {
     glVertex3f(0, 0, -capsule->getLength() / 3);
     glVertex3f(0, capsule->getRadius() * 1.7, capsule->getLength() / 2);
     glVertex3f(0, -capsule->getRadius() * 1.7, capsule->getLength() / 2);
-    glNormal3f(0, 1, 0);
+    glNormal3f(1, 0, 0);
     glEnd();
 
     glBegin(GL_TRIANGLES);
     glVertex3f(0, 0, -capsule->getLength() / 3);
     glVertex3f(capsule->getRadius() * 1.7, 0, capsule->getLength() / 2);
     glVertex3f(-capsule->getRadius() * 1.7, 0, capsule->getLength() / 2);
-    glNormal3f(0, 1, 0);
+    glNormal3f(1, 0, 0);
     glEnd();
 
     glPopMatrix();
