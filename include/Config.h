@@ -19,6 +19,7 @@ struct Config {
 	int windowWidth;
 	int windowHeight;
 	bool showFPS;
+	bool fullscreen;
 	bool recordVideo;
 	bool recordScene;
 	string replayName;

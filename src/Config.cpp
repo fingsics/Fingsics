@@ -8,6 +8,7 @@ Config::Config(map<string, string> config) {
     windowHeight = 720;
     recordVideo = false;
     recordScene = false;
+    fullscreen = true;
     showFPS = true;
     numLatLongs = 8;
     log = false;
@@ -23,12 +24,12 @@ Config::Config(map<string, string> config) {
         fpsCap = stoi(it->second);
     }
 
-    it = config.find("WINDOW_WIDTH");
+    it = config.find("WINDOWED_WIDTH");
     if (it != config.end()) {
         windowWidth = stoi(it->second);
     }
 
-    it = config.find("WINDOW_HEIGHT");
+    it = config.find("WINDOWED_HEIGHT");
     if (it != config.end()) {
         windowHeight = stoi(it->second);
     }
@@ -65,6 +66,11 @@ Config::Config(map<string, string> config) {
     it = config.find("SHOW_FPS");
     if (it != config.end()) {
         showFPS = !it->second.compare("true");
+    }
+
+    it = config.find("FULLSCREEN");
+    if (it != config.end()) {
+        fullscreen = !it->second.compare("true");
     }
 
     it = config.find("RUN_MODE");

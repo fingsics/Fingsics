@@ -27,7 +27,20 @@
 
 #define _USE_MATH_DEFINES
 
-using namespace std;
+
+
+
+
+pair<int,int> getResolution() {    
+    HWND hwnd = GetDesktopWindow();
+    HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO info;
+    info.cbSize = sizeof(MONITORINFO);
+    GetMonitorInfo(monitor, &info);
+    int width = info.rcMonitor.right - info.rcMonitor.left;
+    int height = info.rcMonitor.bottom - info.rcMonitor.top;
+    return pair(width, height);
+}
 
 SDL_Window* initializeSDL(int width, int height) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -338,6 +351,12 @@ void runSceneBenchmark(Config config, SDL_Window* window, string outputsFolder) 
 int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
+
+        if (config.fullscreen) {
+            pair<int, int> resolution = getResolution();
+            config.windowWidth = resolution.first;
+            config.windowHeight= resolution.second;
+        }
 
         time_t time = chrono::system_clock::to_time_t(chrono::system_clock::now());
         std::tm* time2 = std::localtime(&time);
