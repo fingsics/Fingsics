@@ -3,11 +3,12 @@
 using namespace std;
 
 Config::Config(map<string, string> config) {
-    fps = 60;
+    fpsCap = 60;
     windowWidth = 1280;
     windowHeight = 720;
     recordVideo = false;
-    recordData = false;
+    recordScene = false;
+    showFPS = true;
     numLatLongs = 8;
     log = false;
     runMode = RunMode::defaultMode;
@@ -15,11 +16,11 @@ Config::Config(map<string, string> config) {
     stopAtFrame = 300;
     bpAlgorithm = BPAlgorithmChoice::none;
     sceneName = "";
-    logOutputFile = "";
+    replayName = "";
 
-    auto it = config.find("FPS");
+    auto it = config.find("FPS_CAP");
     if (it != config.end()) {
-        fps = stoi(it->second);
+        fpsCap = stoi(it->second);
     }
 
     it = config.find("WINDOW_WIDTH");
@@ -37,12 +38,12 @@ Config::Config(map<string, string> config) {
         recordVideo = !it->second.compare("true");
     }
 
-    it = config.find("RECORD_DATA");
+    it = config.find("RECORD_SCENE");
     if (it != config.end()) {
-        recordData = !it->second.compare("true");
+        recordScene = !it->second.compare("true");
     }
 
-    it = config.find("NUM_LAT_LONGS");
+    it = config.find("OBJECT_DEFINITION");
     if (it != config.end()) {
         numLatLongs = stoi(it->second);
     }
@@ -59,6 +60,11 @@ Config::Config(map<string, string> config) {
     it = config.find("LOG");
     if (it != config.end()) {
         log = !it->second.compare("true");
+    }
+
+    it = config.find("SHOW_FPS");
+    if (it != config.end()) {
+        showFPS = !it->second.compare("true");
     }
 
     it = config.find("RUN_MODE");
@@ -83,9 +89,9 @@ Config::Config(map<string, string> config) {
         sceneName = it->second;
     }
 
-    it = config.find("LOG_OUTPUT_FILE_NAME");
+    it = config.find("SCENE_REPLAY_FOLDER_NAME");
     if (it != config.end()) {
-        logOutputFile = it->second;
+        replayName = it->second;
     }
 }
 
@@ -93,8 +99,8 @@ bool Config::shouldRecordVideo() {
     return runMode == RunMode::defaultMode && recordVideo;
 }
 
-bool Config::shouldRecordData() {
-    return runMode == RunMode::defaultMode && recordData;
+bool Config::shouldRecordScene() {
+    return runMode == RunMode::defaultMode && recordScene;
 }
 
 bool Config::shouldLog() {

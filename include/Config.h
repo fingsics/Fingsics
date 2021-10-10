@@ -14,20 +14,21 @@ enum class RunMode { defaultMode, test, benchmark, replay };
 
 struct Config {
 	string sceneName;
-	int fps;
+	int fpsCap;
 	int numLatLongs;
 	int windowWidth;
 	int windowHeight;
+	bool showFPS;
 	bool recordVideo;
-	bool recordData;
+	bool recordScene;
+	string replayName;
 	BPAlgorithmChoice bpAlgorithm;
 	bool log;
 	RunMode runMode;
 	int numRuns;
 	int stopAtFrame;
-	string logOutputFile;
 	bool shouldRecordVideo();
-	bool shouldRecordData();
+	bool shouldRecordScene();
 	bool shouldLog();
 	string getBPCDDescription();
 	Config(map<string, string>);

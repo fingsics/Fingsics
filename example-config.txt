@@ -1,24 +1,25 @@
+# Main configs
+SCENE_FILE_NAME=scene
+FPS_CAP=60
 WINDOW_WIDTH=1280
 WINDOW_HEIGHT=720
 
-SCENE_FILE_NAME=scene
-FPS=60
-RECORD_VIDEO=true
-RECORD_DATA=true
+# Outputs
+RECORD_VIDEO=false
+RECORD_SCENE=false
+LOG=false
 
-# Object drawing
-NUM_LAT_LONGS=8
+# Drawing
+OBJECT_DEFINITION=8
+SHOW_FPS=true
 
 # Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
 BROAD_PHASE=SAP
 
-# Logging
-LOG=true
-LOG_OUTPUT_FILE_NAME=output.csv
-
 # Run mode (options are DEFAULT, TEST, BENCHMARK, REPLAY)
 RUN_MODE=DEFAULT
 NUM_RUNS_FOR_BENCHMARK=5
+SCENE_REPLAY_FOLDER_NAME=scene_9-10-2021-18_4
 
-# Use -1 to run indefinitely
+# Frame to stop simulation, use -1 to run indefinitely
 STOP_AT_FRAME=-1

@@ -45,7 +45,6 @@ struct SerializedMatrix {
 class SceneRecorder {
 private:
     int numObjects;
-    int frames;
     SerializedObject* objects;
     SerializedPosition** positions;
     SerializedMatrix** rotationMatrices;
@@ -60,8 +59,8 @@ public:
     SceneRecorder(Object**, int, int, string); // Recorder
     SceneRecorder(string); // Loader
     void recordFrame(Object**, int, int);
-    void storeRecordedData(int);
-    vector<Object*> importRecordedScene(Config);
+    void storeRecordedData(int, int);
+    tuple<vector<Object*>, int, int> importRecordedScene(Config);
 };
 
 

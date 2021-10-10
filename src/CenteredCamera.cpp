@@ -7,13 +7,13 @@ CenteredCamera::CenteredCamera(float radius, float pitch, float yaw) : Camera() 
 }
 
 CenteredCamera::CenteredCamera() : Camera() {
-    this->radius = -40;
+    this->radius = 40;
     this->pitch = -25;
     this->yaw = 0;
 }
 
 void CenteredCamera::lookAt() {
-    Point eye = Point(1, 0, 0).rotate(Point(0,yaw,pitch)) * radius;
+    Point eye = Point(-1, 0, 0).rotate(Point(0,yaw,pitch)) * radius;
     float centerX = 0;
     float centerY = 0;
     float centerZ = 0;
@@ -40,10 +40,10 @@ void CenteredCamera::update(SDL_Event event) {
         float speed = 0.7;
         switch (event.key.keysym.sym) {
         case SDLK_s:
-            radius -= speed;
+            radius += speed;
             break;
         case SDLK_w:
-            if (radius < 0) radius += speed;
+            if (radius > speed) radius -= speed;
             break;
         }
     }

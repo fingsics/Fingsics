@@ -109,7 +109,7 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     ofstream summaryFile;
     summaryFile.open(outputFolder + "\\summary.txt");
     summaryFile << "Scene: " + config.sceneName + "\n";
-    summaryFile << "FPS: " + to_string(config.fps) + "\n";
+    summaryFile << "FPS: " + to_string(config.fpsCap) + "\n";
     summaryFile << "BPCD Algorithm: " + config.getBPCDDescription() + "\n";
     summaryFile << "Number of runs: " + to_string(config.numRuns) + "\n";
     summaryFile << "Number of frames per run: " + to_string(config.stopAtFrame) + "\n\n";
