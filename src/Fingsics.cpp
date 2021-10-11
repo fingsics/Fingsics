@@ -352,16 +352,11 @@ int main(int argc, char* argv[]) {
    // try {
         Config config = ConfigLoader().getConfig();
 
-        if (config.fullscreen) {
-            pair<int, int> resolution = getResolution();
-            config.windowWidth = resolution.first;
-            config.windowHeight= resolution.second;
-        }
-
-        time_t time = chrono::system_clock::to_time_t(chrono::system_clock::now());
-        std::tm* time2 = std::localtime(&time);
-        string timeString = to_string(time2->tm_mday) + "-" + to_string(time2->tm_mon + 1) + "-" + to_string(time2->tm_year + 1900) + "-" + to_string(time2->tm_hour) + "_" + to_string(time2->tm_min);
-        string outputsFolder = "output\\" + config.sceneName + "_" + timeString;
+        time_t clock = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        std::tm* time = std::localtime(&clock);
+        char timeChars[32];
+        int timeLength = std::strftime(timeChars, sizeof(timeChars), "%Y-%m-%d_%H-%M-%S", time);
+        string outputsFolder = "output\\" + config.sceneName + "_" + string(timeChars, timeLength);
 
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
 
