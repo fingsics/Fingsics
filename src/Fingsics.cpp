@@ -59,10 +59,6 @@ SDL_Window* initializeSDL(int width, int height) {
     return window;
 }
 
-void goToRecordedFrame(int nframe, Object** objects, int numObjects) {
-    for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
-}
-
 void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
     SDL_Event event;
     int xm, ym;
@@ -304,7 +300,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         }
 
         if (config.runMode == RunMode::replay) {
-            if (currentReplayFrame != nframe) goToRecordedFrame(nframe, scene.objects, scene.numObjects);
+            if (currentReplayFrame != nframe) for (int i = 0; i < scene.numObjects; i++) scene.objects[i]->goToFrame(nframe);
             currentReplayFrame = nframe;
             if (!pause) nframe = min(scene.stopAtFrame - 1, max(0, nframe + 1));
         }
