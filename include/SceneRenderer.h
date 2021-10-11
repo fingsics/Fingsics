@@ -24,6 +24,7 @@ private:
     void initializeBallArrays(Ball*, int, int);
     void initializeCapsuleArrays(Capsule*, int, int);
     void initializeTileArrays(Tile*);
+    void initializeRocketArrays(Capsule*, int, int);
     void drawF(float, float, float, float, float);
     void drawP(float, float, float, float, float);
     void drawS(float, float, float, float, float);
@@ -37,12 +38,16 @@ private:
     void draw7(float, float, float, float, float);
     void draw8(float, float, float, float, float);
     void draw9(float, float, float, float, float);
+
+    int rocketArrayLength1;
+    int rocketArrayLength2;
 public:
     SceneRenderer(Object**, int, int, int);
 	void initializeOpenGL(int, int);
 	void setupFrame();
 	void drawAxis();
     void drawObject(Object*, bool, bool);
+    void drawRocket(Capsule*);
 	void setLighting();
 	void drawFPSCounter(int);
     void drawCharacter(char, float, float, float, float, float);

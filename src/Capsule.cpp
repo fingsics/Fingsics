@@ -2,19 +2,21 @@
 
 using namespace std;
 
-Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw, float radius, float length) : Object(id, color, positions, rotationMatrices, frames, draw) {
+Capsule::Capsule(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw, bool rocket, float radius, float length) : Object(id, color, positions, rotationMatrices, frames, draw) {
     this->length = length;
     this->radius = radius;
 
+    this->drawRocket = rocket;
     this->baseInertiaTensor = Matrix();
     this->invertedInertiaTensor = Point();
     this->obb = frames > 0 ? OBB(positions[0], Point(radius, radius, length / 2 + radius), rotationMatrices[0]) : OBB();
 }
 
-Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, bool draw, float radius, float length) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
+Capsule::Capsule(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, bool draw, bool rocket, float radius, float length) : Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
     this->length = length;
     this->radius = radius;
     this->axisDirection = rotationMatrix * Point(0, 0, 1);
+    this->drawRocket = rocket;
 
     // https://en.wikipedia.org/wiki/List_of_moments_of_inertia
     float extraLengthFactor = 2.0 / 3.0;
@@ -89,4 +91,8 @@ float Capsule::getMaxZ() {
     float z1 = getCylinderPositiveEnd().getZ();
     float z2 = getCylinderNegativeEnd().getZ();
     return (z1 > z2 ? z1 : z2) + radius;
+}
+
+bool Capsule::getDrawRocket() {
+    return drawRocket;
 }

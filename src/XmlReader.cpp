@@ -129,12 +129,15 @@ Tile* XmlReader::loadTile(tinyxml2::XMLElement* xmlObject, string id) {
 Capsule* XmlReader::loadCapsule(tinyxml2::XMLElement* xmlObject, string id, int numLatLongs) {
     CommonFields commonFields = parseCommonFields(xmlObject);
     float radius, length;
+    bool rocket;
     tinyxml2::XMLError parseError;
     parseError = xmlObject->QueryFloatAttribute("radius", &radius);
     radius = (parseError == tinyxml2::XML_SUCCESS) ? radius : 1;
     parseError = xmlObject->QueryFloatAttribute("length", &length);
     length = (parseError == tinyxml2::XML_SUCCESS) ? length : 1;
-    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, commonFields.draw, radius, length);
+    parseError = xmlObject->QueryBoolAttribute("rocket", &rocket);
+    rocket = (parseError == tinyxml2::XML_SUCCESS) ? rocket : false;
+    return new Capsule(id, commonFields.isStatic, commonFields.pos, commonFields.vel, commonFields.ang, commonFields.angVel, commonFields.acceleration, commonFields.mass, commonFields.elasticityCoef, commonFields.color, commonFields.draw, rocket, radius, length);
 }
 
 vector<float> XmlReader::parseTriplet(const char* input) {

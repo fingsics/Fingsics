@@ -4,9 +4,17 @@ SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int lon
     this->ballArrayLength = ((lats + 1) * (longs + 1)) * 2;
     this->capsuleArrayLength = ((lats + 1) * (longs + 1) + (longs + 1)) * 2;
     this->tileArrayLength = 4;
+
+    int rocketTipRings = round((float)lats * 0.28);
+    this->rocketArrayLength1 = ((rocketTipRings) * (longs + 1)) * 2;
+    this->rocketArrayLength2 = ((lats + 1 - rocketTipRings) * (longs + 1)) * 2;
+
     for (int i = 0; i < numObjects; i++) {
         if (Ball* ball = dynamic_cast<Ball*>(objects[i])) initializeBallArrays(ball, lats, longs);
-        else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i])) initializeCapsuleArrays(capsule, lats, longs);
+        else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i])) {
+            if (capsule->getDrawRocket()) initializeRocketArrays(capsule, lats, longs);
+            else initializeCapsuleArrays(capsule, lats, longs);
+        }
         else if (Tile* tile = dynamic_cast<Tile*>(objects[i])) initializeTileArrays(tile);
     }
 }
@@ -142,11 +150,136 @@ int SceneRenderer::openGLArrayLength(Object* object) {
     return 0;
 }
 
+void SceneRenderer::drawRocket(Capsule* capsule) {
+    glPushMatrix();
+    glTranslatef(capsule->getPosition().getX(), capsule->getPosition().getY(), capsule->getPosition().getZ());
+    glMultMatrixf(capsule->getRotationMatrix().getOpenGLRotationMatrix());
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glColor3ub(220, 0, 0);
+    glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()]);
+    glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()]);
+    glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength1);
+
+    glColor3ub(120, 120, 120);
+    glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()] + rocketArrayLength1 * 3);
+    glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()] + rocketArrayLength1 * 3);
+    glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength2);
+
+    glColor3ub(251, 163, 26);
+    //glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()] + rocketArrayLength1 + rocketArrayLength2);
+    //glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()]);
+    //glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength3);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    float fireHeight1 = 0.5;
+    float fireHeight2 = 0.9;
+
+    Point up = Point(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2);
+    Point down = Point(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + capsule->getRadius() * (fireHeight2 + fireHeight1));
+    Point side1 = Point(capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Point side2 = Point(capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Point side3 = Point(-capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Point side4 = Point(-capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+
+    Point normal1 = (side2 - up).crossProduct(side1 - up);
+    Point normal2 = (side3 - up).crossProduct(side2 - up);
+    Point normal3 = (side4 - up).crossProduct(side3 - up);
+    Point normal4 = (side1 - up).crossProduct(side4 - up);
+    Point normal5 = (side1 - down).crossProduct(side2 - down);
+    Point normal6 = (side2 - down).crossProduct(side3 - down);
+    Point normal7 = (side3 - down).crossProduct(side4 - down);
+    Point normal8 = (side4 - down).crossProduct(side1 - down);
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(up.getX(), up.getY(), up.getZ());
+    glVertex3f(side1.getX(), side1.getY(), side1.getZ());
+    glVertex3f(side2.getX(), side2.getY(), side2.getZ());
+    glNormal3f(normal1.getX(), normal1.getY(), normal1.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(up.getX(), up.getY(), up.getZ());
+    glVertex3f(side2.getX(), side2.getY(), side2.getZ());
+    glVertex3f(side3.getX(), side3.getY(), side3.getZ());
+    glNormal3f(normal2.getX(), normal2.getY(), normal2.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(up.getX(), up.getY(), up.getZ());
+    glVertex3f(side3.getX(), side3.getY(), side3.getZ());
+    glVertex3f(side4.getX(), side4.getY(), side4.getZ());
+    glNormal3f(normal3.getX(), normal3.getY(), normal3.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(up.getX(), up.getY(), up.getZ());
+    glVertex3f(side4.getX(), side4.getY(), side4.getZ());
+    glVertex3f(side1.getX(), side1.getY(), side1.getZ());
+    glNormal3f(normal4.getX(), normal4.getY(), normal4.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(down.getX(), down.getY(), down.getZ());
+    glVertex3f(side1.getX(), side1.getY(), side1.getZ());
+    glVertex3f(side2.getX(), side2.getY(), side2.getZ());
+    glNormal3f(normal5.getX(), normal5.getY(), normal5.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(down.getX(), down.getY(), down.getZ());
+    glVertex3f(side2.getX(), side2.getY(), side2.getZ());
+    glVertex3f(side3.getX(), side3.getY(), side3.getZ());
+    glNormal3f(normal6.getX(), normal6.getY(), normal6.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(down.getX(), down.getY(), down.getZ());
+    glVertex3f(side3.getX(), side3.getY(), side3.getZ());
+    glVertex3f(side4.getX(), side4.getY(), side4.getZ());
+    glNormal3f(normal7.getX(), normal7.getY(), normal7.getZ());
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(down.getX(), down.getY(), down.getZ());
+    glVertex3f(side4.getX(), side4.getY(), side4.getZ());
+    glVertex3f(side1.getX(), side1.getY(), side1.getZ());
+    glNormal3f(normal8.getX(), normal8.getY(), normal8.getZ());
+    glEnd();
+
+    glColor3ub(0, 0, 220);
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0, 0, -capsule->getLength() / 3);
+    glVertex3f(0, capsule->getRadius() * 1.7, capsule->getLength() / 2);
+    glVertex3f(0, -capsule->getRadius() * 1.7, capsule->getLength() / 2);
+    glNormal3f(1, 0, 0);
+    glEnd();
+
+    glBegin(GL_TRIANGLES);
+    glVertex3f(0, 0, -capsule->getLength() / 3);
+    glVertex3f(capsule->getRadius() * 1.7, 0, capsule->getLength() / 2);
+    glVertex3f(-capsule->getRadius() * 1.7, 0, capsule->getLength() / 2);
+    glNormal3f(1, 0, 0);
+    glEnd();
+
+    glPopMatrix();
+}
+
 void SceneRenderer::drawObject(Object* object, bool drawOBB, bool drawAABB) {
+    if (!object->getDraw()) return;
+
     if (drawOBB && !dynamic_cast<Tile*>(object)) this->drawOBB(object);
     if (drawAABB) this->drawAABB(object);
 
-    if (!object->getDraw()) return;
+    Capsule* capsule = dynamic_cast<Capsule*>(object);
+    if (capsule && capsule->getDrawRocket()) {
+        drawRocket(capsule);
+        return;
+    }
 
     glPushMatrix();
     glTranslatef(object->getPosition().getX(), object->getPosition().getY(), object->getPosition().getZ());
@@ -155,6 +288,7 @@ void SceneRenderer::drawObject(Object* object, bool drawOBB, bool drawAABB) {
     glEnableClientState(GL_NORMAL_ARRAY);
     glVertexPointer(3, GL_FLOAT, 0, openGLVertices[object->getId()]);
     glNormalPointer(GL_FLOAT, 0, openGLNormals[object->getId()]);
+    
     glColor3ub(object->getColor().getR(), object->getColor().getG(), object->getColor().getB());
     glDrawArrays(GL_QUAD_STRIP, 0, openGLArrayLength(object));
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -210,6 +344,93 @@ void SceneRenderer::initializeBallArrays(Ball* ball, int lats, int longs) {
 
     this->openGLVertices[ball->getId()] = vertices;
     this->openGLNormals[ball->getId()] = normals;
+}
+
+void SceneRenderer::initializeRocketArrays(Capsule* capsule, int lats, int longs) {
+    float radius = capsule->getRadius();
+    float length = capsule->getLength();
+    
+    int arrayLength = ((lats + 1) * (longs + 1)) * 2 * 3;
+    float* vertices = new float[arrayLength];
+    float* normals = new float[arrayLength];
+
+    int arrayIndex = 0;
+
+    for (int i = 0; i <= lats; i++) {
+        float lat0 = M_PI * (-0.5 + (float)(i - 1) / lats);
+        float zr0 = cos(lat0);
+
+        float lat1 = M_PI * (-0.5 + (float)i / lats);
+        float zr1 = cos(lat1);
+
+        if (i < lats / 2 + 1) {
+            float z0 = sin(lat0) * (length + radius);
+            float z1 = sin(lat1) * (length + radius);
+            for (int j = 0; j <= longs; j++) {
+
+                float lng = 2 * M_PI * (float)(j - 1) / longs;
+                float x = cos(lng);
+                float y = sin(lng);
+
+                float s1 = ((float)i) / longs;
+                float s2 = ((float)i + 1) / lats;
+                float t = ((float)j) / lats;
+
+                normals[arrayIndex] = x * zr0;
+                normals[arrayIndex + 1] = y * zr0;
+                normals[arrayIndex + 2] = z0;
+
+                vertices[arrayIndex] = radius * x * zr0;
+                vertices[arrayIndex + 1] = radius * y * zr0;
+                vertices[arrayIndex + 2] = z0 + length / 2;
+
+                normals[arrayIndex + 3] = x * zr1;
+                normals[arrayIndex + 4] = y * zr1;
+                normals[arrayIndex + 5] = z1;
+
+                vertices[arrayIndex + 3] = radius * x * zr1;
+                vertices[arrayIndex + 4] = radius * y * zr1;
+                vertices[arrayIndex + 5] = z1 + length / 2;
+
+                arrayIndex += 6;
+            }
+        }
+        else {
+            float z0 = sin(lat0) * radius * 0.2;
+            float z1 = sin(lat1) * radius * 0.2;
+            for (int j = 0; j <= longs; j++) {
+                float lng = 2 * M_PI * (float)(j - 1) / longs;
+                float x = cos(lng);
+                float y = sin(lng);
+
+                float s1 = ((float)i) / longs;
+                float s2 = ((float)i + 1) / lats;
+                float t = ((float)j) / lats;
+
+                normals[arrayIndex] = x * zr0;
+                normals[arrayIndex + 1] = y * zr0;
+                normals[arrayIndex + 2] = z0;
+
+                vertices[arrayIndex] = radius * x * zr0;
+                vertices[arrayIndex + 1] = radius * y * zr0;
+                vertices[arrayIndex + 2] = z0 + length / 2;
+
+                normals[arrayIndex + 3] = x * zr1;
+                normals[arrayIndex + 4] = y * zr1;
+                normals[arrayIndex + 5] = z1;
+
+                vertices[arrayIndex + 3] = radius * x * zr1;
+                vertices[arrayIndex + 4] = radius * y * zr1;
+                vertices[arrayIndex + 5] = z1 + length / 2;
+
+                arrayIndex += 6;
+            }
+        }
+        
+    }
+
+    this->openGLVertices[capsule->getId()] = vertices;
+    this->openGLNormals[capsule->getId()] = normals;
 }
 
 void SceneRenderer::initializeCapsuleArrays(Capsule* capsule, int lats, int longs) {
