@@ -282,7 +282,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
         if (!pause) {
             // Compute next frame
-            if (config.runMode != RunMode::replay) {
+            if (config.runMode == RunMode::replay) {
+                goToRecordedFrame(nframe, objects, numObjects);
+                nframe = min(config.stopAtFrame - 1, max(0, nframe + 1));
+            } else {
                 if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
                 broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
                 if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
@@ -296,9 +299,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
                     results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
                 }
                 nframe++;
-            } else {
-                goToRecordedFrame(nframe, objects, numObjects);
-                nframe = min(config.stopAtFrame - 1, max(0, nframe + 1));
             }
 
             // Record data
@@ -370,8 +370,8 @@ int main(int argc, char* argv[]) {
         time_t clock = chrono::system_clock::to_time_t(chrono::system_clock::now());
         std::tm* time = std::localtime(&clock);
         char timeChars[32];
-        int timeLength = std::strftime(timeChars, sizeof(timeChars), "%Y-%m-%d_%H-%M-%S", time);
-        string outputsFolder = "output\\" + config.sceneName + "_" + string(timeChars, timeLength);
+        int timeLength = std::strftime(timeChars, sizeof(timeChars), "%Y-%m-%d--%H-%M-%S", time);
+        string outputsFolder = "output\\" + config.sceneName + "--" + string(timeChars, timeLength);
 
         if (config.fullscreen) {
             pair<int, int> resolution = getResolution();

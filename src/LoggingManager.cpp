@@ -41,7 +41,7 @@ void SimulationResults::addFrameResults(int numBroadPhaseCollisions, int numColl
 void LoggingManager::logRunResults(string folderName, string outputFileName, SimulationResults results) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,MPCDTests,MPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
     for (auto it = results.frameResults.begin(); it != results.frameResults.end(); ++it) {
         log(outputCSV, *it, 1);
     }
