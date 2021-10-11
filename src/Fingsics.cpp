@@ -62,7 +62,7 @@ void goToRecordedFrame(int nframe, Object** objects, int numObjects) {
     for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
 }
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config, Object** objects, int numObjects) {
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
     SDL_Event event;
     int xm, ym;
 
@@ -134,7 +134,6 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
             default:
                 break;
             }
-            goToRecordedFrame(nframe, objects, numObjects);
             break;
         }
         default:
@@ -249,6 +248,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     }
     
     int nframe = 0;
+    int currentReplayFrame = 0;
 
     // Draw first frame
     sceneRenderer.initializeOpenGL(config.windowWidth, config.windowHeight);
@@ -280,33 +280,34 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             desiredFrameStart += step;
         }
 
-        if (!pause) {
+        if (!pause && config.runMode != RunMode::replay) {
             // Compute next frame
-            if (config.runMode == RunMode::replay) {
-                goToRecordedFrame(nframe, objects, numObjects);
-                nframe = min(config.stopAtFrame - 1, max(0, nframe + 1));
-            } else {
-                if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
-                broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
-                if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
-                collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
-                if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
-                CollisionResponseAlgorithm::collisionResponse(collisions);
-                if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-                CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fpsCap, slowMotion);
-                if (config.shouldLog()) {
-                    moveEnd = std::chrono::system_clock::now();
-                    results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
-                }
-                nframe++;
+            if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
+            broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
+            if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
+            collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+            if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
+            CollisionResponseAlgorithm::collisionResponse(collisions);
+            if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
+            CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fpsCap, slowMotion);
+            if (config.shouldLog()) {
+                moveEnd = std::chrono::system_clock::now();
+                results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
             }
+            nframe++;
 
             // Record data
             if (config.shouldRecordScene()) sceneRecorder->recordFrame(objects, numObjects, nframe);
         }
 
+        if (config.runMode == RunMode::replay) {
+            if (currentReplayFrame != nframe) goToRecordedFrame(nframe, objects, numObjects);
+            currentReplayFrame = nframe;
+            if (!pause) nframe = min(config.stopAtFrame - 1, max(0, nframe + 1));
+        }
+
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, camera, freeCamera, centeredCamera, config, objects, numObjects);
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, camera, freeCamera, centeredCamera, config);
 
         if (shouldDrawScene) {
             drawScene(sceneRenderer, camera, objects, numObjects, drawOBBs, drawAABBs);
