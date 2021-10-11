@@ -109,6 +109,10 @@ bool Config::shouldRecordScene() {
     return runMode == RunMode::defaultMode && recordScene;
 }
 
+bool Config::shouldDrawScene() {
+    return runMode == RunMode::defaultMode || runMode == RunMode::replay;
+}
+
 bool Config::shouldLog() {
     return runMode == RunMode::benchmark || runMode == RunMode::test || log;
 }

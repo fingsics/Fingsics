@@ -150,6 +150,9 @@
     <ClCompile Include="src\SAPAndOBBs.cpp">
       <Filter>Source Files\Algorithms\BroadPhase</Filter>
     </ClCompile>
+    <ClCompile Include="src\Scene.cpp">
+      <Filter>Source Files\Data Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ball.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="include\SAPAndOBBs.h">
       <Filter>Header Files\Algorithms\BroadPhase</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Scene.h">
+      <Filter>Header Files\Data Structures</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

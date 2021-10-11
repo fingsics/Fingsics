@@ -181,6 +181,7 @@
     <ClCompile Include="src\OBB.cpp" />
     <ClCompile Include="src\OBBBruteForce.cpp" />
     <ClCompile Include="src\Object.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\SceneRenderer.cpp" />
     <ClCompile Include="src\Point.cpp" />
     <ClCompile Include="src\SAPAndOBBs.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="include\OBB.h" />
     <ClInclude Include="include\OBBBruteForce.h" />
     <ClInclude Include="include\Object.h" />
+    <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\SceneRenderer.h" />
     <ClInclude Include="include\Point.h" />
     <ClInclude Include="include\SAPAndOBBs.h" />

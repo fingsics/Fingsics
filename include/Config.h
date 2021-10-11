@@ -31,6 +31,7 @@ struct Config {
 	bool shouldRecordVideo();
 	bool shouldRecordScene();
 	bool shouldLog();
+	bool shouldDrawScene();
 	string getBPCDDescription();
 	Config(map<string, string>);
 };

@@ -196,7 +196,6 @@ tuple<vector<Object*>, int, int> SceneRecorder::importRecordedScene(Config confi
     for (int i = 0; i < numObjects; i++) {
         res[i] = deserializeObject(serializedObjects[i], serializedPositions[i], serializedRotationMatrices[i], frames, to_string(i), config.numLatLongs);
     }
-    config.stopAtFrame = frames;
 
     file.close();
     if (!file.good()) throw std::runtime_error("Error occurred at reading time!");

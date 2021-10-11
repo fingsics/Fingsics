@@ -5,7 +5,10 @@ KeyValue::KeyValue(string key, string value) {
     this->value = value;
 }
 
-ConfigLoader::ConfigLoader() {}
+ConfigLoader::ConfigLoader(int screenResolutionWidth, int screenResolutionHeight) {
+    this->screenResolutionWidth = screenResolutionWidth;
+    this->screenResolutionHeight = screenResolutionHeight;
+}
 
 Config ConfigLoader::getConfig() {
     string configFileName = "config.txt";
@@ -13,17 +16,24 @@ Config ConfigLoader::getConfig() {
 
     string text;
     ifstream configFile(configFileName);
-    map<string, string> config;
+    map<string, string> configMap;
 
     while (getline(configFile, text)) {
         if (text.length() == 0 || text.at(0) == '#' || text.find("=") == string::npos) continue;
         KeyValue keyValue = splitString(text);
-        config.insert(pair<string, string>(keyValue.key, keyValue.value));
+        configMap.insert(pair<string, string>(keyValue.key, keyValue.value));
     }
 
     configFile.close();
 
-    return Config(config);
+    Config config = Config(configMap);
+
+    if (config.fullscreen) {
+        config.windowWidth = screenResolutionWidth;
+        config.windowHeight = screenResolutionHeight;
+    }
+
+    return config;
 }
 
 KeyValue ConfigLoader::splitString(string s) {

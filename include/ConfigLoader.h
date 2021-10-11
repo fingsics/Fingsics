@@ -18,9 +18,11 @@ struct KeyValue {
 
 class ConfigLoader {
 private:
+	int screenResolutionWidth;
+	int screenResolutionHeight;
 	KeyValue splitString(string);
 public:
-	ConfigLoader();
+	ConfigLoader(int, int);
 	Config getConfig();
 };
 
