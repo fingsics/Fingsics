@@ -154,26 +154,18 @@ void SceneRenderer::drawRocket(Capsule* capsule) {
     glPushMatrix();
     glTranslatef(capsule->getPosition().getX(), capsule->getPosition().getY(), capsule->getPosition().getZ());
     glMultMatrixf(capsule->getRotationMatrix().getOpenGLRotationMatrix());
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisable(GL_LIGHTING);
     glColor3ub(220, 0, 0);
     glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()]);
-    glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()]);
     glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength1);
-
-    glColor3ub(120, 120, 120);
+    glColor3ub(65, 65, 65);
     glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()] + rocketArrayLength1 * 3);
-    glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()] + rocketArrayLength1 * 3);
     glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength2);
-
+    glEnable(GL_LIGHTING);
     glColor3ub(251, 163, 26);
-    //glVertexPointer(3, GL_FLOAT, 0, openGLVertices[capsule->getId()] + rocketArrayLength1 + rocketArrayLength2);
-    //glNormalPointer(GL_FLOAT, 0, openGLNormals[capsule->getId()]);
-    //glDrawArrays(GL_QUAD_STRIP, 0, rocketArrayLength3);
-
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
 
     float fireHeight1 = 0.5;
     float fireHeight2 = 0.9;
@@ -376,17 +368,9 @@ void SceneRenderer::initializeRocketArrays(Capsule* capsule, int lats, int longs
                 float s2 = ((float)i + 1) / lats;
                 float t = ((float)j) / lats;
 
-                normals[arrayIndex] = x * zr0;
-                normals[arrayIndex + 1] = y * zr0;
-                normals[arrayIndex + 2] = z0;
-
                 vertices[arrayIndex] = radius * x * zr0;
                 vertices[arrayIndex + 1] = radius * y * zr0;
                 vertices[arrayIndex + 2] = z0 + length / 2;
-
-                normals[arrayIndex + 3] = x * zr1;
-                normals[arrayIndex + 4] = y * zr1;
-                normals[arrayIndex + 5] = z1;
 
                 vertices[arrayIndex + 3] = radius * x * zr1;
                 vertices[arrayIndex + 4] = radius * y * zr1;
@@ -407,17 +391,9 @@ void SceneRenderer::initializeRocketArrays(Capsule* capsule, int lats, int longs
                 float s2 = ((float)i + 1) / lats;
                 float t = ((float)j) / lats;
 
-                normals[arrayIndex] = x * zr0;
-                normals[arrayIndex + 1] = y * zr0;
-                normals[arrayIndex + 2] = z0;
-
                 vertices[arrayIndex] = radius * x * zr0;
                 vertices[arrayIndex + 1] = radius * y * zr0;
                 vertices[arrayIndex + 2] = z0 + length / 2;
-
-                normals[arrayIndex + 3] = x * zr1;
-                normals[arrayIndex + 4] = y * zr1;
-                normals[arrayIndex + 5] = z1;
 
                 vertices[arrayIndex + 3] = radius * x * zr1;
                 vertices[arrayIndex + 4] = radius * y * zr1;
