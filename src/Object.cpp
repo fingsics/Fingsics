@@ -7,18 +7,18 @@ Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrice
     this->id = id;
     this->replayMode = true;
     this->positions = positions;
+    this->position = positions[0];
     this->rotationMatrices = rotationMatrices;
+    this->rotationMatrix = rotationMatrices[0];
     this->frames = frames;
     this->color = color;
 
     this->isStatic = false;
-    this->position = Point();
     this->mass = 0;
     this->elasticityCoef = 0;
     this->velocity = Point();
     this->angularVelocity = Point();
     this->acceleration = Point();
-    this->rotationMatrix = Matrix();
     this->queuedImpulses = list<Impulse>();
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();

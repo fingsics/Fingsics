@@ -27,9 +27,7 @@
 
 #define _USE_MATH_DEFINES
 
-
-
-
+const float NEW_FRAME_WEIGHT = 0.1;
 
 pair<int,int> getResolution() {    
     HWND hwnd = GetDesktopWindow();
@@ -60,7 +58,11 @@ SDL_Window* initializeSDL(int width, int height) {
     return window;
 }
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
+void goToRecordedFrame(int nframe, Object** objects, int numObjects) {
+    for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
+}
+
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config, Object** objects, int numObjects) {
     SDL_Event event;
     int xm, ym;
 
@@ -132,6 +134,7 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
             default:
                 break;
             }
+            goToRecordedFrame(nframe, objects, numObjects);
             break;
         }
         default:
@@ -140,14 +143,31 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-void manageFrameTime(clock_t &lastFrameTime, float &secondsSinceLastFrame, bool shouldSleep, int fpsCap) {
-    float minFrameTime = 1.0 / fpsCap;
-    secondsSinceLastFrame = (float)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
-    if (secondsSinceLastFrame < minFrameTime && shouldSleep) {
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)((minFrameTime - secondsSinceLastFrame) * 1000)));
-        secondsSinceLastFrame = (float)(clock() - lastFrameTime) / CLOCKS_PER_SEC;
+void drawScene(SceneRenderer sceneRenderer, Camera* camera, Object** objects, int numObjects, bool drawOBBs, bool drawAABBs) {
+    sceneRenderer.setupFrame();
+    camera->lookAt();
+    sceneRenderer.setLighting();
+    sceneRenderer.drawAxis();
+
+    // Draw objects
+    for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
+}
+
+void recordVideoFrame(VideoRecorder* recorder, Config config, GLubyte* pixels, uint8_t* rgb, int nframe) {
+    // Record video
+    recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
+    recorder->ffmpeg_encoder_encode_frame(rgb);
+}
+
+void handleFPS(int &drawFrame, int fpsCap, chrono::system_clock::time_point frameStart, int& rollingAvgFrametime, int& currentFPS) {
+    int lastFrameTime = chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - frameStart).count();
+    rollingAvgFrametime = (1 - NEW_FRAME_WEIGHT) * (float)rollingAvgFrametime + NEW_FRAME_WEIGHT * (float)lastFrameTime;
+    int fpsUpdateInterval = fpsCap / 5;
+    if (drawFrame % fpsUpdateInterval == 0) {
+        currentFPS = 1000000 / rollingAvgFrametime > fpsCap ? fpsCap : 1000000 / rollingAvgFrametime;
+        drawFrame = 0;
     }
-    lastFrameTime = clock();
+    drawFrame++;
 }
 
 SimulationResults* runSimulation(Config config, SDL_Window* window, string outputsFolder) {
@@ -167,11 +187,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
-
-    // FPS management
-    clock_t lastFrameTime = clock();
-    float timeSinceLastFrame = 0;
-    int nframe = 0;
 
     // Scene
     vector<Object*> objectsVector;
@@ -215,16 +230,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         }
     }
 
-    // Logging
-    chrono::system_clock::time_point frameStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
-
     // Collision collections
     map<string, pair<Object*, Object*>> broadPhaseCollisions;
     map<string, Collision> collisions;
 
     // FPS drawing
-    int fps = 0;
-    chrono::system_clock::time_point lastFPSDrawTime = std::chrono::system_clock::now();
+    int rollingAvgFrametime = 1000000 / config.fpsCap; // Microseconds
 
     // Video recording
     GLubyte* pixels = NULL;
@@ -237,38 +248,42 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         recorder->ffmpeg_encoder_start(fileName.c_str(), config.fpsCap, config.windowWidth, config.windowHeight);
     }
     
+    int nframe = 0;
+
+    // Draw first frame
     sceneRenderer.initializeOpenGL(config.windowWidth, config.windowHeight);
+    bool shouldDrawScene = config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay;
+    if (shouldDrawScene) {
+        drawScene(sceneRenderer, camera, objects, numObjects, drawOBBs, drawAABBs);
+        if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
+    }
+
+    // Record first frame
+    if (config.shouldRecordScene()) sceneRecorder->recordFrame(objects, numObjects, nframe);
+
+    // Draw time management
+    int drawFrame = 0;
+    int currentFPS = config.fpsCap;
+
+    // Simulation time management
+    chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
+    int stepInMicroseconds = 1000000 / config.fpsCap;
+    chrono::microseconds step = chrono::microseconds(stepInMicroseconds);
+    chrono::system_clock::time_point frameStart;
+    chrono::system_clock::time_point desiredFrameStart = chrono::system_clock::now();
 
     while (!quit && (config.stopAtFrame == -1 || nframe < config.stopAtFrame)) {
-        if (config.runMode == RunMode::replay) {
-            for (int i = 0; i < numObjects; i++) objects[i]->goToFrame(nframe);
-        }
-
+        // Force FPS cap
         if (config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) {
-            sceneRenderer.setupFrame();
-            camera->lookAt();
-            sceneRenderer.setLighting();
-            sceneRenderer.drawAxis();
-
-            // Draw objects
-            for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
-            if (!pause && config.shouldRecordVideo()) {
-                // Record video
-                recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
-                recorder->ffmpeg_encoder_encode_frame(rgb);
-            }
-            if (config.showFPS) sceneRenderer.drawFPSCounter(fps);
+            if (chrono::system_clock::now() < desiredFrameStart) this_thread::sleep_until(desiredFrameStart);
+            frameStart = chrono::system_clock::now();
+            desiredFrameStart += step;
         }
 
         if (!pause) {
-            // Record data
-            if (config.shouldRecordScene()) {
-                sceneRecorder->recordFrame(objects, numObjects, nframe);
-            }
-
             // Compute next frame
             if (config.runMode != RunMode::replay) {
-                if (config.shouldLog()) frameStart = std::chrono::system_clock::now();
+                if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
                 broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(objects, numObjects);
                 if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
                 collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
@@ -278,29 +293,29 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
                 CollisionResponseAlgorithm::moveObjects(objects, numObjects, 1.0 / config.fpsCap, slowMotion);
                 if (config.shouldLog()) {
                     moveEnd = std::chrono::system_clock::now();
-                    results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), frameStart, broadEnd, narrowEnd, responseEnd, moveEnd);
+                    results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
                 }
+                nframe++;
+            } else {
+                goToRecordedFrame(nframe, objects, numObjects);
+                nframe = min(config.stopAtFrame - 1, max(0, nframe + 1));
             }
-            nframe++;
+
+            // Record data
+            if (config.shouldRecordScene()) sceneRecorder->recordFrame(objects, numObjects, nframe);
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, camera, freeCamera, centeredCamera, config);
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, camera, freeCamera, centeredCamera, config, objects, numObjects);
 
-        if (config.runMode == RunMode::replay && (nframe >= config.stopAtFrame || nframe < 0)) {
-            pause = true;
-            nframe = min(config.stopAtFrame - 1, max(0, nframe));
-        }
-
-        // Force FPS cap
-        manageFrameTime(lastFrameTime, timeSinceLastFrame, config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay, config.fpsCap);
-
-        if ((float)chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - lastFPSDrawTime).count() / 1000.0 > 120) {
-            lastFPSDrawTime = std::chrono::system_clock::now();
-            fps = (int)(1.0 / timeSinceLastFrame) > config.fpsCap ? config.fpsCap : (int)(1.0 / timeSinceLastFrame);
+        if (shouldDrawScene) {
+            drawScene(sceneRenderer, camera, objects, numObjects, drawOBBs, drawAABBs);
+            if (!pause && config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
+            if (config.showFPS) sceneRenderer.drawFPSCounter(currentFPS);
         }
 
         SDL_GL_SwapWindow(window);
+        handleFPS(drawFrame, config.fpsCap, frameStart, rollingAvgFrametime, currentFPS);
     }
 
     // Store video
@@ -357,6 +372,12 @@ int main(int argc, char* argv[]) {
         char timeChars[32];
         int timeLength = std::strftime(timeChars, sizeof(timeChars), "%Y-%m-%d_%H-%M-%S", time);
         string outputsFolder = "output\\" + config.sceneName + "_" + string(timeChars, timeLength);
+
+        if (config.fullscreen) {
+            pair<int, int> resolution = getResolution();
+            config.windowWidth = resolution.first;
+            config.windowHeight = resolution.second;
+        }
 
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
 
