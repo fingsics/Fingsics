@@ -341,9 +341,9 @@ void runTestScenes(Config config, SDL_Window* window, string outputsFolder) {
     if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
     if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");
 
+    config.stopAtFrame = 300;
     for (auto scene = testSceneNames.begin(); scene != testSceneNames.end(); ++scene) {
         config.sceneName = *scene;
-        config.stopAtFrame = 300;
         SimulationResults* results = runSimulation(config, window, outputsFolder);
         if (results) {
             LoggingManager::logRunResults("testing\\results", *scene + "_test.csv", *results);
@@ -354,6 +354,9 @@ void runTestScenes(Config config, SDL_Window* window, string outputsFolder) {
 
 void runSceneBenchmark(Config config, SDL_Window* window, string outputsFolder) {
     list<SimulationResults> benchmarkResults = list<SimulationResults>();
+
+    if (config.stopAtFrame == -1) throw std::runtime_error("To do a benchmark run, please specify a maximum number of frames (STOP_AT_FRAME value in the config file)");
+
     for (int i = 0; i < config.numRuns; i++) {
         SimulationResults* results = runSimulation(config, window, outputsFolder);
         if (results) {

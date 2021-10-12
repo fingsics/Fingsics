@@ -22,7 +22,7 @@ void XmlReader::checkFileExists() {
     string filepath = "scenes/" + scene;
     if (!filesystem::exists(filepath) || !filesystem::is_regular_file(filepath)) {
         string error1 = "A scene named \'";
-        string error2 = "\' was not found";
+        string error2 = "\' was not found in the 'scenes' folder";
         throw std::runtime_error(error1 + scene + error2);
     }
 }
