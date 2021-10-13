@@ -7,14 +7,13 @@
 using namespace std;
 
 struct Scene {
-    Object** objects;
-    int numObjects;
+    vector<Object*> objects;
     Camera* currentCamera;
     Camera* freeCamera;
     Camera* centeredCamera;
     int stopAtFrame;
     int fpsCap;
-    Scene(Object**, int, Camera*, Camera*, Camera*, int, int);
+    Scene(vector<Object*>, Camera*, Camera*, Camera*, int, int);
 };
 
 #endif

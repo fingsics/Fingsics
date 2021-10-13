@@ -1,12 +1,12 @@
 #include "../include/SAPAndOBBs.h"
 
-SAPAndOBBs::SAPAndOBBs(Object** objects, int numObjects) {
-    sap = new SweepAndPrune(objects, numObjects);
+SAPAndOBBs::SAPAndOBBs(vector<Object*> objects) {
+    sap = new SweepAndPrune(objects);
     obbBruteForce = new OBBBruteForce();
 }
 
-map<string, pair<Object*, Object*>> SAPAndOBBs::getCollisions(Object** objects, int numObjects) {
-    map<string, pair<Object*, Object*>> SAPcollisions = sap->getCollisions(objects, numObjects);
+map<string, pair<Object*, Object*>> SAPAndOBBs::getCollisions(vector<Object*> objects) {
+    map<string, pair<Object*, Object*>> SAPcollisions = sap->getCollisions(objects);
     map<string, pair<Object*, Object*>> SAPAndOBBColisions = obbBruteForce->getCollisions(SAPcollisions);
     return SAPAndOBBColisions;
 }

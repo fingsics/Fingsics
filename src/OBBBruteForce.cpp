@@ -1,10 +1,10 @@
 #include "../include/OBBBruteForce.h"
 
-map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(Object** objects, int numObjects) {
+map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(vector<Object*> objects) {
     map<string, pair<Object*, Object*>> collisions = map<string, pair<Object*, Object*>>();
 
-    for (int i = 0; i < numObjects; i++) {
-        for (int j = i + 1; j < numObjects; j++) {
+    for (int i = 0; i < objects.size(); i++) {
+        for (int j = i + 1; j < objects.size(); j++) {
             if (OBBOverlapTest(objects[i]->getOBB(), objects[j]->getOBB()))
                 collisions.insert(getObjectPairWithId(objects[i], objects[j]));
         }

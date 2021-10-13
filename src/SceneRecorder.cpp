@@ -2,19 +2,18 @@
 
 SceneRecorder::SceneRecorder(string path) {
     this->numObjects = -1;
-    this->numObjects = -1;
     this->objects = NULL;
     this->positions = NULL;
     this->rotationMatrices = NULL;
     this->path = path;
 }
 
-SceneRecorder::SceneRecorder(Object** objects, int numObjects, int frames, string path) {
-    this->numObjects = numObjects;
-    this->objects = new SerializedObject[numObjects];
-    this->positions = new SerializedPosition*[numObjects];
-    this->rotationMatrices = new SerializedMatrix*[numObjects];
-    for (int i = 0; i < numObjects; i++) {
+SceneRecorder::SceneRecorder(vector<Object*> objects, int frames, string path) {
+    this->numObjects = objects.size();
+    this->objects = new SerializedObject[objects.size()];
+    this->positions = new SerializedPosition*[objects.size()];
+    this->rotationMatrices = new SerializedMatrix*[objects.size()];
+    for (int i = 0; i < objects.size(); i++) {
         serializeObject(objects[i], &this->objects[i]);
         this->positions[i] = new SerializedPosition[frames];
         this->rotationMatrices[i] = new SerializedMatrix[frames];
@@ -102,7 +101,7 @@ void SceneRecorder::deserializeRotationMatrix(SerializedMatrix serializedRotatio
     }
 }
 
-void SceneRecorder::recordFrame(Object** objects, int numObjects, int frame) {
+void SceneRecorder::recordFrame(vector<Object*> objects, int frame) {
     for (int i = 0; i < numObjects; i++) {
         serializePosition(objects[i]->getPosition(), &positions[i][frame]);
         serializeRotationMatrix(objects[i]->getRotationMatrix(), &rotationMatrices[i][frame]);

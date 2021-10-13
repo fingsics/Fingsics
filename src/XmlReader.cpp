@@ -71,6 +71,7 @@ vector<Object*> XmlReader::getObjects() {
         else if (objectType == "tile") objects.push_back((Object*)loadTile(xmlObject, to_string(objects.size())));
     }
 
+    objects.shrink_to_fit();
     return objects;
 }
 

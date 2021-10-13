@@ -1,6 +1,7 @@
 #include "../include/SweepAndPrune.h"
 
-SweepAndPrune::SweepAndPrune(Object** objects, int numObjects) {
+SweepAndPrune::SweepAndPrune(vector<Object*> objects) {
+    int numObjects = objects.size();
     this->pointsPerAxis = numObjects * 2;
     this->xPoints = new AABBPoint[2 * numObjects];
     this->yPoints = new AABBPoint[2 * numObjects];
@@ -196,8 +197,8 @@ void SweepAndPrune::removeCollision(Object* object1, Object* object2) {
     collisionPairs.erase(getObjectPairWithId(object1, object2).first);
 }
 
-map<string, pair<Object*, Object*>> SweepAndPrune::getCollisions(Object** objects, int numObjects) {
-    for (int i = 0; i < numObjects; i++) {
+map<string, pair<Object*, Object*>> SweepAndPrune::getCollisions(vector<Object*> objects) {
+    for (int i = 0; i < objects.size(); i++) {
         updateObject(objects[i]);
     }
     return collisionPairs;

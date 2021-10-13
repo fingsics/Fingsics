@@ -139,14 +139,14 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-void drawScene(SceneRenderer sceneRenderer, Camera* camera, Object** objects, int numObjects, bool drawOBBs, bool drawAABBs) {
+void drawScene(SceneRenderer sceneRenderer, Camera* camera, vector<Object*> objects, bool drawOBBs, bool drawAABBs) {
     sceneRenderer.setupFrame();
     camera->lookAt();
     sceneRenderer.setLighting();
     sceneRenderer.drawAxis();
 
     // Draw objects
-    for (int i = 0; i < numObjects; i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
+    for (int i = 0; i < objects.size(); i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
 }
 
 void recordVideoFrame(VideoRecorder* recorder, Config config, GLubyte* pixels, uint8_t* rgb, int nframe) {
@@ -167,12 +167,12 @@ void handleFPS(int &drawFrame, int fpsCap, chrono::system_clock::time_point fram
     drawFrame++;
 }
 
-BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, Object** objects, int numObjects) {
+BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, vector<Object*> objects) {
     switch (config.bpAlgorithm) {
     case BPAlgorithmChoice::aabbBruteForce: return new AABBBruteForce();
     case BPAlgorithmChoice::obbBruteForce: return new OBBBruteForce();
-    case BPAlgorithmChoice::sweepAndPrune: return new SweepAndPrune(objects, numObjects);
-    case BPAlgorithmChoice::SAPAndOBBs: return new SAPAndOBBs(objects, numObjects);
+    case BPAlgorithmChoice::sweepAndPrune: return new SweepAndPrune(objects);
+    case BPAlgorithmChoice::SAPAndOBBs: return new SAPAndOBBs(objects);
     default: return new NoBPCD();
     }
 }
@@ -182,29 +182,26 @@ Scene getScene(Config config) {
     Camera* settingsCamera = NULL;
     Camera* freeCamera = NULL;
     Camera* currentCamera = NULL;
-    vector<Object*> objectsVector;
+    vector<Object*> objects;
     int stopAtFrame = config.stopAtFrame;
     int fpsCap = config.fpsCap;
 
     if (config.runMode == RunMode::replay) {
         tuple<vector<Object*>, int, int> recordedScene = SceneRecorder("output\\" + config.replayName).importRecordedScene(config);
-        objectsVector = get<0>(recordedScene);
+        objects = get<0>(recordedScene);
         stopAtFrame = get<1>(recordedScene);
         fpsCap = get<2>(recordedScene);
     }
     else {
         XmlReader xmlReader = XmlReader(config.sceneName + ".xml", config.numLatLongs);
         settingsCamera = xmlReader.getCamera();
-        objectsVector = xmlReader.getObjects();
+        objects = xmlReader.getObjects();
     }
 
     freeCamera = settingsCamera ? settingsCamera : new FreeCamera();
     currentCamera = settingsCamera ? freeCamera : centeredCamera;
-
-    Object** objects = new Object*[objectsVector.size()];
-    memcpy(objects, &objectsVector[0], objectsVector.size() * sizeof(Object*));
     
-    return Scene(objects, objectsVector.size(), currentCamera, freeCamera, centeredCamera, stopAtFrame, fpsCap);
+    return Scene(objects, currentCamera, freeCamera, centeredCamera, stopAtFrame, fpsCap);
 }
 
 SimulationResults* runSimulation(Config config, SDL_Window* window, string outputsFolder) {
@@ -232,10 +229,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
     // Initialize scene recorder
     if (config.shouldRecordScene() && scene.stopAtFrame == -1) throw std::runtime_error("To record a scene, please specify a maximum number of frames (STOP_AT_FRAME value in the config file)");
-    SceneRecorder* sceneRecorder = config.shouldRecordScene() ? new SceneRecorder(scene.objects, scene.numObjects, scene.stopAtFrame, outputsFolder) : NULL;
+    SceneRecorder* sceneRecorder = config.shouldRecordScene() ? new SceneRecorder(scene.objects, scene.stopAtFrame, outputsFolder) : NULL;
 
     // Initialize renderer
-    SceneRenderer sceneRenderer = SceneRenderer(scene.objects, scene.numObjects, config.numLatLongs, config.numLatLongs);
+    SceneRenderer sceneRenderer = SceneRenderer(scene.objects, config.numLatLongs, config.numLatLongs);
     sceneRenderer.initializeOpenGL(config.windowWidth, config.windowHeight);
 
     // Initialize collision detection algorithms
@@ -243,7 +240,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     NarrowPhaseAlgorithm* narrowPhaseAlgorithm = NULL;
     if (config.runMode != RunMode::replay) {
         narrowPhaseAlgorithm = new NarrowPhaseAlgorithm();
-        broadPhaseAlgorithm = getBroadPhaseAlgorithm(config, scene.objects, scene.numObjects);
+        broadPhaseAlgorithm = getBroadPhaseAlgorithm(config, scene.objects);
     }
 
     // Initiailize video recording
@@ -259,10 +256,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
     // Draw and record first frame
     if (config.shouldDrawScene()) {
-        drawScene(sceneRenderer, scene.currentCamera, scene.objects, scene.numObjects, drawOBBs, drawAABBs);
+        drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
         if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
     }
-    if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, scene.numObjects, nframe);
+    if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
 
     // Simulation time management
     chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
@@ -283,24 +280,24 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (!pause && config.runMode != RunMode::replay) {
             // Compute next frame
             if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
-            broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(scene.objects, scene.numObjects);
+            broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(scene.objects);
             if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
             collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
             if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
             if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-            CollisionResponseAlgorithm::moveObjects(scene.objects, scene.numObjects, 1.0 / scene.fpsCap, slowMotion);
+            CollisionResponseAlgorithm::moveObjects(scene.objects, 1.0 / scene.fpsCap, slowMotion);
             if (config.shouldLog()) {
                 moveEnd = std::chrono::system_clock::now();
                 results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
             }
             nframe++;
 
-            if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, scene.numObjects, nframe);
+            if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
         }
 
         if (config.runMode == RunMode::replay) {
-            if (currentReplayFrame != nframe) for (int i = 0; i < scene.numObjects; i++) scene.objects[i]->goToFrame(nframe);
+            if (currentReplayFrame != nframe) for (int i = 0; i < scene.objects.size(); i++) scene.objects[i]->goToFrame(nframe);
             currentReplayFrame = nframe;
             if (!pause) nframe = min(scene.stopAtFrame - 1, max(0, nframe + 1));
         }
@@ -310,7 +307,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
         // Draw scene and record video frame
         if (config.shouldDrawScene()) {
-            drawScene(sceneRenderer, scene.currentCamera, scene.objects, scene.numObjects, drawOBBs, drawAABBs);
+            drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
             if (!pause && config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
             if (config.showFPS) sceneRenderer.drawFPSCounter(currentFPS);
         }

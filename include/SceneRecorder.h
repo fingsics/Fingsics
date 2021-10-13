@@ -56,9 +56,9 @@ private:
     void serializeRotationMatrix(Matrix, SerializedMatrix*);
     void deserializeRotationMatrix(SerializedMatrix, Matrix*);
 public:
-    SceneRecorder(Object**, int, int, string); // Recorder
+    SceneRecorder(vector<Object*>, int, string); // Recorder
     SceneRecorder(string); // Loader
-    void recordFrame(Object**, int, int);
+    void recordFrame(vector<Object*>, int);
     void storeRecordedData(int, int);
     tuple<vector<Object*>, int, int> importRecordedScene(Config);
 };

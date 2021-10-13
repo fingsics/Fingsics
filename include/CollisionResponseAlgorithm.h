@@ -14,7 +14,7 @@ private:
     static void calculateStaticCollision(Object*, Object*, Point, Point);
 public:
     static void collisionResponse(map<string, Collision>);
-    static void moveObjects(Object**, int, float, bool);
+    static void moveObjects(vector<Object*>, float, bool);
 };
 
 

@@ -1,6 +1,6 @@
 #include "../include/SceneRenderer.h";
 
-SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int longs) {
+SceneRenderer::SceneRenderer(vector<Object*> objects, int lats, int longs) {
     this->ballArrayLength = ((lats + 1) * (longs + 1)) * 2;
     this->capsuleArrayLength = ((lats + 1) * (longs + 1) + (longs + 1)) * 2;
     this->tileArrayLength = 4;
@@ -9,7 +9,7 @@ SceneRenderer::SceneRenderer(Object** objects, int numObjects, int lats, int lon
     this->rocketArrayLength1 = ((rocketTipRings) * (longs + 1)) * 2;
     this->rocketArrayLength2 = ((lats + 1 - rocketTipRings) * (longs + 1)) * 2;
 
-    for (int i = 0; i < numObjects; i++) {
+    for (int i = 0; i < objects.size(); i++) {
         if (Ball* ball = dynamic_cast<Ball*>(objects[i])) initializeBallArrays(ball, lats, longs);
         else if (Capsule* capsule = dynamic_cast<Capsule*>(objects[i])) {
             if (capsule->getDrawRocket()) initializeRocketArrays(capsule, lats, longs);

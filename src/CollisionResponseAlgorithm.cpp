@@ -1,8 +1,8 @@
 #include "../include/CollisionResponseAlgorithm.h"
 
-void CollisionResponseAlgorithm::moveObjects(Object** objects, int numObjects, float framesPeroSecond, bool slowMotion) {
+void CollisionResponseAlgorithm::moveObjects(vector<Object*> objects, float framesPeroSecond, bool slowMotion) {
     float time = slowMotion ? framesPeroSecond / 3 : framesPeroSecond;
-    for (int i = 0; i < numObjects; i++) objects[i]->updatePositionAndVelocity(time);
+    for (int i = 0; i < objects.size(); i++) objects[i]->updatePositionAndVelocity(time);
 }
 
 void CollisionResponseAlgorithm::calculateNonStaticCollision(Object* object1, Object* object2, Point collisionPoint, Point normal) {

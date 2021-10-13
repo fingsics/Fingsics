@@ -7,7 +7,7 @@ using namespace std;
 
 class NoBPCD : public BroadPhaseAlgorithm {
 public:
-    map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
 };
 
 #endif

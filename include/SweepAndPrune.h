@@ -22,8 +22,8 @@ private:
     void addCollision(Object*, Object*);
     void removeCollision(Object*, Object*);
 public:
-    SweepAndPrune(Object**, int);
-    map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+    SweepAndPrune(vector<Object*>);
+    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
     void updateObject(Object*);
 };
 

@@ -9,7 +9,7 @@ class AABBBruteForce : public BroadPhaseAlgorithm {
 private:
     bool AABBOverlapTest(Object*, Object*);
 public:
-    map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
 };
 
 #endif

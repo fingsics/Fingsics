@@ -42,7 +42,7 @@ private:
     int rocketArrayLength1;
     int rocketArrayLength2;
 public:
-    SceneRenderer(Object**, int, int, int);
+    SceneRenderer(vector<Object*>, int, int);
 	void initializeOpenGL(int, int);
 	void setupFrame();
 	void drawAxis();

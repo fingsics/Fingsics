@@ -12,8 +12,8 @@ private:
     SweepAndPrune* sap;
     OBBBruteForce* obbBruteForce;
 public:
-    SAPAndOBBs(Object**, int);
-    map<string, pair<Object*, Object*>> getCollisions(Object**, int);
+    SAPAndOBBs(vector<Object*>);
+    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
 };
 
 #endif
