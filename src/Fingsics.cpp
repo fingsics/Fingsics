@@ -155,16 +155,10 @@ void recordVideoFrame(VideoRecorder* recorder, Config config, GLubyte* pixels, u
     recorder->ffmpeg_encoder_encode_frame(rgb);
 }
 
-void handleFPS(int &drawFrame, int fpsCap, chrono::system_clock::time_point frameStart, int& rollingAvgFrametime, int& currentFPS) {
-    const float newFrameWeight = 0.1;
+void handleFPS(int fpsCap, chrono::system_clock::time_point frameStart, int& rollingAvgFrametime) {
+    const float newFrameWeight = 0.05;
     int lastFrameTime = chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - frameStart).count();
     rollingAvgFrametime = (1 - newFrameWeight) * (float)rollingAvgFrametime + newFrameWeight * (float)lastFrameTime;
-    int fpsUpdateInterval = fpsCap / 5;
-    if (drawFrame % fpsUpdateInterval == 0) {
-        currentFPS = microsecondsInOneSecond / rollingAvgFrametime > fpsCap ? fpsCap : microsecondsInOneSecond / rollingAvgFrametime;
-        drawFrame = 0;
-    }
-    drawFrame++;
 }
 
 BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, vector<Object*> objects) {
@@ -224,8 +218,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     int nframe = 0;
     int currentReplayFrame = 0;
     int rollingAvgFrametime = microsecondsInOneSecond / scene.fpsCap; // Microseconds
-    int drawFrame = 0;
-    int currentFPS = scene.fpsCap;
 
     // Initialize scene recorder
     if (config.shouldRecordScene() && scene.stopAtFrame == -1) throw std::runtime_error("To record a scene, please specify a maximum number of frames (STOP_AT_FRAME value in the config file)");
@@ -265,17 +257,13 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
     int stepInMicroseconds = microsecondsInOneSecond / scene.fpsCap;
     chrono::microseconds step = chrono::microseconds(stepInMicroseconds);
-    chrono::system_clock::time_point frameStart;
-    chrono::system_clock::time_point desiredFrameStart = chrono::system_clock::now();
+    chrono::system_clock::time_point frameStart, frameEnd;
+    frameEnd = chrono::system_clock::now();
 
     // MAIN LOOP
     while (!quit && (scene.stopAtFrame == -1 || nframe < scene.stopAtFrame)) {
-        // Force FPS cap
-        if (config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) {
-            if (chrono::system_clock::now() < desiredFrameStart) this_thread::sleep_until(desiredFrameStart);
-            frameStart = chrono::system_clock::now();
-            desiredFrameStart += step;
-        }
+        frameStart = chrono::system_clock::now();
+        frameEnd = frameStart + step;
 
         if (!pause && config.runMode != RunMode::replay) {
             // Compute next frame
@@ -309,11 +297,17 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (config.shouldDrawScene()) {
             drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
             if (!pause && config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
-            if (config.showFPS) sceneRenderer.drawFPSCounter(currentFPS);
+            if (config.showFPS) {
+                handleFPS(scene.fpsCap, frameStart, rollingAvgFrametime);
+                int fps = microsecondsInOneSecond / rollingAvgFrametime > scene.fpsCap ? scene.fpsCap : microsecondsInOneSecond / rollingAvgFrametime;
+                sceneRenderer.drawFPSCounter(fps);
+            }
         }
 
         SDL_GL_SwapWindow(window);
-        handleFPS(drawFrame, scene.fpsCap, frameStart, rollingAvgFrametime, currentFPS);
+
+        if ((config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) && chrono::system_clock::now() < frameEnd)
+            this_thread::sleep_until(frameEnd);
     }
 
     // Store video recording
