@@ -36,12 +36,12 @@ Config::Config(map<string, string> config) {
 
     it = config.find("RECORD_VIDEO");
     if (it != config.end()) {
-        recordVideo = !it->second.compare("true");
+        recordVideo = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("RECORD_SCENE");
     if (it != config.end()) {
-        recordScene = !it->second.compare("true");
+        recordScene = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("OBJECT_DEFINITION");
@@ -60,24 +60,24 @@ Config::Config(map<string, string> config) {
 
     it = config.find("LOG");
     if (it != config.end()) {
-        log = !it->second.compare("true");
+        log = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("SHOW_FPS");
     if (it != config.end()) {
-        showFPS = !it->second.compare("true");
+        showFPS = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("FULLSCREEN");
     if (it != config.end()) {
-        fullscreen = !it->second.compare("true");
+        fullscreen = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("RUN_MODE");
     if (it != config.end()) {
-        if (!it->second.compare("TEST")) runMode = RunMode::test;
-        else if (!it->second.compare("BENCHMARK")) runMode = RunMode::benchmark;
-        else if (!it->second.compare("REPLAY")) runMode = RunMode::replay;
+        if (it->second.find("TEST") != std::string::npos) runMode = RunMode::test;
+        else if (it->second.find("BENCHMARK") != std::string::npos) runMode = RunMode::benchmark;
+        else if (it->second.find("REPLAY") != std::string::npos) runMode = RunMode::replay;
     }
 
     it = config.find("NUM_RUNS_FOR_BENCHMARK");
@@ -102,7 +102,7 @@ Config::Config(map<string, string> config) {
 }
 
 bool Config::shouldRecordVideo() {
-    return recordVideo && runMode == RunMode::defaultMode;
+    return recordVideo && runMode == RunMode::defaultMode && (fpsCap == 25 || fpsCap == 30 || fpsCap == 60 || fpsCap == 120);
 }
 
 bool Config::shouldRecordScene() {

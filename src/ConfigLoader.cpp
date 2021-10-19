@@ -39,8 +39,13 @@ Config ConfigLoader::getConfig() {
 KeyValue ConfigLoader::splitString(string s) {
     string key, value;
     string delimiter = "=";
+    string comment = "#";
     size_t pos = 0;
     
+    if ((pos = s.find(comment)) != string::npos) {
+        s = s.substr(0, pos);
+    }
+
     if ((pos = s.find(delimiter)) != string::npos) {
         key = s.substr(0, pos);
         value = s.substr(pos + delimiter.length(), s.length());

@@ -23,7 +23,7 @@ Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrice
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
-    this->draw = true;
+    this->draw = draw;
 }
 
 Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color, bool draw) {
@@ -41,7 +41,7 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->velCollisionMassPerAxis = Point();
     this->angVelCollisionMassPerAxis = Point();
     this->aabb = NULL;
-    this->draw = true;
+    this->draw = draw;
 
     this->replayMode = false;
     this->positions = NULL;

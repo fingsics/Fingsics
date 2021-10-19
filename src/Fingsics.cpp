@@ -59,7 +59,7 @@ SDL_Window* initializeSDL(int width, int height) {
     return window;
 }
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config) {
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config, int stopAtFrame) {
     SDL_Event event;
     int xm, ym;
 
@@ -112,13 +112,13 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
                 nframe = max(0, nframe - 600);
                 break;
             case SDLK_DOWN:
-                nframe = min(config.stopAtFrame - 1, nframe + 600);
+                nframe = min(stopAtFrame - 1, nframe + 600);
                 break;
             case SDLK_LEFT:
                 nframe = max(0, nframe - 60);
                 break;
             case SDLK_RIGHT:
-                nframe = min(config.stopAtFrame - 1, nframe + 60);
+                nframe = min(stopAtFrame - 1, nframe + 60);
                 break;
             case SDLK_COMMA:
                 pause = true;
@@ -126,7 +126,7 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
                 break;
             case SDLK_PERIOD:
                 pause = true;
-                nframe = min(config.stopAtFrame - 1, nframe + 1);
+                nframe = min(stopAtFrame - 1, nframe + 1);
                 break;
             default:
                 break;
@@ -240,7 +240,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (!filesystem::is_directory("output") || !filesystem::exists("output")) filesystem::create_directory("output");
         if (!filesystem::is_directory(outputsFolder) || !filesystem::exists(outputsFolder)) filesystem::create_directory(outputsFolder);
         string fileName = outputsFolder + "\\" + "scene.mpg";
-        recorder->ffmpeg_encoder_start(fileName.c_str(), scene.fpsCap, config.windowWidth, config.windowHeight);
+        recorder->ffmpeg_encoder_start(fileName.c_str(), scene.fpsCap < 60 ? scene.fpsCap : 60, config.windowWidth, config.windowHeight);
     }
 
     // Draw and record first frame
@@ -292,7 +292,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
         // Persist data
         if (!pause) {
-            if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
+            if (config.shouldRecordVideo() && (config.fpsCap != 120 || nframe % 2 == 1)) recordVideoFrame(recorder, config, pixels, rgb, nframe);
             if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
             if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd);
         }
@@ -305,7 +305,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, scene.currentCamera, scene.freeCamera, scene.centeredCamera, config);
+        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, scene.currentCamera, scene.freeCamera, scene.centeredCamera, config, scene.stopAtFrame);
 
         SDL_GL_SwapWindow(window);
 
