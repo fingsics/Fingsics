@@ -5,7 +5,7 @@ FULLSCREEN=true
 WINDOWED_WIDTH=1280
 WINDOWED_HEIGHT=720
 
-# Outputs
+# Outputs (for DEFAULT mode only)
 RECORD_VIDEO=false
 RECORD_SCENE=false
 LOG=false

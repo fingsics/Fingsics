@@ -16,15 +16,15 @@ struct FrameResult {
     float bpcdTime;
     float npcdTime;
     float collisionResponseTime;
-    float moveTime;
     float totalTime;
+    float drawTime;
     FrameResult(int, int, float, float, float, float, float);
     FrameResult();
 };
 
 struct SimulationResults {
     list<FrameResult> frameResults;
-    void addFrameResults(int, int, chrono::system_clock::time_point, chrono::system_clock::time_point,
+    void addFrameResults(int, int, chrono::system_clock::time_point, chrono::system_clock::time_point, chrono::system_clock::time_point,
         chrono::system_clock::time_point, chrono::system_clock::time_point, chrono::system_clock::time_point);
     SimulationResults();
 };

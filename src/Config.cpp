@@ -102,7 +102,7 @@ Config::Config(map<string, string> config) {
 }
 
 bool Config::shouldRecordVideo() {
-    return runMode == RunMode::defaultMode && recordVideo;
+    return recordVideo && runMode == RunMode::defaultMode;
 }
 
 bool Config::shouldRecordScene() {
@@ -114,7 +114,7 @@ bool Config::shouldDrawScene() {
 }
 
 bool Config::shouldLog() {
-    return runMode == RunMode::benchmark || runMode == RunMode::test || log;
+    return runMode == RunMode::benchmark || runMode == RunMode::test || (log && runMode == RunMode::defaultMode);
 }
 
 string Config::getBPCDDescription() {

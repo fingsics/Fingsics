@@ -1,13 +1,13 @@
 #include "../include/LoggingManager.h"
 
-FrameResult::FrameResult(int npcdTests, int collisions, float bpcdTime, float npcdTime, float collisionResponseTime, float moveTime, float totalTime) {
+FrameResult::FrameResult(int npcdTests, int collisions, float bpcdTime, float npcdTime, float collisionResponseTime, float drawTime, float totalTime) {
     this->npcdTests = npcdTests;
     this->collisions = collisions;
     this->bpcdTime = bpcdTime;
     this->npcdTime = npcdTime;
     this->collisionResponseTime = collisionResponseTime;
-    this->moveTime = moveTime;
     this->totalTime = totalTime;
+    this->drawTime = drawTime;
 }
 
 FrameResult::FrameResult() {
@@ -16,8 +16,8 @@ FrameResult::FrameResult() {
     this->bpcdTime = 0;
     this->npcdTime = 0;
     this->collisionResponseTime = 0;
-    this->moveTime = 0;
     this->totalTime = 0;
+    this->drawTime = 0;
 }
 
 SimulationResults::SimulationResults() {
@@ -26,22 +26,23 @@ SimulationResults::SimulationResults() {
 
 void SimulationResults::addFrameResults(int numBroadPhaseCollisions, int numCollisions, chrono::system_clock::time_point frameStart,
 										chrono::system_clock::time_point broadEnd, chrono::system_clock::time_point narrowEnd,
-										chrono::system_clock::time_point responseEnd, chrono::system_clock::time_point moveEnd) {
+										chrono::system_clock::time_point responseEnd, chrono::system_clock::time_point drawStart,
+                                        chrono::system_clock::time_point drawEnd) {
 
     float bpcdTime = (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000.0;
     float npcdTime = (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - broadEnd).count() / 1000.0;
     float collisionResponseTime = (float)chrono::duration_cast<std::chrono::microseconds>(responseEnd - narrowEnd).count() / 1000.0;
-    float moveTime = (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - responseEnd).count() / 1000.0;
-    float totalTime = (float)chrono::duration_cast<std::chrono::microseconds>(moveEnd - frameStart).count() / 1000.0;
+    float drawTime = (float)chrono::duration_cast<std::chrono::microseconds>(drawEnd - drawStart).count() / 1000.0;
+    float totalTime = (float)chrono::duration_cast<std::chrono::microseconds>(drawEnd - frameStart).count() / 1000.0;
 
-    FrameResult frameResult = FrameResult(numBroadPhaseCollisions, numCollisions, bpcdTime, npcdTime, collisionResponseTime, moveTime, totalTime);
+    FrameResult frameResult = FrameResult(numBroadPhaseCollisions, numCollisions, bpcdTime, npcdTime, collisionResponseTime, drawTime, totalTime);
     frameResults.push_back(frameResult);
 }
 
 void LoggingManager::logRunResults(string folderName, string outputFileName, SimulationResults results) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
     for (auto it = results.frameResults.begin(); it != results.frameResults.end(); ++it) {
         log(outputCSV, *it, 1);
     }
@@ -51,7 +52,7 @@ void LoggingManager::logRunResults(string folderName, string outputFileName, Sim
 void LoggingManager::logManyRunsResults(string folderName, string outputFileName, FrameResult* results, int numFrames, int numRuns) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,MoveTime,TotalTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
     for (int i = 0; i < numFrames; i++) {
         log(outputCSV, results[i], numRuns);
     }
@@ -134,7 +135,7 @@ void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult, int
     outputFile << ",";
     outputFile << frameResult.collisionResponseTime / divisor;
     outputFile << ",";
-    outputFile << frameResult.moveTime / divisor;
+    outputFile << frameResult.drawTime / divisor;
     outputFile << ",";
     outputFile << frameResult.totalTime / divisor;
     outputFile << "\n";

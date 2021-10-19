@@ -144,13 +144,10 @@ void drawScene(SceneRenderer sceneRenderer, Camera* camera, vector<Object*> obje
     camera->lookAt();
     sceneRenderer.setLighting();
     sceneRenderer.drawAxis();
-
-    // Draw objects
     for (int i = 0; i < objects.size(); i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
 }
 
 void recordVideoFrame(VideoRecorder* recorder, Config config, GLubyte* pixels, uint8_t* rgb, int nframe) {
-    // Record video
     recorder->ffmpeg_encoder_glread_rgb(&rgb, &pixels, config.windowWidth, config.windowHeight, nframe);
     recorder->ffmpeg_encoder_encode_frame(rgb);
 }
@@ -254,19 +251,19 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
 
     // Simulation time management
-    chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, moveEnd;
+    chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, drawStart, drawEnd;
     int stepInMicroseconds = microsecondsInOneSecond / scene.fpsCap;
     chrono::microseconds step = chrono::microseconds(stepInMicroseconds);
     chrono::system_clock::time_point frameStart, frameEnd;
     frameEnd = chrono::system_clock::now();
 
-    // MAIN LOOP
+    // ----- MAIN LOOP -----
     while (!quit && (scene.stopAtFrame == -1 || nframe < scene.stopAtFrame)) {
         frameStart = chrono::system_clock::now();
         frameEnd = frameStart + step;
 
+        // Compute next frame
         if (!pause && config.runMode != RunMode::replay) {
-            // Compute next frame
             if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
             broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(scene.objects);
             if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
@@ -274,38 +271,45 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
             if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-            CollisionResponseAlgorithm::moveObjects(scene.objects, 1.0 / scene.fpsCap, slowMotion);
-            if (config.shouldLog()) {
-                moveEnd = std::chrono::system_clock::now();
-                results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, moveEnd);
-            }
-            nframe++;
 
-            if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
+            CollisionResponseAlgorithm::moveObjects(scene.objects, 1.0 / scene.fpsCap, slowMotion);
+            nframe++;
         }
 
+        // Replay handling
         if (config.runMode == RunMode::replay) {
             if (currentReplayFrame != nframe) for (int i = 0; i < scene.objects.size(); i++) scene.objects[i]->goToFrame(nframe);
             currentReplayFrame = nframe;
             if (!pause) nframe = min(scene.stopAtFrame - 1, max(0, nframe + 1));
         }
 
+        // Draw scene
+        if (config.shouldDrawScene()) {
+            if (config.shouldLog()) drawStart = std::chrono::system_clock::now();
+            drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
+            if (config.shouldLog()) drawEnd = std::chrono::system_clock::now();
+        }
+
+        // Persist data
+        if (!pause) {
+            if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
+            if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
+            if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd);
+        }
+
+        // Draw curent FPS
+        if (config.shouldDrawScene() && config.showFPS) {
+            handleFPS(scene.fpsCap, frameStart, rollingAvgFrametime);
+            int fps = microsecondsInOneSecond / rollingAvgFrametime > scene.fpsCap ? scene.fpsCap : microsecondsInOneSecond / rollingAvgFrametime;
+            sceneRenderer.drawFPSCounter(fps);
+        }
+
         // Process events
         checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, scene.currentCamera, scene.freeCamera, scene.centeredCamera, config);
 
-        // Draw scene and record video frame
-        if (config.shouldDrawScene()) {
-            drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
-            if (!pause && config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
-            if (config.showFPS) {
-                handleFPS(scene.fpsCap, frameStart, rollingAvgFrametime);
-                int fps = microsecondsInOneSecond / rollingAvgFrametime > scene.fpsCap ? scene.fpsCap : microsecondsInOneSecond / rollingAvgFrametime;
-                sceneRenderer.drawFPSCounter(fps);
-            }
-        }
-
         SDL_GL_SwapWindow(window);
 
+        // Sleep if necessary
         if ((config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay) && chrono::system_clock::now() < frameEnd)
             this_thread::sleep_until(frameEnd);
     }
