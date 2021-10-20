@@ -142,7 +142,7 @@ void SceneRecorder::storeRecordedData(int actualFrameCount, int fpsCap) {
     }
 
     file.close();
-    if (!file.good()) throw std::runtime_error("Error occurred at reading time!");
+    if (!file.good()) throw std::runtime_error("Error occurred at writing time!");
 }
 
 tuple<vector<Object*>, int, int> SceneRecorder::importRecordedScene(Config config) {
@@ -153,7 +153,7 @@ tuple<vector<Object*>, int, int> SceneRecorder::importRecordedScene(Config confi
         throw std::runtime_error(error + fileName);
     }
     
-    ifstream file(fileName, ios::out | ios::binary);
+    ifstream file(fileName, ios::in | ios::binary);
 
     uint32_t serializedNumObjects;
     uint32_t serializedFrames;

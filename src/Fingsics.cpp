@@ -249,6 +249,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
     }
     if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
+    nframe++;
 
     // Simulation time management
     chrono::system_clock::time_point collHandStart, broadEnd, midEnd, narrowEnd, responseEnd, drawStart, drawEnd;
@@ -273,14 +274,12 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
 
             CollisionResponseAlgorithm::moveObjects(scene.objects, 1.0 / scene.fpsCap, slowMotion);
-            nframe++;
         }
 
         // Replay handling
         if (config.runMode == RunMode::replay) {
             if (currentReplayFrame != nframe) for (int i = 0; i < scene.objects.size(); i++) scene.objects[i]->goToFrame(nframe);
             currentReplayFrame = nframe;
-            if (!pause) nframe = min(scene.stopAtFrame - 1, max(0, nframe + 1));
         }
 
         // Draw scene
@@ -302,6 +301,11 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             handleFPS(scene.fpsCap, frameStart, rollingAvgFrametime);
             int fps = microsecondsInOneSecond / rollingAvgFrametime > scene.fpsCap ? scene.fpsCap : microsecondsInOneSecond / rollingAvgFrametime;
             sceneRenderer.drawFPSCounter(fps);
+        }
+
+        if (!pause) {
+            if (config.runMode != RunMode::replay) nframe++;
+            else nframe = min(scene.stopAtFrame - 1, max(0, nframe + 1));
         }
 
         // Process events
@@ -371,7 +375,7 @@ string getOutputsFolderName(string sceneName) {
 }
 
 int main(int argc, char* argv[]) {
-   // try {
+   try {
         pair<int, int> resolution = getResolution();
         Config config = ConfigLoader(resolution.first, resolution.second).getConfig();
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
@@ -395,11 +399,11 @@ int main(int argc, char* argv[]) {
         if (config.runMode == RunMode::replay) {
             runSimulation(config, window, outputsFolder);
         }
-    //}
-    //catch (const std::exception& ex) {
-    //    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", ex.what(), NULL);
-    //    return 1;
-    //}
-    //
+    }
+    catch (const std::exception& ex) {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", ex.what(), NULL);
+        return 1;
+    }
+    
     return 0;
 }
