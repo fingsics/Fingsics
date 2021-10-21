@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+	<camera rad="76" pitch="-89.99" yaw="-89.99"/>
 	<objects>
 		<sphere pos="-31.560000000000002,0.0,-15.650000000000002" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.3" />
 		<sphere pos="-31.53,0.0,-14.88" vel="0,0,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,0,0" radius="0.3" />

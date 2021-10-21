@@ -27,7 +27,7 @@ void XmlReader::checkFileExists() {
     }
 }
 
-FreeCamera* XmlReader::getCamera() {
+CenteredCamera* XmlReader::getCamera() {
     checkFileExists();
 
     string filepath = "scenes/" + scene;
@@ -38,18 +38,16 @@ FreeCamera* XmlReader::getCamera() {
 
     if (!cameraSettings) return NULL;
 
-    float pitch, yaw;
-    const char* posChar;
-    Point pos;
+    float pitch, yaw, rad;
     tinyxml2::XMLError parseError;
-    parseError = cameraSettings->QueryStringAttribute("pos", &posChar);
-    pos = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(posChar) : Point(-13, 6, 0);
+    parseError = cameraSettings->QueryFloatAttribute("rad", &rad);
+    rad = (parseError == tinyxml2::XML_SUCCESS) ? rad : 40;
     parseError = cameraSettings->QueryFloatAttribute("pitch", &pitch);
     pitch = (parseError == tinyxml2::XML_SUCCESS) ? pitch : -25;
     parseError = cameraSettings->QueryFloatAttribute("yaw", &yaw);
     yaw = (parseError == tinyxml2::XML_SUCCESS) ? yaw : 0;
 
-    return new FreeCamera(pos, pitch, yaw);
+    return new CenteredCamera(rad, pitch, yaw);
 }
 
 vector<Object*> XmlReader::getObjects() {

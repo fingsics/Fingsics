@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+	<camera rad="63" pitch="-47" yaw="0"/>
 	<objects>
 		<capsule pos="-5.75,-5.5,-5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" />
 		<capsule pos="-5.75,-5.5,-3.45" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" />

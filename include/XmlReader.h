@@ -7,7 +7,9 @@
 #include "Capsule.h"
 #include "Tile.h"
 #include "Object.h"
+#include "Camera.h"
 #include "FreeCamera.h"
+#include "CenteredCamera.h"
 #include "tinyxml2.h"
 #include <filesystem>
 #include <iostream>
@@ -45,7 +47,7 @@ private:
 public:
 	XmlReader(string, int);
 	vector<Object*> getObjects();
-	FreeCamera* getCamera();
+	CenteredCamera* getCamera();
 };
 
 #endif OBJLOADER_H

@@ -169,10 +169,8 @@ BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, vector<Object*> objec
 }
 
 Scene getScene(Config config) {
-    Camera* centeredCamera = new CenteredCamera();
+    Camera* centeredCamera = new FreeCamera();
     Camera* settingsCamera = NULL;
-    Camera* freeCamera = NULL;
-    Camera* currentCamera = NULL;
     vector<Object*> objects;
     int stopAtFrame = config.stopAtFrame;
     int fpsCap = config.fpsCap;
@@ -189,10 +187,9 @@ Scene getScene(Config config) {
         objects = xmlReader.getObjects();
     }
 
-    freeCamera = settingsCamera ? settingsCamera : new FreeCamera();
-    currentCamera = settingsCamera ? freeCamera : centeredCamera;
+    centeredCamera = settingsCamera ? settingsCamera : new CenteredCamera();
     
-    return Scene(objects, currentCamera, freeCamera, centeredCamera, stopAtFrame, fpsCap);
+    return Scene(objects, centeredCamera, new FreeCamera(), centeredCamera, stopAtFrame, fpsCap);
 }
 
 SimulationResults* runSimulation(Config config, SDL_Window* window, string outputsFolder) {

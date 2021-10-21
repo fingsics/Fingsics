@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
+	<camera rad="53" pitch="-50" yaw="0"/>
 	<objects>
 		<tile pos="0,-17.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" draw="false" />
 		<tile pos="0,11.7,0" mass="1" elasticityCoef="1" ang="0,0,0" color="220,220,220" static="true" length="30" width="30" draw="false" />
