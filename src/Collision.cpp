@@ -53,11 +53,5 @@ void Collision::setSecondToLastPenetrationDepth(float secondToLastPenetrationDep
 }
 
 bool Collision::shouldApplyIt() {
-    if (lastPenetrationDepth == -1 || (secondToLastPenetrationDepth == -1 && penetrationDepth > lastPenetrationDepth)) return true;
-
-    float threshold = 5;
-    float projection1 = object1->getVelocity().dotProduct(normal);
-    float projection2 = object2->getVelocity().dotProduct(normal);
-
-    return penetrationDepth > lastPenetrationDepth && lastPenetrationDepth > secondToLastPenetrationDepth && projection1 < threshold && projection2 < threshold;
+    return lastPenetrationDepth == -1 || penetrationDepth > lastPenetrationDepth;
 }

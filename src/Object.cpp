@@ -103,10 +103,14 @@ void Object::setPosition(Point pos) {
 }
 
 void Object::setVelocity(Point vel) {
+    if (vel.getMagnitudeSqr() > 2500)
+        vel = vel / vel.getMagnitude() * 50;
     this->velocity = vel;
 }
 
 void Object::setAngularVelocity(Point angularVelocity) {
+    if (angularVelocity.getMagnitudeSqr() > 100)
+        angularVelocity = angularVelocity / angularVelocity.getMagnitude() * 10;
     this->angularVelocity = angularVelocity;
 }
 
