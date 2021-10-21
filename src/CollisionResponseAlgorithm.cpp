@@ -52,7 +52,7 @@ void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collis
     // Calculate per-collision impulses
     for (auto mapEntry : collisionMap) {
         Collision collision = mapEntry.second;
-        if (collision.getLastPenetrationDepth() != -1 && collision.getPenetrationDepth() < collision.getLastPenetrationDepth()) continue;
+        if (!collision.shouldApplyIt()) continue;
         Object* object1 = collision.getObject1();
         Object* object2 = collision.getObject2();
         Point collisionPoint = collision.getPoint();
@@ -65,7 +65,7 @@ void CollisionResponseAlgorithm::collisionResponse(map<string, Collision> collis
     // Calculate net impulse and apply it
     for (auto mapEntry : collisionMap) {
         Collision collision = mapEntry.second;
-        if (collision.getLastPenetrationDepth() != -1 && collision.getPenetrationDepth() < collision.getLastPenetrationDepth()) continue;
+        if (!collision.shouldApplyIt()) continue;
         collision.getObject1()->applyQueuedImpulses();
         collision.getObject2()->applyQueuedImpulses();
     }

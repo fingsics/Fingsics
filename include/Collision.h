@@ -13,8 +13,8 @@ struct Collision {
         Point normal;
         float penetrationDepth;
         float lastPenetrationDepth;
+        float secondToLastPenetrationDepth;
     public:
-        Collision(Object*, Object*, Point, Point, float, float);
         Collision(Point, Point, float);
         Object* getObject1();
         Object* getObject2();
@@ -24,7 +24,9 @@ struct Collision {
         float getLastPenetrationDepth();
         void setObjects(pair<Object*, Object*>);
         void setLastPenetrationDepth(float);
+        void setSecondToLastPenetrationDepth(float);
         void invertNormal();
+        bool shouldApplyIt();
 };
 
 #endif

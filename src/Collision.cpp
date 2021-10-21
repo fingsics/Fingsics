@@ -2,15 +2,6 @@
 
 using namespace std;
 
-Collision::Collision(Object* object1, Object* object2, Point point, Point normal, float penetrationDepth, float lastPenetrationDepth) {
-    this->object1 = object1;
-    this->object2 = object2;
-    this->point = point;
-    this->normal = normal;
-    this->penetrationDepth = penetrationDepth;
-    this->lastPenetrationDepth = lastPenetrationDepth;
-}
-
 Collision::Collision(Point point, Point normal, float penetrationDepth) {
     this->object1 = NULL;
     this->object2 = NULL;
@@ -55,4 +46,18 @@ void Collision::setObjects(pair<Object*, Object*> objects) {
 
 void Collision::setLastPenetrationDepth(float lastPenetrationDepth) {
     this->lastPenetrationDepth = lastPenetrationDepth;
+}
+
+void Collision::setSecondToLastPenetrationDepth(float secondToLastPenetrationDepth) {
+    this->secondToLastPenetrationDepth = secondToLastPenetrationDepth;
+}
+
+bool Collision::shouldApplyIt() {
+    if (lastPenetrationDepth == -1 || (secondToLastPenetrationDepth == -1 && penetrationDepth > lastPenetrationDepth)) return true;
+
+    float threshold = 5;
+    float projection1 = object1->getVelocity().dotProduct(normal);
+    float projection2 = object2->getVelocity().dotProduct(normal);
+
+    return penetrationDepth > lastPenetrationDepth && lastPenetrationDepth > secondToLastPenetrationDepth && projection1 < threshold && projection2 < threshold;
 }

@@ -355,7 +355,10 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
             if (collisions.find(objectPair.first) == collisions.end()) {
                 collision->setObjects(objectPair.second);
                 auto lastFrameCollision = lastFrameCollisions.find(objectPair.first);
-                if (lastFrameCollision != lastFrameCollisions.end()) collision->setLastPenetrationDepth(lastFrameCollision->second.getPenetrationDepth());
+                if (lastFrameCollision != lastFrameCollisions.end()) {
+                    collision->setSecondToLastPenetrationDepth(lastFrameCollision->second.getLastPenetrationDepth());
+                    collision->setLastPenetrationDepth(lastFrameCollision->second.getPenetrationDepth());
+                }
 
                 collisions.insert(pair<string, Collision>(objectPair.first, *collision));
             }

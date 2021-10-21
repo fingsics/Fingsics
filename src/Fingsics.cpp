@@ -334,8 +334,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 }
 
 void runTestScenes(Config config, SDL_Window* window, string outputsFolder) {
-    list<string> testSceneNames = list<string>{ "bouncy-things", "capsule-static-floor", "many-balls",
-        "big-grid-3", "missile2", "objects-resting", "one-ball-many-capsules", "bowling", "lag", "ramp", "two-simultaneous-collisions" };
+    list<string> testSceneNames = list<string>{ "many-balls", "missile", "missile2",
+        "objects-resting", "bowling", "matrix", "ramp", "simultaneous-collisions" };
 
     if (!filesystem::is_directory("testing") || !filesystem::exists("testing")) filesystem::create_directory("testing");
     if (!filesystem::is_directory("testing\\results") || !filesystem::exists("testing\\results")) filesystem::create_directory("testing\\results");

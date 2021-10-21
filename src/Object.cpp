@@ -158,7 +158,6 @@ void Object::applyQueuedImpulses() {
 void Object::applyImpulse(Point normal, Point tangent) {
     Point velDiff = normal / mass;
     Point angVelDiff = getInertiaTensorInverse() * tangent;
-
     setVelocity(velocity + velDiff);
     setAngularVelocity(angularVelocity + angVelDiff);
 }

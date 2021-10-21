@@ -13,7 +13,6 @@
 		<sphere pos="0,2.2,1" radius="0.2" mass="1" elasticityCoef="1" vel="5,0,5" color="200,200,200" acceleration="0,-9.8,0" />
 		<sphere pos="0,3.2,2" radius="0.4" mass="2" elasticityCoef="1" vel="2,0,0" color="200,200,200" acceleration="0,-9.8,0" />
 		<sphere pos="2,3.2,0.3" radius="0.33" mass="0.33" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
-		<sphere pos="-2,3.2,0.3" radius="0.1" mass="0.05" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
 		<sphere pos="2,4,0.3" radius="0.33" mass="0.33" elasticityCoef="1" vel="0,0,0" color="200,200,200" acceleration="0,-9.8,0" />
 		<sphere pos="-2,2.2,-2" radius="0.33" mass="0.33" elasticityCoef="1" vel="2,1,5" color="200,200,200" acceleration="0,-9.8,0" />
 		<sphere pos="-1.5,2,0.7" radius="0.33" mass="0.33" elasticityCoef="1" vel="3,-2,7" color="200,200,200" acceleration="0,-9.8,0" />
