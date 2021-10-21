@@ -99,6 +99,9 @@ Config::Config(map<string, string> config) {
     if (it != config.end()) {
         replayName = it->second;
     }
+
+    if (recordVideo && fpsCap != 25 && fpsCap != 30 && fpsCap != 60 && fpsCap != 120)
+        throw std::runtime_error("FPS_CAP must be 25, 30, 60 or 120 to do video recording");
 }
 
 bool Config::shouldRecordVideo() {
