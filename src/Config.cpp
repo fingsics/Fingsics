@@ -9,6 +9,7 @@ Config::Config(map<string, string> config) {
     recordVideo = false;
     recordScene = false;
     fullscreen = true;
+    drawAxes = true;
     showFPS = true;
     numLatLongs = 8;
     log = false;
@@ -66,6 +67,11 @@ Config::Config(map<string, string> config) {
     it = config.find("SHOW_FPS");
     if (it != config.end()) {
         showFPS = it->second.find("true") != std::string::npos;
+    }
+
+    it = config.find("DRAW_AXES");
+    if (it != config.end()) {
+        drawAxes = it->second.find("true") != std::string::npos;
     }
 
     it = config.find("FULLSCREEN");

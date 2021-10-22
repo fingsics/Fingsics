@@ -139,11 +139,11 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
     }
 }
 
-void drawScene(SceneRenderer sceneRenderer, Camera* camera, vector<Object*> objects, bool drawOBBs, bool drawAABBs) {
+void drawScene(SceneRenderer sceneRenderer, Camera* camera, vector<Object*> objects, bool drawOBBs, bool drawAABBs, bool drawAxes) {
     sceneRenderer.setupFrame();
     camera->lookAt();
     sceneRenderer.setLighting();
-    sceneRenderer.drawAxis();
+    if (drawAxes) sceneRenderer.drawAxis();
     for (int i = 0; i < objects.size(); i++) sceneRenderer.drawObject(objects[i], drawOBBs, drawAABBs);
 }
 
@@ -242,7 +242,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
 
     // Draw and record first frame
     if (config.shouldDrawScene()) {
-        drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
+        drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs, config.drawAxes);
         if (config.shouldRecordVideo()) recordVideoFrame(recorder, config, pixels, rgb, nframe);
     }
     if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
@@ -282,7 +282,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         // Draw scene
         if (config.shouldDrawScene()) {
             if (config.shouldLog()) drawStart = std::chrono::system_clock::now();
-            drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs);
+            drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs, config.drawAxes);
             if (config.shouldLog()) drawEnd = std::chrono::system_clock::now();
         }
 

@@ -1,16 +1,17 @@
 # Main configs
 SCENE_FILE_NAME=scene
 FPS_CAP=60
-FULLSCREEN=true
+FULLSCREEN=false
 WINDOWED_WIDTH=1280
 WINDOWED_HEIGHT=720
 
 # Outputs (for DEFAULT mode only)
 LOG=false
-RECORD_SCENE=false
+RECORD_SCENE=false # Warning: big scenes may consume a lot of disk space
 RECORD_VIDEO=false # FPS_CAP must be 25, 30, 60 or 120
 
 # Drawing
+DRAW_AXES=true
 OBJECT_DEFINITION=8
 SHOW_FPS=true
 

@@ -18,6 +18,7 @@ struct Config {
 	int numLatLongs;
 	int windowWidth;
 	int windowHeight;
+	bool drawAxes;
 	bool showFPS;
 	bool fullscreen;
 	bool recordVideo;
