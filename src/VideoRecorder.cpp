@@ -31,7 +31,7 @@ void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int widt
         errorFound = true;
         return;
     }
-    c->bit_rate = 3000000;
+    c->bit_rate = 10000000;
     c->width = width;
     c->height = height;
     c->time_base.num = 1;
