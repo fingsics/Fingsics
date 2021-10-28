@@ -31,7 +31,7 @@ void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int widt
         errorFound = true;
         return;
     }
-    c->bit_rate = 10000000;
+    c->bit_rate = 50000000;
     c->width = width;
     c->height = height;
     c->time_base.num = 1;
@@ -40,7 +40,7 @@ void VideoRecorder::ffmpeg_encoder_start(const char* filename, int fps, int widt
     c->max_b_frames = 1;
     c->pix_fmt = AV_PIX_FMT_YUV420P;
     if (codec_id == AV_CODEC_ID_H264)
-        av_opt_set(c->priv_data, "preset", "slow", 0);
+        av_opt_set(c->priv_data, "preset", "fast", 0);
     if (avcodec_open2(c, codec, NULL) < 0) {
         fprintf(stderr, "Could not open codec\n");
         errorFound = true;
