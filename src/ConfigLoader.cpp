@@ -28,7 +28,7 @@ Config ConfigLoader::getConfig() {
 
     Config config = Config(configMap);
 
-    if (config.fullscreen) {
+    if (config.fullscreen && config.runMode != RunMode::benchmark) {
         config.windowWidth = screenResolutionWidth;
         config.windowHeight = screenResolutionHeight;
     }

@@ -59,9 +59,7 @@ void LoggingManager::logManyRunsResults(string folderName, string outputFileName
     outputCSV.close();
 }
 
-void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config config) {
-    string outputFolder = "benchmarks\\" + config.sceneName + "_" + config.getBPCDDescription();
-    
+void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config config, string outputFolder) {
     if (!filesystem::is_directory("benchmarks") || !filesystem::exists("benchmarks")) filesystem::create_directory("benchmarks");
     if (filesystem::exists(outputFolder) && filesystem::is_directory(outputFolder)) filesystem::remove_all(outputFolder);
     filesystem::create_directory(outputFolder);

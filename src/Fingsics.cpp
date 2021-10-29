@@ -59,7 +59,7 @@ SDL_Window* initializeSDL(int width, int height) {
     return window;
 }
 
-void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config, int stopAtFrame) {
+void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& drawOBBs, bool& drawAABBs, int& nframe, Camera*& camera, Camera* freeCamera, Camera* centeredCamera, Config config, int stopAtFrame) {
     SDL_Event event;
     int xm, ym;
 
@@ -86,9 +86,6 @@ void checkForInput(bool& slowMotion, bool& pause, bool& quit, bool& draw, bool& 
                 break;
             case SDLK_m:
                 slowMotion = !slowMotion;
-                break;
-            case SDLK_f:
-                draw = !draw;
                 break;
             case SDLK_o:
                 drawOBBs = !drawOBBs;
@@ -201,7 +198,6 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     // Program options
     bool quit = false;
     bool pause = config.runMode == RunMode::defaultMode || config.runMode == RunMode::replay;
-    bool draw = true;
     bool slowMotion = false;
     bool drawOBBs = false;
     bool drawAABBs = false;
@@ -285,6 +281,10 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             drawScene(sceneRenderer, scene.currentCamera, scene.objects, drawOBBs, drawAABBs, config.drawAxes);
             if (config.shouldLog()) drawEnd = std::chrono::system_clock::now();
         }
+        else if (config.shouldLog()) {
+            drawStart = std::chrono::system_clock::now();
+            drawEnd = drawStart;
+        }
 
         // Persist data
         if (!pause) {
@@ -306,7 +306,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         }
 
         // Process events
-        checkForInput(slowMotion, pause, quit, draw, drawOBBs, drawAABBs, nframe, scene.currentCamera, scene.freeCamera, scene.centeredCamera, config, scene.stopAtFrame);
+        checkForInput(slowMotion, pause, quit, drawOBBs, drawAABBs, nframe, scene.currentCamera, scene.freeCamera, scene.centeredCamera, config, scene.stopAtFrame);
 
         SDL_GL_SwapWindow(window);
 
@@ -360,15 +360,18 @@ void runSceneBenchmark(Config config, SDL_Window* window, string outputsFolder) 
             delete results;
         }
     }
-    LoggingManager::logBenchmarkResults(benchmarkResults, config);
+    LoggingManager::logBenchmarkResults(benchmarkResults, config, outputsFolder);
 }
 
-string getOutputsFolderName(string sceneName) {
+string getOutputsFolderName(Config config) {
     time_t clock = chrono::system_clock::to_time_t(chrono::system_clock::now());
     std::tm* time = std::localtime(&clock);
     char timeChars[32];
     int timeLength = std::strftime(timeChars, sizeof(timeChars), "%Y-%m-%d--%H-%M-%S", time);
-    return "output\\" + sceneName + "--" + string(timeChars, timeLength);
+    if (config.runMode == RunMode::benchmark) {
+        return "benchmarks\\" + config.sceneName + "_" + config.getBPCDDescription() + "--" + string(timeChars, timeLength);
+    }
+    return "output\\" + config.sceneName + "--" + string(timeChars, timeLength);
 }
 
 int main(int argc, char* argv[]) {
@@ -376,7 +379,7 @@ int main(int argc, char* argv[]) {
         pair<int, int> resolution = getResolution();
         Config config = ConfigLoader(resolution.first, resolution.second).getConfig();
         SDL_Window* window = initializeSDL(config.windowWidth, config.windowHeight);
-        string outputsFolder = getOutputsFolderName(config.sceneName);
+        string outputsFolder = getOutputsFolderName(config);
 
         if (config.runMode == RunMode::test) {
             runTestScenes(config, window, outputsFolder);

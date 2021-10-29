@@ -35,7 +35,7 @@ private:
 public:
     static void logRunResults(string, string, SimulationResults);
     static void logManyRunsResults(string, string, FrameResult*, int, int);
-    static void logBenchmarkResults(list<SimulationResults>, Config);
+    static void logBenchmarkResults(list<SimulationResults>, Config, string);
 };
 
 #endif
