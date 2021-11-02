@@ -2,6 +2,8 @@
 
 using namespace std;
 
+
+
 Collision* NarrowPhaseAlgorithm::parallelCapsules(Capsule* capsule1, Capsule* capsule2) {
     // Tests all 4 balls with the other capsule 
     Collision* capsule1Ball1 = ballCapsule(capsule1->getCylinderPositiveEnd(), capsule1->getRadius(), capsule2->getPosition(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection(), capsule2->getCylinderPositiveEnd(), capsule2->getCylinderNegativeEnd());
@@ -318,8 +320,17 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
     return NULL;
 }
 
-map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
+pair<map<string, Collision>, NPCDData> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
     map<string, Collision> collisions;
+
+    chrono::system_clock::time_point start;
+    int capsuleCapsuleTests = 0;
+    int ballCapsuleTests = 0;
+    int ballBallTests = 0;
+    float capsuleCapsuleTime = 0;
+    float ballCapsuleTime = 0;
+    float ballBallTime = 0;
+
     for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
         Object* object1 = it->second.first;
         Object* object2 = it->second.second;
@@ -334,19 +345,52 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
         Tile* tile2 = dynamic_cast<Tile*>(object2);
 
         if (ball1) {
-            if (ball2) collision = ballBall(ball1, ball2);
-            else if (capsule2) collision = ballCapsule(ball1, capsule2);
-            else if (tile2) { collision = ballTile(ball1, tile2); if (collision) collision->invertNormal(); }
+            if (ball2) {
+                ballBallTests++;
+                start = chrono::system_clock::now();
+                collision = ballBall(ball1, ball2);
+                ballBallTime += (float)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - start).count() / 1000.0;
+            }
+            else if (capsule2) {
+                ballCapsuleTests++;
+                start = chrono::system_clock::now();
+                collision = ballCapsule(ball1, capsule2);
+                ballCapsuleTime += (float)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - start).count() / 1000.0;
+            }
+            else if (tile2) {
+                collision = ballTile(ball1, tile2);
+                if (collision) collision->invertNormal();
+            }
         }
         else if (capsule1) {
-            if (ball2) { collision = ballCapsule(ball2, capsule1); if (collision) collision->invertNormal(); }
-            else if (capsule2) collision = capsuleCapsule(capsule1, capsule2);
-            else if (tile2) { collision = capsuleTile(capsule1, tile2); if (collision) collision->invertNormal(); }
+            if (ball2) {
+                ballCapsuleTests++;
+                start = chrono::system_clock::now();
+                collision = ballCapsule(ball2, capsule1);
+                ballCapsuleTime += (float)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - start).count() / 1000.0;
+                if (collision) collision->invertNormal();
+            }
+            else if (capsule2) {
+                capsuleCapsuleTests++;
+                start = chrono::system_clock::now();
+                collision = capsuleCapsule(capsule1, capsule2);
+                capsuleCapsuleTime += (float)chrono::duration_cast<chrono::microseconds>(chrono::system_clock::now() - start).count() / 1000.0;
+            }
+            else if (tile2) {
+                collision = capsuleTile(capsule1, tile2);
+                if (collision) collision->invertNormal();
+            }
         }
         else if (tile1) {
-            if (ball2) collision = ballTile(ball2, tile1);
-            else if (capsule2) collision = capsuleTile(capsule2, tile1);
-            else if (tile2) collision = NULL;
+            if (ball2) {
+                collision = ballTile(ball2, tile1);
+            }
+            else if (capsule2) {
+                collision = capsuleTile(capsule2, tile1);
+            }
+            else if (tile2) {
+                collision = NULL;
+            }
         }
 
         if (collision) {
@@ -369,5 +413,6 @@ map<string, Collision> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Obje
 
     lastFrameCollisions.clear();
     lastFrameCollisions = collisions;
-    return collisions;
+    NPCDData npcdData = NPCDData(capsuleCapsuleTests, ballCapsuleTests, ballBallTests, capsuleCapsuleTime, ballCapsuleTime, ballBallTime);
+    return pair<map<string, Collision>, NPCDData>(collisions, npcdData);
 }

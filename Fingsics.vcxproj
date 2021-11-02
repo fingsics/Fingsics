@@ -178,6 +178,7 @@
     <ClCompile Include="src\Matrix.cpp" />
     <ClCompile Include="src\NarrowPhaseAlgorithm.cpp" />
     <ClCompile Include="src\NoBPCD.cpp" />
+    <ClCompile Include="src\NPCDData.cpp" />
     <ClCompile Include="src\OBB.cpp" />
     <ClCompile Include="src\OBBBruteForce.cpp" />
     <ClCompile Include="src\Object.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="include\Matrix.h" />
     <ClInclude Include="include\NarrowPhaseAlgorithm.h" />
     <ClInclude Include="include\NoBPCD.h" />
+    <ClInclude Include="include\NPCDData.h" />
     <ClInclude Include="include\OBB.h" />
     <ClInclude Include="include\OBBBruteForce.h" />
     <ClInclude Include="include\Object.h" />

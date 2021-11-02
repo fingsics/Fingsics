@@ -2,6 +2,7 @@
 #define SIMRESULTS_H
 
 #include "Config.h"
+#include "NPCDData.h"
 #include <chrono>
 #include <list>
 #include <iostream>
@@ -18,14 +19,15 @@ struct FrameResult {
     float collisionResponseTime;
     float totalTime;
     float drawTime;
-    FrameResult(int, int, float, float, float, float, float);
+    NPCDData npcdData;
+    FrameResult(int, int, float, float, float, float, float, NPCDData);
     FrameResult();
 };
 
 struct SimulationResults {
     list<FrameResult> frameResults;
     void addFrameResults(int, int, chrono::system_clock::time_point, chrono::system_clock::time_point, chrono::system_clock::time_point,
-        chrono::system_clock::time_point, chrono::system_clock::time_point, chrono::system_clock::time_point);
+        chrono::system_clock::time_point, chrono::system_clock::time_point, chrono::system_clock::time_point, NPCDData);
     SimulationResults();
 };
 

@@ -7,15 +7,17 @@
 #include "Tile.h"
 #include "Helpers.h"
 #include "Collision.h"
+#include "NPCDData.h"
 #include <map>
 #include <string>
+#include <chrono>
 
 using namespace std;
 
 class NarrowPhaseAlgorithm {
 // All normals point towards the second object
 public:
-    map<string, Collision> getCollisions(map<string, pair<Object*, Object*>>);
+    pair<map<string, Collision>, NPCDData> getCollisions(map<string, pair<Object*, Object*>>);
 private:
     map<string, Collision> lastFrameCollisions;
     Collision* ballLine(Point, float, Point, Point, float);

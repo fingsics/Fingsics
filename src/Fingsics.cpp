@@ -205,6 +205,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     // Variables
     map<string, pair<Object*, Object*>> broadPhaseCollisions;
     map<string, Collision> collisions;
+    NPCDData npcdData = NPCDData();
     int nframe = 0;
     int currentReplayFrame = 0;
     int rollingAvgFrametime = microsecondsInOneSecond / scene.fpsCap; // Microseconds
@@ -261,7 +262,9 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             if (config.shouldLog()) collHandStart = std::chrono::system_clock::now();
             broadPhaseCollisions = broadPhaseAlgorithm->getCollisions(scene.objects);
             if (config.shouldLog()) broadEnd = std::chrono::system_clock::now();
-            collisions = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+            pair<map<string, Collision>, NPCDData> npcdResults = narrowPhaseAlgorithm->getCollisions(broadPhaseCollisions);
+            collisions = npcdResults.first;
+            npcdData = npcdResults.second;
             if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
             if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
@@ -290,7 +293,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (!pause) {
             if (config.shouldRecordVideo() && (config.fpsCap != 120 || nframe % 2 == 1)) recordVideoFrame(recorder, config, pixels, rgb, nframe);
             if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
-            if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd);
+            if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd, npcdData);
         }
 
         // Draw curent FPS

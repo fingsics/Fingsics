@@ -1,6 +1,6 @@
 #include "../include/LoggingManager.h"
 
-FrameResult::FrameResult(int npcdTests, int collisions, float bpcdTime, float npcdTime, float collisionResponseTime, float drawTime, float totalTime) {
+FrameResult::FrameResult(int npcdTests, int collisions, float bpcdTime, float npcdTime, float collisionResponseTime, float drawTime, float totalTime, NPCDData npcdData) {
     this->npcdTests = npcdTests;
     this->collisions = collisions;
     this->bpcdTime = bpcdTime;
@@ -8,6 +8,7 @@ FrameResult::FrameResult(int npcdTests, int collisions, float bpcdTime, float np
     this->collisionResponseTime = collisionResponseTime;
     this->totalTime = totalTime;
     this->drawTime = drawTime;
+    this->npcdData = npcdData;
 }
 
 FrameResult::FrameResult() {
@@ -18,6 +19,7 @@ FrameResult::FrameResult() {
     this->collisionResponseTime = 0;
     this->totalTime = 0;
     this->drawTime = 0;
+    this->npcdData = NPCDData();
 }
 
 SimulationResults::SimulationResults() {
@@ -27,7 +29,7 @@ SimulationResults::SimulationResults() {
 void SimulationResults::addFrameResults(int numBroadPhaseCollisions, int numCollisions, chrono::system_clock::time_point frameStart,
 										chrono::system_clock::time_point broadEnd, chrono::system_clock::time_point narrowEnd,
 										chrono::system_clock::time_point responseEnd, chrono::system_clock::time_point drawStart,
-                                        chrono::system_clock::time_point drawEnd) {
+                                        chrono::system_clock::time_point drawEnd, NPCDData npcdData) {
 
     float bpcdTime = (float)chrono::duration_cast<std::chrono::microseconds>(broadEnd - frameStart).count() / 1000.0;
     float npcdTime = (float)chrono::duration_cast<std::chrono::microseconds>(narrowEnd - broadEnd).count() / 1000.0;
@@ -35,14 +37,14 @@ void SimulationResults::addFrameResults(int numBroadPhaseCollisions, int numColl
     float drawTime = (float)chrono::duration_cast<std::chrono::microseconds>(drawEnd - drawStart).count() / 1000.0;
     float totalTime = (float)chrono::duration_cast<std::chrono::microseconds>(drawEnd - frameStart).count() / 1000.0;
 
-    FrameResult frameResult = FrameResult(numBroadPhaseCollisions, numCollisions, bpcdTime, npcdTime, collisionResponseTime, drawTime, totalTime);
+    FrameResult frameResult = FrameResult(numBroadPhaseCollisions, numCollisions, bpcdTime, npcdTime, collisionResponseTime, drawTime, totalTime, npcdData);
     frameResults.push_back(frameResult);
 }
 
 void LoggingManager::logRunResults(string folderName, string outputFileName, SimulationResults results) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime,BallBallTests,BallBallTime,BallCapsuleTests,BallCapsuleTime,CapsuleCapsuleTests,CapsuleCapsuleTime\n";
     for (auto it = results.frameResults.begin(); it != results.frameResults.end(); ++it) {
         log(outputCSV, *it, 1);
     }
@@ -52,7 +54,7 @@ void LoggingManager::logRunResults(string folderName, string outputFileName, Sim
 void LoggingManager::logManyRunsResults(string folderName, string outputFileName, FrameResult* results, int numFrames, int numRuns) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime,BallBallTests,BallBallTime,BallCapsuleTests,BallCapsuleTime,CapsuleCapsuleTests,CapsuleCapsuleTime\n";
     for (int i = 0; i < numFrames; i++) {
         log(outputCSV, results[i], numRuns);
     }
@@ -71,6 +73,13 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     int collisions = 0;
     int runNumber = 1;
 
+    float avgCapsuleCapsuleTime = 0.0;
+    float avgBallBallTime = 0.0;
+    float avgBallCapsuleTime = 0.0;
+    int capsuleCapsuleTests = 0;
+    int ballBallTests = 0;
+    int ballCapsuleTests = 0;
+
     int numFrames = results.front().frameResults.size();
     FrameResult* avgResultsPerFrame = new FrameResult[numFrames];
 
@@ -85,11 +94,25 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
             npcdTests += it2->npcdTests;
             collisions += it2->collisions;
 
+            avgCapsuleCapsuleTime += it2->npcdData.capsuleCapsuleTime;
+            avgBallBallTime += it2->npcdData.ballBallTime;
+            avgBallCapsuleTime += it2->npcdData.ballCapsuleTime;
+            capsuleCapsuleTests += it2->npcdData.capsuleCapsuleTests;
+            ballBallTests += it2->npcdData.ballBallTests;
+            ballCapsuleTests += it2->npcdData.ballCapsuleTests;
+
             avgResultsPerFrame[frame].bpcdTime += it2->bpcdTime;
             avgResultsPerFrame[frame].npcdTime += it2->npcdTime;
             avgResultsPerFrame[frame].totalTime += it2->totalTime;
             avgResultsPerFrame[frame].npcdTests += it2->npcdTests;
             avgResultsPerFrame[frame].collisions += it2->collisions;
+
+            avgResultsPerFrame[frame].npcdData.capsuleCapsuleTests += it2->npcdData.capsuleCapsuleTests;
+            avgResultsPerFrame[frame].npcdData.ballCapsuleTests += it2->npcdData.ballCapsuleTests;
+            avgResultsPerFrame[frame].npcdData.ballBallTests += it2->npcdData.ballBallTests;
+            avgResultsPerFrame[frame].npcdData.capsuleCapsuleTime += it2->npcdData.capsuleCapsuleTime;
+            avgResultsPerFrame[frame].npcdData.ballCapsuleTime += it2->npcdData.ballCapsuleTime;
+            avgResultsPerFrame[frame].npcdData.ballBallTime += it2->npcdData.ballBallTime;
 
             frame++;
         }
@@ -119,6 +142,14 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     summaryFile << "NPCD tests per run: " + to_string(npcdTests) + "\n";
     summaryFile << "Collisions per run: " + to_string(collisions);
 
+    summaryFile << "Avg. capsule-capsule time: " + to_string(avgCapsuleCapsuleTime) + " ms\n";
+    summaryFile << "Capsule-capsule tests per run: " + to_string(capsuleCapsuleTests) + "\n";
+    summaryFile << "Avg. ball-capsule time: " + to_string(avgBallCapsuleTime) + " ms\n";
+    summaryFile << "Ball-capsule tests per run: " + to_string(ballCapsuleTests) + "\n";
+    summaryFile << "Avg. ball-balltime: " + to_string(avgBallBallTime) + " ms\n";
+    summaryFile << "Ball-ball tests per run: " + to_string(ballBallTests) + "\n";
+
+
     summaryFile.close();
 }
 
@@ -136,5 +167,17 @@ void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult, int
     outputFile << frameResult.drawTime / divisor;
     outputFile << ",";
     outputFile << frameResult.totalTime / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballBallTests / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballBallTime / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballCapsuleTests / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballCapsuleTime / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.capsuleCapsuleTests / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.capsuleCapsuleTime / divisor;
     outputFile << "\n";
 }
