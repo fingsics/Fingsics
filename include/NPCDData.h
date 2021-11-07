@@ -10,7 +10,13 @@ struct NPCDData {
     float capsuleCapsuleTime;
     float ballCapsuleTime;
     float ballBallTime;
-    NPCDData(int, int, int, float, float, float);
+
+    int capsuleTileTests;
+    int ballTileTests;
+    float capsuleTileTime;
+    float ballTileTime;
+
+    NPCDData(int, int, int, int, int, float, float, float, float, float);
     NPCDData();
 };
 

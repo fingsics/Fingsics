@@ -76,9 +76,13 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     float avgCapsuleCapsuleTime = 0.0;
     float avgBallBallTime = 0.0;
     float avgBallCapsuleTime = 0.0;
+    float avgBallTileTime = 0.0;
+    float avgCapsuleTileTime = 0.0;
     int capsuleCapsuleTests = 0;
     int ballBallTests = 0;
     int ballCapsuleTests = 0;
+    int ballTileTests = 0;
+    int capsuleTileTests = 0;
 
     int numFrames = results.front().frameResults.size();
     FrameResult* avgResultsPerFrame = new FrameResult[numFrames];
@@ -97,9 +101,13 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
             avgCapsuleCapsuleTime += it2->npcdData.capsuleCapsuleTime;
             avgBallBallTime += it2->npcdData.ballBallTime;
             avgBallCapsuleTime += it2->npcdData.ballCapsuleTime;
+            avgBallTileTime += it2->npcdData.ballTileTime;
+            avgCapsuleTileTime += it2->npcdData.capsuleTileTime;
             capsuleCapsuleTests += it2->npcdData.capsuleCapsuleTests;
             ballBallTests += it2->npcdData.ballBallTests;
             ballCapsuleTests += it2->npcdData.ballCapsuleTests;
+            ballTileTests += it2->npcdData.ballTileTests;
+            capsuleTileTests += it2->npcdData.capsuleTileTests;
 
             avgResultsPerFrame[frame].bpcdTime += it2->bpcdTime;
             avgResultsPerFrame[frame].npcdTime += it2->npcdTime;
@@ -110,9 +118,13 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
             avgResultsPerFrame[frame].npcdData.capsuleCapsuleTests += it2->npcdData.capsuleCapsuleTests;
             avgResultsPerFrame[frame].npcdData.ballCapsuleTests += it2->npcdData.ballCapsuleTests;
             avgResultsPerFrame[frame].npcdData.ballBallTests += it2->npcdData.ballBallTests;
+            avgResultsPerFrame[frame].npcdData.ballTileTests += it2->npcdData.ballTileTests;
+            avgResultsPerFrame[frame].npcdData.capsuleTileTests += it2->npcdData.capsuleTileTests;
             avgResultsPerFrame[frame].npcdData.capsuleCapsuleTime += it2->npcdData.capsuleCapsuleTime;
             avgResultsPerFrame[frame].npcdData.ballCapsuleTime += it2->npcdData.ballCapsuleTime;
             avgResultsPerFrame[frame].npcdData.ballBallTime += it2->npcdData.ballBallTime;
+            avgResultsPerFrame[frame].npcdData.ballTileTime += it2->npcdData.ballTileTime;
+            avgResultsPerFrame[frame].npcdData.capsuleTileTime += it2->npcdData.capsuleTileTime;
 
             frame++;
         }
@@ -127,6 +139,17 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     avgTotalTime /= config.numRuns;
     npcdTests /= config.numRuns;
     collisions /= config.numRuns;
+
+    avgCapsuleCapsuleTime /= config.numRuns;
+    capsuleCapsuleTests /= config.numRuns;
+    avgBallCapsuleTime /= config.numRuns;
+    ballCapsuleTests /= config.numRuns;
+    avgBallBallTime /= config.numRuns;
+    ballBallTests /= config.numRuns;
+    avgBallTileTime /= config.numRuns;
+    ballTileTests /= config.numRuns;
+    avgCapsuleTileTime /= config.numRuns;
+    capsuleTileTests /= config.numRuns;
     
     ofstream summaryFile;
     summaryFile.open(outputFolder + "\\summary.txt");
@@ -136,19 +159,23 @@ void LoggingManager::logBenchmarkResults(list<SimulationResults> results, Config
     summaryFile << "Number of runs: " + to_string(config.numRuns) + "\n";
     summaryFile << "Number of frames per run: " + to_string(config.stopAtFrame) + "\n\n";
     
-    summaryFile << "Avg. BPCD time: " + to_string(avgBpcdTime) + " ms\n";
-    summaryFile << "Avg. NPCD time: " + to_string(avgNpcdTime) + " ms\n";
-    summaryFile << "Avg. Total time: " + to_string(avgTotalTime) + " ms\n";
+    summaryFile << "Avg. BPCD time per run: " + to_string(avgBpcdTime) + " ms\n";
+    summaryFile << "Avg. NPCD time per run: " + to_string(avgNpcdTime) + " ms\n";
+    summaryFile << "Avg. Total time per run: " + to_string(avgTotalTime) + " ms\n";
     summaryFile << "NPCD tests per run: " + to_string(npcdTests) + "\n";
-    summaryFile << "Collisions per run: " + to_string(collisions);
+    summaryFile << "Collisions per run: " + to_string(collisions) + "\n\n";
 
-    summaryFile << "Avg. capsule-capsule time: " + to_string(avgCapsuleCapsuleTime) + " ms\n";
+    summaryFile << "Avg. capsule-capsule time per run: " + to_string(avgCapsuleCapsuleTime) + " ms\n";
+    summaryFile << "Avg. ball-capsule time per run: " + to_string(avgBallCapsuleTime) + " ms\n";
+    summaryFile << "Avg. ball-ball time per run: " + to_string(avgBallBallTime) + " ms\n";
+    summaryFile << "Avg. ball-tile time per run: " + to_string(avgBallTileTime) + " ms\n";
+    summaryFile << "Avg. capsule-tile time per run: " + to_string(avgCapsuleTileTime) + " ms\n\n";
+
     summaryFile << "Capsule-capsule tests per run: " + to_string(capsuleCapsuleTests) + "\n";
-    summaryFile << "Avg. ball-capsule time: " + to_string(avgBallCapsuleTime) + " ms\n";
     summaryFile << "Ball-capsule tests per run: " + to_string(ballCapsuleTests) + "\n";
-    summaryFile << "Avg. ball-balltime: " + to_string(avgBallBallTime) + " ms\n";
     summaryFile << "Ball-ball tests per run: " + to_string(ballBallTests) + "\n";
-
+    summaryFile << "Ball-tile tests per run: " + to_string(ballTileTests) + "\n";
+    summaryFile << "Capsule-tile tests per run: " + to_string(capsuleTileTests);
 
     summaryFile.close();
 }
@@ -179,5 +206,13 @@ void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult, int
     outputFile << frameResult.npcdData.capsuleCapsuleTests / divisor;
     outputFile << ",";
     outputFile << frameResult.npcdData.capsuleCapsuleTime / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballTileTests / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.ballTileTime / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.capsuleTileTests / divisor;
+    outputFile << ",";
+    outputFile << frameResult.npcdData.capsuleTileTime / divisor;
     outputFile << "\n";
 }
