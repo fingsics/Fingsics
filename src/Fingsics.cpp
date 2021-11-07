@@ -161,7 +161,7 @@ BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, vector<Object*> objec
     case BPAlgorithmChoice::obbBruteForce: return new OBBBruteForce();
     case BPAlgorithmChoice::sweepAndPrune: return new SweepAndPrune(objects);
     case BPAlgorithmChoice::SAPAndOBBs: return new SAPAndOBBs(objects);
-    default: return new NoBPCD();
+    default: return new NoBPCD(objects);
     }
 }
 

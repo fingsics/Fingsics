@@ -1,8 +1,6 @@
 #include "../include/NoBPCD.h"
 
-// Adds every posible object pair to the map
-map<string, pair<Object*, Object*>> NoBPCD::getCollisions(vector<Object*> objects) {
-    map<string, pair<Object*, Object*>> collisionMap;
+NoBPCD::NoBPCD(vector<Object*> objects) {
     for (int i = 0; i < objects.size(); i++) {
         for (int j = i + 1; j < objects.size(); j++) {
             if (objects[i]->getIsStatic() && objects[j]->getIsStatic()) continue;
@@ -12,5 +10,9 @@ map<string, pair<Object*, Object*>> NoBPCD::getCollisions(vector<Object*> object
             }
         }
     }
+}
+
+// Adds every posible object pair to the map
+map<string, pair<Object*, Object*>> NoBPCD::getCollisions(vector<Object*> objects) {
     return collisionMap;
 }
