@@ -13,7 +13,7 @@ private:
     OBBBruteForce* obbBruteForce;
 public:
     SAPAndOBBs(vector<Object*>);
-    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
+    map<string, pair<Object*, Object*>>* getCollisions(vector<Object*>);
 };
 
 #endif

@@ -1,25 +1,22 @@
 #include "../include/OBBBruteForce.h"
 
-map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(vector<Object*> objects) {
-    map<string, pair<Object*, Object*>> collisions = map<string, pair<Object*, Object*>>();
+map<string, pair<Object*, Object*>>* OBBBruteForce::getCollisions(vector<Object*> objects) {
+    map<string, pair<Object*, Object*>>* collisions = new map<string, pair<Object*, Object*>>();
 
     for (int i = 0; i < objects.size(); i++) {
         for (int j = i + 1; j < objects.size(); j++) {
-            if (OBBOverlapTest(objects[i]->getOBB(), objects[j]->getOBB()))
-                collisions.insert(getObjectPairWithId(objects[i], objects[j]));
+            if (!(objects[i]->getIsStatic() && objects[j]->getIsStatic()) && OBBOverlapTest(objects[i]->getOBB(), objects[j]->getOBB()))
+                collisions->insert(getObjectPairWithId(objects[i], objects[j]));
         }
     }
 
     return collisions;
 }
 
-map<string, pair<Object*, Object*>> OBBBruteForce::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
-    map<string, pair<Object*, Object*>> collisions = map<string, pair<Object*, Object*>>();
-    for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
-        Object* object1 = it->second.first;
-        Object* object2 = it->second.second;
-        if (OBBOverlapTest(object1->getOBB(), object2->getOBB())) collisions.insert(*it);
-    }
+map<string, pair<Object*, Object*>>* OBBBruteForce::getCollisions(map<string, pair<Object*, Object*>>* possibleCollisions) {
+    map<string, pair<Object*, Object*>>* collisions = new map<string, pair<Object*, Object*>>();
+    for (auto it = possibleCollisions->begin(); it != possibleCollisions->end(); it++)
+        if (OBBOverlapTest(it->second.first->getOBB(), it->second.second->getOBB())) collisions->insert(*it);
     return collisions;
 }
 

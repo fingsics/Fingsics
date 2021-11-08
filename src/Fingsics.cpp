@@ -203,7 +203,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
     bool drawAABBs = false;
 
     // Variables
-    map<string, pair<Object*, Object*>> broadPhaseCollisions;
+    map<string, pair<Object*, Object*>>* broadPhaseCollisions = NULL;
     map<string, Collision> collisions;
     NPCDData npcdData = NPCDData();
     int nframe = 0;
@@ -293,7 +293,7 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
         if (!pause) {
             if (config.shouldRecordVideo() && (config.fpsCap != 120 || nframe % 2 == 1)) recordVideoFrame(recorder, config, pixels, rgb, nframe);
             if (config.shouldRecordScene()) sceneRecorder->recordFrame(scene.objects, nframe);
-            if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions.size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd, npcdData);
+            if (config.shouldLog()) results->addFrameResults(broadPhaseCollisions->size(), collisions.size(), collHandStart, broadEnd, narrowEnd, responseEnd, drawStart, drawEnd, npcdData);
         }
 
         // Draw curent FPS

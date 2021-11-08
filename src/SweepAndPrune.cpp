@@ -1,6 +1,7 @@
 #include "../include/SweepAndPrune.h"
 
 SweepAndPrune::SweepAndPrune(vector<Object*> objects) {
+    this->collisionPairs = new map<string, pair<Object*, Object*>>();
     int numObjects = objects.size();
     this->pointsPerAxis = numObjects * 2;
     this->xPoints = new AABBPoint[2 * numObjects];
@@ -188,16 +189,16 @@ bool SweepAndPrune::AABBOverlapTest(AABB* aabb1, AABB* aabb2, AABBPoint* pointAr
 void SweepAndPrune::addCollision(Object* object1, Object* object2) {
     if (object1 == object2 || (object1->getIsStatic() && object2->getIsStatic())) return;
     pair<string, pair<Object*, Object*>> objectPair = getObjectPairWithId(object1, object2);
-    if (collisionPairs.find(objectPair.first) == collisionPairs.end()) {
-        collisionPairs.insert(objectPair);
+    if (collisionPairs->find(objectPair.first) == collisionPairs->end()) {
+        collisionPairs->insert(objectPair);
     }
 }
 
 void SweepAndPrune::removeCollision(Object* object1, Object* object2) {
-    collisionPairs.erase(getObjectPairWithId(object1, object2).first);
+    collisionPairs->erase(getObjectPairWithId(object1, object2).first);
 }
 
-map<string, pair<Object*, Object*>> SweepAndPrune::getCollisions(vector<Object*> objects) {
+map<string, pair<Object*, Object*>>* SweepAndPrune::getCollisions(vector<Object*> objects) {
     for (int i = 0; i < objects.size(); i++) {
         updateObject(objects[i]);
     }

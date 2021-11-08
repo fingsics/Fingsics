@@ -12,7 +12,7 @@ using namespace std;
 
 class BroadPhaseAlgorithm {
 public:
-    virtual map<string, pair<Object*, Object*>> getCollisions(vector<Object*>) = 0;
+    virtual map<string, pair<Object*, Object*>>* getCollisions(vector<Object*>) = 0;
 };
 
 #endif

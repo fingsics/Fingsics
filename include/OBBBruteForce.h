@@ -9,8 +9,8 @@ class OBBBruteForce : public BroadPhaseAlgorithm {
 private:
     bool OBBOverlapTest(OBB, OBB);
 public:
-    map<string, pair<Object*, Object*>> getCollisions(vector<Object*>);
-    map<string, pair<Object*, Object*>> getCollisions(map<string, pair<Object*, Object*>>);
+    map<string, pair<Object*, Object*>>* getCollisions(vector<Object*>);
+    map<string, pair<Object*, Object*>>* getCollisions(map<string, pair<Object*, Object*>>*);
 };
 
 #endif

@@ -320,7 +320,7 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
     return NULL;
 }
 
-pair<map<string, Collision>, NPCDData> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Object*, Object*>> possibleCollisions) {
+pair<map<string, Collision>, NPCDData> NarrowPhaseAlgorithm::getCollisions(map<string, pair<Object*, Object*>>* possibleCollisions) {
     map<string, Collision> collisions;
 
     chrono::system_clock::time_point start;
@@ -335,7 +335,7 @@ pair<map<string, Collision>, NPCDData> NarrowPhaseAlgorithm::getCollisions(map<s
     float capsuleTileTime = 0;
     float ballTileTime = 0;
 
-    for (auto it = possibleCollisions.begin(); it != possibleCollisions.end(); it++) {
+    for (auto it = possibleCollisions->begin(); it != possibleCollisions->end(); it++) {
         Object* object1 = it->second.first;
         Object* object2 = it->second.second;
 
