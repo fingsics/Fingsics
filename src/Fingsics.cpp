@@ -157,8 +157,8 @@ void handleFPS(int fpsCap, chrono::system_clock::time_point frameStart, int& rol
 
 BroadPhaseAlgorithm* getBroadPhaseAlgorithm(Config config, vector<Object*> objects) {
     switch (config.bpAlgorithm) {
-    case BPAlgorithmChoice::aabbBruteForce: return new AABBBruteForce();
-    case BPAlgorithmChoice::obbBruteForce: return new OBBBruteForce();
+    case BPAlgorithmChoice::aabbBruteForce: return new AABBBruteForce(objects);
+    case BPAlgorithmChoice::obbBruteForce: return new OBBBruteForce(objects);
     case BPAlgorithmChoice::sweepAndPrune: return new SweepAndPrune(objects);
     case BPAlgorithmChoice::SAPAndOBBs: return new SAPAndOBBs(objects);
     default: return new NoBPCD(objects);

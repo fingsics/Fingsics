@@ -2,7 +2,7 @@
 
 SAPAndOBBs::SAPAndOBBs(vector<Object*> objects) {
     sap = new SweepAndPrune(objects);
-    obbBruteForce = new OBBBruteForce();
+    obbBruteForce = new OBBBruteForce(objects);
 }
 
 map<string, pair<Object*, Object*>>* SAPAndOBBs::getCollisions(vector<Object*> objects) {

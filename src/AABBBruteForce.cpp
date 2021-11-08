@@ -1,7 +1,11 @@
 #include "../include/AABBBruteForce.h"
 
+AABBBruteForce::AABBBruteForce(vector<Object*> objects) {
+    this->collisionMap = new map<string, pair<Object*, Object*>>();
+}
+
 map<string, pair<Object*, Object*>>* AABBBruteForce::getCollisions(vector<Object*> objects) {
-    map<string, pair<Object*, Object*>>* collisionMap = new map<string, pair<Object*, Object*>>();
+    collisionMap->clear();
     for (int i = 0; i < objects.size(); i++) {
         for (int j = i + 1; j < objects.size(); j++) {
             if (!(objects[i]->getIsStatic() && objects[j]->getIsStatic()) && AABBOverlapTest(objects[i], objects[j]))

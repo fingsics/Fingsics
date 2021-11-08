@@ -8,7 +8,7 @@ using namespace std;
 
 class SweepAndPrune : public BroadPhaseAlgorithm {
 private:
-    map<string, pair<Object*, Object*>>* collisionPairs;
+    map<string, pair<Object*, Object*>>* collisionMap;
     int pointsPerAxis;
     AABBPoint* xPoints;
     AABBPoint* yPoints;
