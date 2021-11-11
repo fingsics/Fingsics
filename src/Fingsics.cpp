@@ -267,9 +267,8 @@ SimulationResults* runSimulation(Config config, SDL_Window* window, string outpu
             npcdData = npcdResults.second;
             if (config.shouldLog()) narrowEnd = std::chrono::system_clock::now();
             CollisionResponseAlgorithm::collisionResponse(collisions);
-            if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
-
             CollisionResponseAlgorithm::moveObjects(scene.objects, 1.0 / scene.fpsCap, slowMotion);
+            if (config.shouldLog()) responseEnd = std::chrono::system_clock::now();
         }
 
         // Replay handling
