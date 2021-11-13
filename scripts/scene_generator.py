@@ -44,12 +44,12 @@ def make_capsule_cube_horizontal(num_x, num_y, num_z, dist_1, dist_2):
                 objects.append(create_capsule_horizontal(f"{-12 + dist_1 * i},{-15 + dist_2 * j},{-50 + dist_1 * k}", "1", "0.5", "4", "0,0,15", "220,0,0"))
     return objects
 
-def make_capsule_cube_vertical(num_x, num_y, num_z, dist_1, dist_2):
+def make_capsule_cube_vertical(num_x, num_y, num_z, dist_1, dist_2, radius=0.5, length=4, randomVel=False):
     objects = []
     for i in range(0, num_x):
         for j in range(0, num_y):
             for k in range(0, num_z):
-                objects.append(create_capsule_vertical(f"{-(num_x * dist_2 / 2) + dist_2 * i},{-(num_y * dist_1 / 2) + dist_1 * j},{-(num_z * dist_2 / 2) + dist_2 * k}", "1", "0.5", "4", "0,0,0", "0,220,0"))
+                objects.append(create_capsule_vertical(f"{(dist_2 + 2 * radius) * (i - num_x / 2)},{(dist_1 + length + 2 * radius) * (j - num_y / 2)},{(dist_2 + 2 * radius) * (k - num_z / 2)}", "1", f"{radius}", f"{length}", get_random_velocity() if randomVel else "0,0,0", "0,220,0"))
     return objects
 
 def make_ball_cube(num_x, num_y, num_z, dist, rad, use_velocities, use_random_colors):
@@ -160,8 +160,38 @@ def make_mixed_box_scene():
     
     filtered_objects.append(create_tile(f"0,{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}", True))
     filtered_objects.append(create_tile(f"0,-{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}"))
+    
+    return filtered_objects
+
+def make_capsules_in_box_scene():
+    final_count = 5000
+    num_x = 48
+    num_y = 24
+    num_z = 48
+    distance = 1
+    radius = 0.5
+    length = 15
+
+    objects = make_capsule_cube_vertical(num_x, num_y, num_z, distance, distance, radius, length, True)
+    
+    filtered_objects = delete_random_elems(objects, num_x * num_y * num_z - final_count)
+
+    plane_length_x = (num_x + 2) * (2 * radius + distance)
+    plane_length_y = (num_y + 2) * (2 * radius + length + distance)
+    plane_length_z = (num_z + 2) * (2 * radius + distance)
+
+    filtered_objects.append(create_tile(f"{plane_length_x / 2},0,0", "0,0,90", "220,220,220", f"{plane_length_y}", f"{plane_length_z}", True))
+    filtered_objects.append(create_tile(f"-{plane_length_x / 2},0,0", "0,0,90", "220,220,220", f"{plane_length_y}", f"{plane_length_z}"))
+    
+    filtered_objects.append(create_tile(f"0,0,{plane_length_z / 2}", "90,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_y}", True))
+    filtered_objects.append(create_tile(f"0,0,-{plane_length_z / 2}", "90,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_y}"))
+    
+    filtered_objects.append(create_tile(f"0,{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}", True))
+    filtered_objects.append(create_tile(f"0,-{plane_length_y / 2},0", "0,0,0", "220,220,220", f"{plane_length_x}", f"{plane_length_z}"))
+    
     return filtered_objects
     
+
 def make_confetti_scene():
     objects = ""
     num_x = 18
@@ -251,7 +281,8 @@ def make_matrix_scene():
     
 # Main
 
-objects = make_mixed_box_scene()
+objects = make_capsules_in_box_scene()
+print(len(objects))
 
 content = """<?xml version="1.0" encoding="utf-8"?>
 <config>
