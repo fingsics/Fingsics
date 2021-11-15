@@ -1,0 +1,27 @@
+# Main configs
+SCENE_FILE_NAME=scene
+FPS_CAP=60
+FULLSCREEN=false
+WINDOWED_WIDTH=1280
+WINDOWED_HEIGHT=720
+
+# Outputs (for DEFAULT mode only)
+LOG=false
+RECORD_SCENE=false # Warning: big scenes may consume a lot of disk space
+RECORD_VIDEO=false # FPS_CAP must be 25, 30, 60 or 120
+
+# Drawing
+DRAW_AXES=true
+OBJECT_DEFINITION=8
+SHOW_FPS=true
+
+# Algorithms (BROAD_PHASE options are NONE, AABB, OBB, SAP or SAPOBB)
+BROAD_PHASE=SAP
+
+# Run mode (options are DEFAULT, TEST, BENCHMARK, REPLAY)
+RUN_MODE=DEFAULT
+NUM_RUNS_FOR_BENCHMARK=5
+SCENE_REPLAY_FOLDER_NAME=scene--2021-10-11--10-41-03
+
+# Frame to stop simulation, use -1 to run indefinitely
+STOP_AT_FRAME=-1

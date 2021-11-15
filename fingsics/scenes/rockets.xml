@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<camera rad="63" pitch="-47" yaw="0"/>
+	<objects>
+		<capsule pos="-8.049999999999999,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-8.049999999999999,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-8.049999999999999,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-5.749999999999999,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true" />
+		<capsule pos="-5.749999999999999,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-5.749999999999999,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-5.749999999999999,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-5.749999999999999,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-3.4499999999999993,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="-1.1499999999999995,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="1.1500000000000004,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="3.450000000000001,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,-5.5,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,-8.049999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,-5.749999999999999" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,-3.4499999999999993" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,-1.1499999999999995" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,1.1500000000000004" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,3.450000000000001" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<capsule pos="5.75,0.0,5.75" vel="0,0,0" mass="1" elasticityCoef="1" ang="90,0,0" color="0,220,0" radius="0.5" length="4" rocket="true"/>
+		<sphere pos="18.049999999999997,15.5,18.049999999999997" vel="-20,-20,-20" mass="1000" elasticityCoef="1" ang="0,0,0" color="200,200,200" radius="4" />
+
+	</objects>
+</config>
