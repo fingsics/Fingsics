@@ -9,17 +9,17 @@ struct Collision {
     private:
         Object* object1;
         Object* object2;
-        Point point;
-        Point normal;
+        Vector point;
+        Vector normal;
         float penetrationDepth;
         float lastPenetrationDepth;
         float secondToLastPenetrationDepth;
     public:
-        Collision(Point, Point, float);
+        Collision(Vector, Vector, float);
         Object* getObject1();
         Object* getObject2();
-        Point getPoint();
-        Point getNormal();
+        Vector getPoint();
+        Vector getNormal();
         float getPenetrationDepth();
         float getLastPenetrationDepth();
         void setObjects(pair<Object*, Object*>);

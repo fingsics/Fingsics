@@ -2,46 +2,46 @@
 
 using namespace std;
 
-Tile::Tile(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw, float length, float width) : Object(id, color, positions, rotationMatrices, frames, draw) {
+Tile::Tile(string id, Color color, Vector* positions, Matrix* rotationMatrices, int frames, bool draw, float length, float width) : Object(id, color, positions, rotationMatrices, frames, draw) {
     this->axis1Length = length;
     this->axis2Length = width;
     if (frames > 0) {
         this->position = positions[0];
         this->setRotation(rotationMatrices[0]);
-        this->obb = OBB(positions[0], Point(width, EPSILON, length), rotationMatrices[0]);
+        this->obb = OBB(positions[0], Vector(width, EPSILON, length), rotationMatrices[0]);
     }
 }
 
-Tile::Tile(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point force, float mass, float elasticityCoef, Color color, bool draw, float length, float width) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
+Tile::Tile(string id, bool isStatic, Vector pos, Vector vel, Vector angle, Vector angularVelocity, Vector force, float mass, float elasticityCoef, Color color, bool draw, float length, float width) :  Object(id, isStatic, pos, vel, angle, angularVelocity, force, mass, elasticityCoef, color, draw) {
     this->baseInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->axis1Length = length;
     this->axis2Length = width;
-    this->obb = OBB(pos, Point(width, EPSILON, length), rotationMatrix);
+    this->obb = OBB(pos, Vector(width, EPSILON, length), rotationMatrix);
     this->setRotation(rotationMatrix);
 }
 
-Point Tile::getAxis1() {
+Vector Tile::getAxis1() {
     return axis1;
 }
 
-Point Tile::getAxis2() {
+Vector Tile::getAxis2() {
     return axis2;
 }
 
-Point Tile::getEnd1() {
+Vector Tile::getEnd1() {
     return end1;
 }
 
-Point Tile::getEnd2() {
+Vector Tile::getEnd2() {
     return end2;
 }
 
-Point Tile::getEnd3() {
+Vector Tile::getEnd3() {
     return end3;
 }
 
-Point Tile::getEnd4() {
+Vector Tile::getEnd4() {
     return end4;
 }
 
@@ -53,15 +53,15 @@ float Tile::getAxis2Length() {
     return axis2Length;
 }
 
-Point Tile::getNormal() {
-    return rotationMatrix * Point(0, 1, 0);
+Vector Tile::getNormal() {
+    return rotationMatrix * Vector(0, 1, 0);
 }
 
 void Tile::setRotation(Matrix rotationMatrix) {
     this->rotationMatrix = rotationMatrix;
     obb.setRotation(rotationMatrix);
-    axis1 = rotationMatrix * Point(1, 0, 0);
-    axis2 = rotationMatrix * Point(0, 0, 1);
+    axis1 = rotationMatrix * Vector(1, 0, 0);
+    axis2 = rotationMatrix * Vector(0, 0, 1);
     end1 = position + axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
     end2 = position - axis1 * axis1Length / 2 + axis2 * axis2Length / 2;
     end3 = position + axis1 * axis1Length / 2 - axis2 * axis2Length / 2;

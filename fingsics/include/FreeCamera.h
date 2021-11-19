@@ -3,7 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include "Camera.h"
-#include "Point.h"
+#include "Vector.h"
 #include <string>
 #include <math.h>
 
@@ -12,12 +12,12 @@ using namespace std;
 
 class FreeCamera: public Camera {
 private:
-    Point eye;
+    Vector eye;
     float pitch;
     float yaw;
-    Point getCenter();
+    Vector getCenter();
 public:
-    FreeCamera(Point, float, float);
+    FreeCamera(Vector, float, float);
     FreeCamera();
     void lookAt();
     void update(SDL_Event);

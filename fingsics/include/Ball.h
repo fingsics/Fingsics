@@ -11,8 +11,8 @@ class Ball : public Object {
     private:
         float radius;
     public:
-        Ball(string, bool, Point, Point, Point, Point, Point, float, float, Color, bool, float);
-        Ball(string, Color, Point*, Matrix*, int, bool, float);
+        Ball(string, bool, Vector, Vector, Vector, Vector, Vector, float, float, Color, bool, float);
+        Ball(string, Color, Vector*, Matrix*, int, bool, float);
         float getRadius();
         Matrix getInertiaTensorInverse();
         float getMinX();

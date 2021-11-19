@@ -25,16 +25,16 @@ map<string, pair<Object*, Object*>>* OBBBruteForce::getCollisions(map<string, pa
 // Ideas from: http://gamma.cs.unc.edu/SSV/obb.pdf
 // Code from: https://www.gamasutra.com/view/feature/131790/simple_intersection_tests_for_games.php?page=5
 bool OBBBruteForce::OBBOverlapTest(OBB obb1, OBB obb2) {
-    Point a = obb1.getHalfLengths();
-    Point pos1 = obb1.getPosition();
+    Vector a = obb1.getHalfLengths();
+    Vector pos1 = obb1.getPosition();
     Matrix A = obb1.getNormals();
 
-    Point b = obb2.getHalfLengths();
-    Point pos2 = obb2.getPosition();
+    Vector b = obb2.getHalfLengths();
+    Vector pos2 = obb2.getPosition();
     Matrix B = obb2.getNormals();
 
-    Point v = pos2 - pos1; // T in world's coordenates
-    Point T = A * v; // To calculate T in ObjectA's the coordenate system, we use the basis change matrix A
+    Vector v = pos2 - pos1; // T in world's coordenates
+    Vector T = A * v; // To calculate T in ObjectA's the coordenate system, we use the basis change matrix A
     Matrix R = A * B.transpose(); // ObjectB's rotation relative to ObjectA
 
     float ra, rb, tl;

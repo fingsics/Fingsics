@@ -83,8 +83,8 @@ void SceneRenderer::setLighting() {
 }
 
 void SceneRenderer::drawOBB(Object* object) {
-    Point dimensions = object->getOBB().getHalfLengths() * 2;
-    Point pos = object->getOBB().getPosition();
+    Vector dimensions = object->getOBB().getHalfLengths() * 2;
+    Vector pos = object->getOBB().getPosition();
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor3ub(220, 220, 0);
@@ -170,21 +170,21 @@ void SceneRenderer::drawRocket(Capsule* capsule) {
     float fireHeight1 = 0.5;
     float fireHeight2 = 0.9;
 
-    Point up = Point(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2);
-    Point down = Point(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + capsule->getRadius() * (fireHeight2 + fireHeight1));
-    Point side1 = Point(capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
-    Point side2 = Point(capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
-    Point side3 = Point(-capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
-    Point side4 = Point(-capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Vector up = Vector(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2);
+    Vector down = Vector(0, 0, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + capsule->getRadius() * (fireHeight2 + fireHeight1));
+    Vector side1 = Vector(capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Vector side2 = Vector(capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Vector side3 = Vector(-capsule->getRadius() * fireHeight1, -capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
+    Vector side4 = Vector(-capsule->getRadius() * fireHeight1, capsule->getRadius() * fireHeight1, (capsule->getRadius() * 0.2) + capsule->getLength() / 2 + (capsule->getRadius() * fireHeight1));
 
-    Point normal1 = (side2 - up).crossProduct(side1 - up);
-    Point normal2 = (side3 - up).crossProduct(side2 - up);
-    Point normal3 = (side4 - up).crossProduct(side3 - up);
-    Point normal4 = (side1 - up).crossProduct(side4 - up);
-    Point normal5 = (side1 - down).crossProduct(side2 - down);
-    Point normal6 = (side2 - down).crossProduct(side3 - down);
-    Point normal7 = (side3 - down).crossProduct(side4 - down);
-    Point normal8 = (side4 - down).crossProduct(side1 - down);
+    Vector normal1 = (side2 - up).crossProduct(side1 - up);
+    Vector normal2 = (side3 - up).crossProduct(side2 - up);
+    Vector normal3 = (side4 - up).crossProduct(side3 - up);
+    Vector normal4 = (side1 - up).crossProduct(side4 - up);
+    Vector normal5 = (side1 - down).crossProduct(side2 - down);
+    Vector normal6 = (side2 - down).crossProduct(side3 - down);
+    Vector normal7 = (side3 - down).crossProduct(side4 - down);
+    Vector normal8 = (side4 - down).crossProduct(side1 - down);
 
     glBegin(GL_TRIANGLES);
     glVertex3f(up.getX(), up.getY(), up.getZ());

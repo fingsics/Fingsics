@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Collision::Collision(Point point, Point normal, float penetrationDepth) {
+Collision::Collision(Vector point, Vector normal, float penetrationDepth) {
     this->object1 = NULL;
     this->object2 = NULL;
     this->point = point;
@@ -19,11 +19,11 @@ Object* Collision::getObject2() {
     return object2;
 }
 
-Point Collision::getPoint() {
+Vector Collision::getPoint() {
     return point;
 }
 
-Point Collision::getNormal() {
+Vector Collision::getNormal() {
     return normal;
 }
 

@@ -51,8 +51,8 @@ private:
     string path;
     void serializeObject(Object*, SerializedObject*);
     Object* deserializeObject(SerializedObject, SerializedPosition*, SerializedMatrix*, int, string, int);
-    void serializePosition(Point, SerializedPosition*);
-    void deserializePosition(SerializedPosition, Point*);
+    void serializePosition(Vector, SerializedPosition*);
+    void deserializePosition(SerializedPosition, Vector*);
     void serializeRotationMatrix(Matrix, SerializedMatrix*);
     void deserializeRotationMatrix(SerializedMatrix, Matrix*);
 public:

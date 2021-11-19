@@ -3,7 +3,7 @@
 using namespace std;
 
 // Draw only object
-Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrices, int frames, bool draw) {
+Object::Object(string id, Color color, Vector* positions, Matrix* rotationMatrices, int frames, bool draw) {
     this->id = id;
     this->replayMode = true;
     this->positions = positions;
@@ -16,17 +16,17 @@ Object::Object(string id, Color color, Point* positions, Matrix* rotationMatrice
     this->isStatic = false;
     this->mass = 0;
     this->elasticityCoef = 0;
-    this->velocity = Point();
-    this->angularVelocity = Point();
-    this->acceleration = Point();
+    this->velocity = Vector();
+    this->angularVelocity = Vector();
+    this->acceleration = Vector();
     this->queuedImpulses = list<Impulse>();
-    this->velCollisionMassPerAxis = Point();
-    this->angVelCollisionMassPerAxis = Point();
+    this->velCollisionMassPerAxis = Vector();
+    this->angVelCollisionMassPerAxis = Vector();
     this->aabb = NULL;
     this->draw = draw;
 }
 
-Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Point angularVelocity, Point acceleration, float mass, float elasticityCoef, Color color, bool draw) {
+Object::Object(string id, bool isStatic, Vector pos, Vector vel, Vector angle, Vector angularVelocity, Vector acceleration, float mass, float elasticityCoef, Color color, bool draw) {
     this->isStatic = isStatic;
     this->position = pos;
     this->mass = mass;
@@ -38,8 +38,8 @@ Object::Object(string id, bool isStatic, Point pos, Point vel, Point angle, Poin
     this->id = id;
     this->rotationMatrix = Matrix(1,0,0,0,1,0,0,0,1) * Matrix(angle);
     this->queuedImpulses = list<Impulse>();
-    this->velCollisionMassPerAxis = Point();
-    this->angVelCollisionMassPerAxis = Point();
+    this->velCollisionMassPerAxis = Vector();
+    this->angVelCollisionMassPerAxis = Vector();
     this->aabb = NULL;
     this->draw = draw;
 
@@ -61,19 +61,19 @@ Matrix Object::getRotationMatrix() {
     return rotationMatrix;
 }
 
-Point Object::getAngularVelocity() {
+Vector Object::getAngularVelocity() {
     return angularVelocity;
 }
 
-Point Object::getPosition() {
+Vector Object::getPosition() {
     return position;
 }
 
-Point Object::getVelocity() {
+Vector Object::getVelocity() {
     return velocity;
 }
 
-Point Object::getAcceleration() {
+Vector Object::getAcceleration() {
     return acceleration;
 }
 
@@ -97,18 +97,18 @@ Color Object::getColor() {
     return color;
 }
 
-void Object::setPosition(Point pos) {
+void Object::setPosition(Vector pos) {
     this->position = pos;
     obb.setPosition(pos);
 }
 
-void Object::setVelocity(Point vel) {
+void Object::setVelocity(Vector vel) {
     if (vel.getMagnitudeSqr() > 2500)
         vel = vel / vel.getMagnitude() * 50;
     this->velocity = vel;
 }
 
-void Object::setAngularVelocity(Point angularVelocity) {
+void Object::setAngularVelocity(Vector angularVelocity) {
     if (angularVelocity.getMagnitudeSqr() > 100)
         angularVelocity = angularVelocity / angularVelocity.getMagnitude() * 10;
     this->angularVelocity = angularVelocity;
@@ -139,7 +139,7 @@ Matrix Object::getInertiaTensorInverse() {
     return invertedInertiaTensor;
 }
 
-void Object::queueImpulse(Point normal, Point tangent, float magnitude, float mass) {
+void Object::queueImpulse(Vector normal, Vector tangent, float magnitude, float mass) {
     normal = normal.roundToZeroIfNear();
     tangent = tangent.roundToZeroIfNear();
     queuedImpulses.insert(queuedImpulses.begin(), Impulse(normal, tangent, magnitude, mass));
@@ -149,19 +149,19 @@ void Object::queueImpulse(Point normal, Point tangent, float magnitude, float ma
 
 void Object::applyQueuedImpulses() {
     for (auto it = queuedImpulses.begin(); it != queuedImpulses.end(); ++it) {
-        Point velProportion = Point(it->mass, it->mass, it->mass) / velCollisionMassPerAxis;
-        Point angVelProportion = Point(it->mass, it->mass, it->mass) / angVelCollisionMassPerAxis;
+        Vector velProportion = Vector(it->mass, it->mass, it->mass) / velCollisionMassPerAxis;
+        Vector angVelProportion = Vector(it->mass, it->mass, it->mass) / angVelCollisionMassPerAxis;
         applyImpulse(it->normal * velProportion * it->magnitude, it->tangent * angVelProportion * it->magnitude);
     }
 
     queuedImpulses.clear();
-    velCollisionMassPerAxis = Point();
-    angVelCollisionMassPerAxis = Point();
+    velCollisionMassPerAxis = Vector();
+    angVelCollisionMassPerAxis = Vector();
 }
 
-void Object::applyImpulse(Point normal, Point tangent) {
-    Point velDiff = normal / mass;
-    Point angVelDiff = getInertiaTensorInverse() * tangent;
+void Object::applyImpulse(Vector normal, Vector tangent) {
+    Vector velDiff = normal / mass;
+    Vector angVelDiff = getInertiaTensorInverse() * tangent;
     setVelocity(velocity + velDiff);
     setAngularVelocity(angularVelocity + angVelDiff);
 }

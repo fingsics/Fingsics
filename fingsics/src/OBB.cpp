@@ -4,28 +4,28 @@ using namespace std;
 
 OBB::OBB() {}
 
-OBB::OBB(Point position, Point halfLengths, Matrix rotationMatrix) {
+OBB::OBB(Vector position, Vector halfLengths, Matrix rotationMatrix) {
     this->position = position;
     this->halfLengths = halfLengths;
     setRotation(rotationMatrix);
 }
 
 void OBB::setRotation(Matrix rotationMatrix) {
-    Point normal1 = rotationMatrix * Point(1, 0, 0);
-    Point normal2 = rotationMatrix * Point(0, 1, 0);
-    Point normal3 = rotationMatrix * Point(0, 0, 1);
+    Vector normal1 = rotationMatrix * Vector(1, 0, 0);
+    Vector normal2 = rotationMatrix * Vector(0, 1, 0);
+    Vector normal3 = rotationMatrix * Vector(0, 0, 1);
     normals = Matrix(normal1, normal2, normal3);
 }
 
-void OBB::setPosition(Point position) {
+void OBB::setPosition(Vector position) {
     this->position = position;
 }
 
-Point OBB::getPosition() {
+Vector OBB::getPosition() {
     return position;
 }
 
-Point OBB::getHalfLengths() {
+Vector OBB::getHalfLengths() {
     return halfLengths;
 }
 

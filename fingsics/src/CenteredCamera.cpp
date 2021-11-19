@@ -13,7 +13,7 @@ CenteredCamera::CenteredCamera() : Camera() {
 }
 
 void CenteredCamera::lookAt() {
-    Point eye = Point(-1, 0, 0).rotate(Point(0,yaw,pitch)) * radius;
+    Vector eye = Vector(-1, 0, 0).rotate(Vector(0,yaw,pitch)) * radius;
     float centerX = 0;
     float centerY = 0;
     float centerZ = 0;

@@ -1,26 +1,26 @@
 #include "../include/FreeCamera.h"
 
-FreeCamera::FreeCamera(Point eye, float pitch, float yaw): Camera() {
+FreeCamera::FreeCamera(Vector eye, float pitch, float yaw): Camera() {
     this->eye = eye;
     this->pitch = pitch;
     this->yaw = yaw;
 }
 
 FreeCamera::FreeCamera(): Camera() {
-    this->eye = Point(-13,6,0);
+    this->eye = Vector(-13,6,0);
     this->pitch = -25;
     this->yaw = 0;
 }
 
-Point FreeCamera::getCenter() {
-    return eye + Point(1,0,0).rotate(Point(0,yaw,pitch));
+Vector FreeCamera::getCenter() {
+    return eye + Vector(1,0,0).rotate(Vector(0,yaw,pitch));
 }
 
 void FreeCamera::lookAt() {
     float eyeX = eye.getX();
     float eyeY = eye.getY();
     float eyeZ = eye.getZ();
-    Point center = getCenter();
+    Vector center = getCenter();
     float upX = 0;
     float upY = 1;
     float upZ = 0;
@@ -29,8 +29,8 @@ void FreeCamera::lookAt() {
 
 void FreeCamera::update(SDL_Event event) {
     Camera::update(event);
-    Point lookingDirection = getCenter() - eye;
-    Point perpendicularLookingDirection = lookingDirection.crossProduct(Point(0,1,0)).normalize();
+    Vector lookingDirection = getCenter() - eye;
+    Vector perpendicularLookingDirection = lookingDirection.crossProduct(Vector(0,1,0)).normalize();
     switch (event.type) {
     case SDL_MOUSEMOTION:
         if (move) {
@@ -57,10 +57,10 @@ void FreeCamera::update(SDL_Event event) {
             eye = eye + perpendicularLookingDirection * speed;
             break;
         case SDLK_LCTRL:
-            eye = eye + Point(0, 1, 0) * speed;
+            eye = eye + Vector(0, 1, 0) * speed;
             break;
         case SDLK_LSHIFT:
-            eye = eye - Point(0, 1, 0) * speed;
+            eye = eye - Vector(0, 1, 0) * speed;
             break;
         }
     }

@@ -1,23 +1,23 @@
 #ifndef OBB_H
 #define OBB_H
 
-#include "Point.h"
+#include "Vector.h"
 #include "Matrix.h"
 
 using namespace std;
 
 struct OBB {
     private:
-        Point position;
-        Point halfLengths;
+        Vector position;
+        Vector halfLengths;
         Matrix normals;
     public:
         OBB();
-        OBB(Point, Point, Matrix);
+        OBB(Vector, Vector, Matrix);
         void setRotation(Matrix);
-        void setPosition(Point);
-        Point getPosition();
-        Point getHalfLengths();
+        void setPosition(Vector);
+        Vector getPosition();
+        Vector getHalfLengths();
         Matrix getNormals();
 };
 

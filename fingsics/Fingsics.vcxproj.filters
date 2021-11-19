@@ -96,7 +96,7 @@
     <ClCompile Include="src\Collision.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
-    <ClCompile Include="src\Point.cpp">
+    <ClCompile Include="src\Vector.cpp">
       <Filter>Source Files\Data Structures</Filter>
     </ClCompile>
     <ClCompile Include="src\XmlReader.cpp">
@@ -188,7 +188,7 @@
     <ClInclude Include="include\CollisionResponseAlgorithm.h">
       <Filter>Header Files\Algorithms</Filter>
     </ClInclude>
-    <ClInclude Include="include\Point.h">
+    <ClInclude Include="include\Vector.h">
       <Filter>Header Files\Data Structures</Filter>
     </ClInclude>
     <ClInclude Include="include\Matrix.h">

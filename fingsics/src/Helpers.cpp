@@ -1,9 +1,9 @@
 #include "../include/Helpers.h"
 
-Point average(list<Point*> points) {
+Vector average(list<Vector*> points) {
     int count = 0;
-    Point res = Point();
-    list<Point*>::iterator it;
+    Vector res = Vector();
+    list<Vector*>::iterator it;
     for (it = points.begin(); it != points.end(); ++it) {
         if (*it) {
             res = res + **it;
@@ -23,7 +23,7 @@ pair<string,pair<Object*,Object*>> getObjectPairWithId(Object * object1, Object 
         : make_pair(object2->getId() + "-" + object1->getId(), make_pair(object2, object1));
 }
 
-float** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
+float** getMatrixForGausianElimination(Matrix LHS, Vector RHS) {
         float* row0 = new float[4];
         float* row1 = new float[4];
         float* row2 = new float[4];
@@ -47,7 +47,7 @@ float** getMatrixForGausianElimination(Matrix LHS, Point RHS) {
 }
 
 // Works only if the system has a SINGLE solution
-tuple<float, float, float> solveLinearSystem(Matrix LHS, Point RHS) {
+tuple<float, float, float> solveLinearSystem(Matrix LHS, Vector RHS) {
     float** A = getMatrixForGausianElimination(LHS, RHS);
     int h = 0;
     int k = 0;

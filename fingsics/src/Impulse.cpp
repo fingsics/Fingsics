@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Impulse::Impulse(Point normal, Point tangent, float magnitude, float mass) {
+Impulse::Impulse(Vector normal, Vector tangent, float magnitude, float mass) {
     this->normal = normal;
     this->tangent = tangent;
     this->magnitude = magnitude;

@@ -4,17 +4,17 @@
 #include <string>
 #include "Object.h"
 #include "Matrix.h"
-#include "Point.h"
+#include "Vector.h"
 
 using namespace std;
 
-Point average(list<Point*>);
+Vector average(list<Vector*>);
 
 int sign(float);
 
 pair<string,pair<Object*, Object*>> getObjectPairWithId(Object*, Object*);
 
-float** getMatrixForGausianElimination(Matrix, Point);
-tuple<float, float, float> solveLinearSystem(Matrix, Point);
+float** getMatrixForGausianElimination(Matrix, Vector);
+tuple<float, float, float> solveLinearSystem(Matrix, Vector);
 
 #endif

@@ -1,6 +1,6 @@
 #include "../include/XmlReader.h"
 
-CommonFields::CommonFields(Point p, Point v, Point a, Point av, Point acc, float m, float ec, Color c, bool s, bool d) {
+CommonFields::CommonFields(Vector p, Vector v, Vector a, Vector av, Vector acc, float m, float ec, Color c, bool s, bool d) {
     pos = p;
     vel = v;
     ang = a;
@@ -75,22 +75,22 @@ vector<Object*> XmlReader::getObjects() {
 
 CommonFields XmlReader::parseCommonFields(tinyxml2::XMLElement* xmlObject) {
     const char* posChar, * velChar, * angChar, * angVelChar, * accelerationChar, * colorChar;
-    Point pos, vel, ang, angVel, acceleration;
+    Vector pos, vel, ang, angVel, acceleration;
     Color color;
     bool isStatic, draw;
     float radius, mass, elasticityCoef;
     tinyxml2::XMLError parseError;
 
     parseError = xmlObject->QueryStringAttribute("pos", &posChar);
-    pos = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(posChar) : Point(0, 0, 0);
+    pos = (parseError == tinyxml2::XML_SUCCESS) ? parseVector(posChar) : Vector(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("vel", &velChar);
-    vel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(velChar) : Point(0, 0, 0);
+    vel = (parseError == tinyxml2::XML_SUCCESS) ? parseVector(velChar) : Vector(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("ang", &angChar);
-    ang = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angChar) * M_PI / 180 : Point(0, 0, 0);
+    ang = (parseError == tinyxml2::XML_SUCCESS) ? parseVector(angChar) * M_PI / 180 : Vector(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("angVel", &angVelChar);
-    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(angVelChar) * M_PI / 180 : Point(0, 0, 0);
+    angVel = (parseError == tinyxml2::XML_SUCCESS) ? parseVector(angVelChar) * M_PI / 180 : Vector(0, 0, 0);
     parseError = xmlObject->QueryStringAttribute("acceleration", &accelerationChar);
-    acceleration = (parseError == tinyxml2::XML_SUCCESS) ? parsePoint(accelerationChar) : Point(0, 0, 0);
+    acceleration = (parseError == tinyxml2::XML_SUCCESS) ? parseVector(accelerationChar) : Vector(0, 0, 0);
     parseError = xmlObject->QueryFloatAttribute("mass", &mass);
     mass = (parseError == tinyxml2::XML_SUCCESS) ? mass : 1;
     parseError = xmlObject->QueryFloatAttribute("elasticityCoef", &elasticityCoef);
@@ -158,9 +158,9 @@ vector<float> XmlReader::parseTriplet(const char* input) {
     }
 }
 
-Point XmlReader::parsePoint(const char* charPoint) {
+Vector XmlReader::parseVector(const char* charPoint) {
     vector<float> values = parseTriplet(charPoint);
-    return Point(values[0], values[1], values[2]);
+    return Vector(values[0], values[1], values[2]);
 }
 
 Color XmlReader::parseColor(const char* charColor) {

@@ -3,7 +3,7 @@
 
 #define _USE_MATH_DEFINES
 #include "Camera.h"
-#include "Point.h"
+#include "Vector.h"
 #include <string>
 #include <math.h>
 

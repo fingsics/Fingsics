@@ -31,43 +31,43 @@ Collision* NarrowPhaseAlgorithm::parallelCapsules(Capsule* capsule1, Capsule* ca
     return collision;
 }
 
-tuple<Point, Point>* NarrowPhaseAlgorithm::calculateCylinderLineCollision(Capsule* capsule, Point edgeCenter, Point tileAxis, float tileAxisLength, tuple<float, float, float> solution) {
+tuple<Vector, Vector>* NarrowPhaseAlgorithm::calculateCylinderLineCollision(Capsule* capsule, Vector edgeCenter, Vector tileAxis, float tileAxisLength, tuple<float, float, float> solution) {
     // Returns the collision points on the line and the cylinder axis
     float distanceInCapsule = get<0>(solution);
     float distanceInEdge = get<1>(solution);
-    Point capsulePoint = capsule->getPosition() + capsule->getAxisDirection() * (abs(distanceInCapsule) < capsule->getLength() / 2 ? distanceInCapsule : capsule->getLength() * sign(distanceInCapsule) / 2);
-    Point axisPoint = edgeCenter + tileAxis * (abs(distanceInEdge) < tileAxisLength / 2 ? distanceInEdge : tileAxisLength * sign(distanceInEdge) / 2);
+    Vector capsulePoint = capsule->getPosition() + capsule->getAxisDirection() * (abs(distanceInCapsule) < capsule->getLength() / 2 ? distanceInCapsule : capsule->getLength() * sign(distanceInCapsule) / 2);
+    Vector axisPoint = edgeCenter + tileAxis * (abs(distanceInEdge) < tileAxisLength / 2 ? distanceInEdge : tileAxisLength * sign(distanceInEdge) / 2);
     float distance = (capsulePoint - axisPoint).getMagnitude();
-    return distance < capsule->getRadius() ? new tuple<Point, Point>(axisPoint, capsulePoint) : NULL;
+    return distance < capsule->getRadius() ? new tuple<Vector, Vector>(axisPoint, capsulePoint) : NULL;
 }
 
-tuple<float, float, float> NarrowPhaseAlgorithm::closestPointBetweenNonParallelLines(Point line1Point, Point line1Direction, Point line2Point, Point line2Direction, Point closestPointsDirection) {
+tuple<float, float, float> NarrowPhaseAlgorithm::closestPointBetweenNonParallelLines(Vector line1Point, Vector line1Direction, Vector line2Point, Vector line2Direction, Vector closestPointsDirection) {
     // https://math.stackexchange.com/questions/1993953/closest-points-between-two-lines
-    Point RHS = line2Point - line1Point;
+    Vector RHS = line2Point - line1Point;
     Matrix LHS = Matrix(line1Direction, line2Direction * -1, closestPointsDirection).transpose();
 
     return solveLinearSystem(LHS, RHS);
 }
 
-tuple<tuple<Point, Point>*, tuple<Point, Point>*> NarrowPhaseAlgorithm::parallelCapsuleAndTileEdgeCollisions(Point vertex1, Point vertex2, Point capsuleCenter, Point capsuleAxis, float capsuleLength) {
+tuple<tuple<Vector, Vector>*, tuple<Vector, Vector>*> NarrowPhaseAlgorithm::parallelCapsuleAndTileEdgeCollisions(Vector vertex1, Vector vertex2, Vector capsuleCenter, Vector capsuleAxis, float capsuleLength) {
     // Returns the collision points on both ends of the tile edge vertex1-vertex2 and the cylinder axis (if they exist)
-    tuple<tuple<Point, Point>*, tuple<Point, Point>*> res = tuple<tuple<Point, Point>*, tuple<Point, Point>*>(NULL, NULL);
+    tuple<tuple<Vector, Vector>*, tuple<Vector, Vector>*> res = tuple<tuple<Vector, Vector>*, tuple<Vector, Vector>*>(NULL, NULL);
 
-    Point projection1 = capsuleCenter + capsuleAxis * vertex1.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
-    Point projection2 = capsuleCenter + capsuleAxis * vertex2.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
+    Vector projection1 = capsuleCenter + capsuleAxis * vertex1.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
+    Vector projection2 = capsuleCenter + capsuleAxis * vertex2.dotProduct(capsuleAxis) / capsuleAxis.dotProduct(capsuleAxis);
 
-    if ((projection1 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) get<0>(res) = new tuple<Point, Point>(vertex1, projection1);
-    if ((projection2 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) get<1>(res) = new tuple<Point, Point>(vertex2, projection2);
+    if ((projection1 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) get<0>(res) = new tuple<Vector, Vector>(vertex1, projection1);
+    if ((projection2 - capsuleCenter).getMagnitudeSqr() < pow(capsuleLength / 2, 2)) get<1>(res) = new tuple<Vector, Vector>(vertex2, projection2);
 
     return res;
 }
 
 // Primitives
 
-Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Point lineCenter, Point lineDirection, float lineLength) {
+Collision* NarrowPhaseAlgorithm::ballLine(Vector ballCenter, float ballRadius, Vector lineCenter, Vector lineDirection, float lineLength) {
     float distance = abs((lineCenter - ballCenter).crossProduct(lineDirection).getMagnitude());
     if (distance < ballRadius) {
-        Point projection = lineCenter + lineDirection * (ballCenter - lineCenter).dotProduct(lineDirection);
+        Vector projection = lineCenter + lineDirection * (ballCenter - lineCenter).dotProduct(lineDirection);
 
         if ((projection - lineCenter).getMagnitudeSqr() < pow(lineLength / 2, 2)) {
             return new Collision(projection, (ballCenter - projection).normalize(), ballRadius - distance);
@@ -77,45 +77,45 @@ Collision* NarrowPhaseAlgorithm::ballLine(Point ballCenter, float ballRadius, Po
     return NULL;
 }
 
-Collision* NarrowPhaseAlgorithm::ballBall(Point center1, float radius1, Point center2, float radius2) {
-    Point normalVector = center2 - center1;
+Collision* NarrowPhaseAlgorithm::ballBall(Vector center1, float radius1, Vector center2, float radius2) {
+    Vector normalVector = center2 - center1;
     float normalMagnitude = normalVector.getMagnitude();
     float radiusSum = radius1 + radius2;
     if (normalMagnitude < radiusSum) {
         float radiusRatio = radius2 / radiusSum;
-        Point collisionPoint = center1 + normalVector * radiusRatio;
+        Vector collisionPoint = center1 + normalVector * radiusRatio;
         return new Collision(collisionPoint, normalVector / normalMagnitude, radiusSum - normalMagnitude);
     }
     return NULL;
 }
 
-Collision* NarrowPhaseAlgorithm::ballCylinder(Point ballCenter, float ballRadius, Point cylinderCenter, float cylinderRadius, float cylinderLength, Point cylinderAxisDirection) {
+Collision* NarrowPhaseAlgorithm::ballCylinder(Vector ballCenter, float ballRadius, Vector cylinderCenter, float cylinderRadius, float cylinderLength, Vector cylinderAxisDirection) {
     // https://gamedev.stackexchange.com/questions/72528/how-can-i-project-a-3d-point-onto-a-3d-line
-    Point AB = cylinderAxisDirection;
-    Point AP = ballCenter - cylinderCenter;
-    Point displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
+    Vector AB = cylinderAxisDirection;
+    Vector AP = ballCenter - cylinderCenter;
+    Vector displacementFromA = AB * (AP.dotProduct(AB) / AB.dotProduct(AB));
     // Projection of the ball's center is inside the capsule's cylinder
     if (displacementFromA.getMagnitudeSqr() < pow(cylinderLength / 2, 2)) {
-        Point projection = cylinderCenter + displacementFromA;
-        Point projectionToCenter = ballCenter - projection;
+        Vector projection = cylinderCenter + displacementFromA;
+        Vector projectionToCenter = ballCenter - projection;
         float distance = projectionToCenter.getMagnitude();
         float radiusSum = ballRadius + cylinderRadius;
         if (distance < radiusSum) {
-            Point collisionNormal = projectionToCenter.invert().normalize();
-            Point collisionPoint = projection + collisionNormal * cylinderRadius;
+            Vector collisionNormal = projectionToCenter.invert().normalize();
+            Vector collisionPoint = projection + collisionNormal * cylinderRadius;
             return new Collision(collisionPoint, collisionNormal, radiusSum - distance);
         }
     }
     return NULL;
 }
 
-Collision* NarrowPhaseAlgorithm::ballTile(Point ballCenter, float ballRadius, Point tileCenter, Point tileNormal, Point tileAxis1, Point tileAxis2, float tileAxis1Length, float tileAxis2Length, Point tileEnd1, Point tileEnd2, Point tileEnd3, Point tileEnd4) {
+Collision* NarrowPhaseAlgorithm::ballTile(Vector ballCenter, float ballRadius, Vector tileCenter, Vector tileNormal, Vector tileAxis1, Vector tileAxis2, float tileAxis1Length, float tileAxis2Length, Vector tileEnd1, Vector tileEnd2, Vector tileEnd3, Vector tileEnd4) {
     float d = tileNormal.dotProduct(ballCenter - tileCenter);
     float absD = abs(d);
 
     if (absD < ballRadius) {
-        Point normal = (d > 0) ? tileNormal : tileNormal * -1;
-        Point projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
+        Vector normal = (d > 0) ? tileNormal : tileNormal * -1;
+        Vector projection = ballCenter - normal * (absD * 3 / 2 - ballRadius / 2);
 
         float axis1Distance = (tileCenter - projection).crossProduct(tileAxis1).getMagnitude();
         float axis2Distance = (tileCenter - projection).crossProduct(tileAxis2).getMagnitude();
@@ -136,7 +136,7 @@ Collision* NarrowPhaseAlgorithm::ballTile(Point ballCenter, float ballRadius, Po
         }
         else {
             // Test collision with tile's vertices
-            Point tileEnd;
+            Vector tileEnd;
             float cos1 = (ballCenter - tileCenter).dotProduct(tileAxis2);
             float cos2 = (ballCenter - tileCenter).dotProduct(tileAxis1);
 
@@ -145,7 +145,7 @@ Collision* NarrowPhaseAlgorithm::ballTile(Point ballCenter, float ballRadius, Po
             else if (cos2 > 0) tileEnd = tileEnd3;
             else tileEnd = tileEnd4;
 
-            Point endToBall = ballCenter - tileEnd;
+            Vector endToBall = ballCenter - tileEnd;
             float distance = endToBall.getMagnitude();
             if (distance < ballRadius) {
                 return new Collision(tileEnd, endToBall / distance, ballRadius - distance);
@@ -164,8 +164,8 @@ Collision* NarrowPhaseAlgorithm::ballTile(Ball* ball, Tile* tile) {
 }
 
 Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
-    Point cylinderPositiveEnd = capsule->getCylinderPositiveEnd();
-    Point cylinderNegativeEnd = capsule->getCylinderNegativeEnd();
+    Vector cylinderPositiveEnd = capsule->getCylinderPositiveEnd();
+    Vector cylinderNegativeEnd = capsule->getCylinderNegativeEnd();
 
     Collision* positiveCollision = ballTile(cylinderPositiveEnd, capsule->getRadius(), tile->getPosition(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
     Collision* negativeCollision = ballTile(cylinderNegativeEnd, capsule->getRadius(), tile->getPosition(), tile->getNormal(), tile->getAxis1(), tile->getAxis2(), tile->getAxis1Length(), tile->getAxis2Length(), tile->getEnd1(), tile->getEnd2(), tile->getEnd3(), tile->getEnd4());
@@ -177,23 +177,23 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
         return res;
     }
 
-    Point UA = capsule->getAxisDirection();
-    Point UB12 = tile->getAxis1();
-    Point UB34 = tile->getAxis2();
+    Vector UA = capsule->getAxisDirection();
+    Vector UB12 = tile->getAxis1();
+    Vector UB34 = tile->getAxis2();
 
-    Point edge1Center = tile->getPosition() + UB12 * tile->getAxis1Length() / 2;
-    Point edge2Center = tile->getPosition() - UB12 * tile->getAxis1Length() / 2;
-    Point edge3Center = tile->getPosition() + UB34 * tile->getAxis2Length() / 2;
-    Point edge4Center = tile->getPosition() - UB34 * tile->getAxis2Length() / 2;
+    Vector edge1Center = tile->getPosition() + UB12 * tile->getAxis1Length() / 2;
+    Vector edge2Center = tile->getPosition() - UB12 * tile->getAxis1Length() / 2;
+    Vector edge3Center = tile->getPosition() + UB34 * tile->getAxis2Length() / 2;
+    Vector edge4Center = tile->getPosition() - UB34 * tile->getAxis2Length() / 2;
 
-    tuple<Point, Point>* collision1 = NULL;
-    tuple<Point, Point>* collision2 = NULL;
-    tuple<Point, Point>* collision3 = NULL;
-    tuple<Point, Point>* collision4 = NULL;
+    tuple<Vector, Vector>* collision1 = NULL;
+    tuple<Vector, Vector>* collision2 = NULL;
+    tuple<Vector, Vector>* collision3 = NULL;
+    tuple<Vector, Vector>* collision4 = NULL;
 
     if (capsule->getAxisDirection().parallel(UB34)) {
         // The capsule is parallel to two of the plane's edges
-        tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
+        tuple<tuple<Vector, Vector>*, tuple<Vector, Vector>*> collisions;
         if (UB34.crossProduct(capsule->getPosition() - edge1Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
             collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd3(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision1 = get<0>(collisions);
@@ -204,7 +204,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
             collision2 = get<1>(collisions);
         }
     } else {
-        Point UC34 = UB34.crossProduct(UA).normalize();
+        Vector UC34 = UB34.crossProduct(UA).normalize();
         tuple<float, float, float> edge1Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge1Center, UB34, UC34);
         tuple<float, float, float> edge2Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge2Center, UB34, UC34);
         collision1 = calculateCylinderLineCollision(capsule, edge1Center, UB34, tile->getAxis2Length(), edge1Solution);
@@ -213,7 +213,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
 
     if (capsule->getAxisDirection().parallel(UB12)) {
         // The capsule is parallel to two of the plane's edges
-        tuple<tuple<Point, Point>*, tuple<Point, Point>*> collisions;
+        tuple<tuple<Vector, Vector>*, tuple<Vector, Vector>*> collisions;
         if (UB12.crossProduct(capsule->getPosition() - edge3Center).getMagnitudeSqr() < pow(capsule->getRadius(), 2)) {
             collisions = parallelCapsuleAndTileEdgeCollisions(tile->getEnd1(), tile->getEnd2(), capsule->getPosition(), capsule->getAxisDirection(), capsule->getLength());
             collision3 = get<0>(collisions);
@@ -224,7 +224,7 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
             collision4 = get<1>(collisions);
         }
     } else {
-        Point UC12 = UB12.crossProduct(UA).normalize();
+        Vector UC12 = UB12.crossProduct(UA).normalize();
         tuple<float, float, float> edge3Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge3Center, UB12, UC12);
         tuple<float, float, float> edge4Solution = closestPointBetweenNonParallelLines(capsule->getPosition(), UA, edge4Center, UB12, UC12);
         collision3 = calculateCylinderLineCollision(capsule, edge3Center, UB12, tile->getAxis1Length(), edge3Solution);
@@ -233,13 +233,13 @@ Collision* NarrowPhaseAlgorithm::capsuleTile(Capsule* capsule, Tile* tile) {
 
     if (!(collision1 || collision2 || collision3 || collision4)) return positiveCollision ? positiveCollision : negativeCollision;
 
-    Point tilePoint = average({
+    Vector tilePoint = average({
         collision1 ? &get<0>(*collision1) : NULL,
         collision2 ? &get<0>(*collision2) : NULL,
         collision3 ? &get<0>(*collision3) : NULL,
         collision4 ? &get<0>(*collision4) : NULL
     });
-    Point capsulePoint = average({
+    Vector capsulePoint = average({
         collision1 ? &get<1>(*collision1) : NULL,
         collision2 ? &get<1>(*collision2) : NULL,
         collision3 ? &get<1>(*collision3) : NULL,
@@ -259,7 +259,7 @@ Collision* NarrowPhaseAlgorithm::ballBall(Ball* ball1, Ball* ball2) {
     return ballBall(ball1->getPosition(), ball1->getRadius(), ball2->getPosition(), ball2->getRadius());
 }
 
-Collision* NarrowPhaseAlgorithm::ballCapsule(Point ballPos, float ballRadius, Point capsulePos, float capsuleRadius, float capsuleLength, Point capsuleAxisDirection, Point capsulePositiveEnd, Point capsuleNegativeEnd) {
+Collision* NarrowPhaseAlgorithm::ballCapsule(Vector ballPos, float ballRadius, Vector capsulePos, float capsuleRadius, float capsuleLength, Vector capsuleAxisDirection, Vector capsulePositiveEnd, Vector capsuleNegativeEnd) {
     Collision* cylinderCollision = ballCylinder(ballPos, ballRadius, capsulePos, capsuleRadius, capsuleLength, capsuleAxisDirection);
     if (cylinderCollision) return cylinderCollision;
     Collision* positiveEndCollision = ballBall(ballPos, ballRadius, capsulePositiveEnd, capsuleRadius);
@@ -272,34 +272,34 @@ Collision* NarrowPhaseAlgorithm::ballCapsule(Ball* ball, Capsule* capsule) {
 }
 
 Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* capsule2) {
-    Point UA = capsule1->getAxisDirection();
-    Point UB = capsule2->getAxisDirection();
+    Vector UA = capsule1->getAxisDirection();
+    Vector UB = capsule2->getAxisDirection();
 
     // Check if capsules are parallel
     if (UA.parallel(UB)) return parallelCapsules(capsule1, capsule2);
 
-    Point UC = UB.crossProduct(UA).normalize();
+    Vector UC = UB.crossProduct(UA).normalize();
     tuple<float, float, float> solution = closestPointBetweenNonParallelLines(capsule1->getPosition(), UA, capsule2->getPosition(), UB, UC);
     
     float distanceInAxis1 = get<0>(solution);
     float distanceInAxis2 = get<1>(solution);
-    Point axis1Point = UA * distanceInAxis1 + capsule1->getPosition();
-    Point axis2Point = UB * distanceInAxis2 + capsule2->getPosition();
+    Vector axis1Point = UA * distanceInAxis1 + capsule1->getPosition();
+    Vector axis2Point = UB * distanceInAxis2 + capsule2->getPosition();
     float distance = abs(get<2>(solution));
     float radiusSum = capsule1->getRadius() + capsule2->getRadius();
 
     if (distance < radiusSum) {
         // Check collision between cylinders
         if (abs(distanceInAxis1) < capsule1->getLength() / 2 && abs(distanceInAxis2) < capsule2->getLength() / 2) {
-            Point normalVector = axis2Point - axis1Point;
+            Vector normalVector = axis2Point - axis1Point;
             if (normalVector.isZero()) normalVector = UC;
             float radiusRatio = capsule2->getRadius() / radiusSum;
-            Point collisionPoint = axis1Point + normalVector * radiusRatio;
+            Vector collisionPoint = axis1Point + normalVector * radiusRatio;
             return new Collision(collisionPoint, normalVector.normalize(), radiusSum - distance);
         }
 
         // Check collision between capsule 1 and one of the ends of capsule 2
-        Point test1BallCenter = (distanceInAxis2 > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
+        Vector test1BallCenter = (distanceInAxis2 > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
         Collision* collision = ballCylinder(test1BallCenter, capsule2->getRadius(), capsule1->getPosition(), capsule1->getRadius(), capsule1->getLength(), capsule1->getAxisDirection());
         if (collision) {
             collision->invertNormal();
@@ -307,13 +307,13 @@ Collision* NarrowPhaseAlgorithm::capsuleCapsule(Capsule* capsule1, Capsule* caps
         }
         
         // Check collision between capsule 2 and one of the ends of capsule 1
-        Point test2BallCenter = (distanceInAxis1 > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
+        Vector test2BallCenter = (distanceInAxis1 > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
         collision =  ballCylinder(test2BallCenter, capsule1->getRadius(), capsule2->getPosition(), capsule2->getRadius(), capsule2->getLength(), capsule2->getAxisDirection());
         if (collision) return collision;
 
         // Check collision between ends of the capsules
-        Point ball1Center = (distanceInAxis1 > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
-        Point ball2Center = (distanceInAxis2 > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
+        Vector ball1Center = (distanceInAxis1 > 0) ? capsule1->getCylinderPositiveEnd() : capsule1->getCylinderNegativeEnd();
+        Vector ball2Center = (distanceInAxis2 > 0) ? capsule2->getCylinderPositiveEnd() : capsule2->getCylinderNegativeEnd();
         return ballBall(ball1Center, capsule1->getRadius(), ball2Center, capsule2->getRadius());
     }
 

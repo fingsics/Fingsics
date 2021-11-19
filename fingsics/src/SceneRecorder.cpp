@@ -50,7 +50,7 @@ void SceneRecorder::serializeObject(Object* object, SerializedObject* serialized
     }
 }
 
-void SceneRecorder::serializePosition(Point position, SerializedPosition* serializedPosition) {
+void SceneRecorder::serializePosition(Vector position, SerializedPosition* serializedPosition) {
     float x = position.getX();
     float y = position.getY();
     float z = position.getZ();
@@ -71,7 +71,7 @@ void SceneRecorder::serializeRotationMatrix(Matrix rotationMatrix, SerializedMat
 
 Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, SerializedPosition* serializedPositions, SerializedMatrix* serializedRotationMatrices, int frames, string id, int numLatLongs) {
     Color color = Color(serializedObject.r, serializedObject.g, serializedObject.b);
-    Point* positions = new Point[frames];
+    Vector* positions = new Vector[frames];
     Matrix* rotationMatrices = new Matrix[frames];
 
     for (int i = 0; i < frames; i++) {
@@ -89,7 +89,7 @@ Object* SceneRecorder::deserializeObject(SerializedObject serializedObject, Seri
         return new Capsule(id, color, positions, rotationMatrices, frames, serializedObject.draw != NODRAW, true, reinterpret_cast<float&>(serializedObject.dim1), reinterpret_cast<float&>(serializedObject.dim2));
 }
 
-void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, Point* position) {
+void SceneRecorder::deserializePosition(SerializedPosition serializedPosition, Vector* position) {
     position->setX(reinterpret_cast<float&>(serializedPosition.x));
     position->setY(reinterpret_cast<float&>(serializedPosition.y));
     position->setZ(reinterpret_cast<float&>(serializedPosition.z));
