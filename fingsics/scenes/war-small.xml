@@ -482,66 +482,6 @@
 		<capsule pos="9,9,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
 		<capsule pos="9,9,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
 		<capsule pos="9,9,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-50" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-47" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-44" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-41" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-38" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-35" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-32" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-29" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-26" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-15,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-50" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-47" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-44" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-41" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-38" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-35" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-32" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-29" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-26" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-9,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-50" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-47" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-44" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-41" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-38" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-35" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-32" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-29" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-26" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,-3,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-50" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-47" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-44" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-41" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-38" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-35" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-32" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-29" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-26" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,3,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-50" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-47" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-44" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-41" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-38" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-35" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-32" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-29" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-26" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-23" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-20" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
-		<capsule pos="12,9,-17" vel="0,0,15" mass="1" elasticityCoef="0.4" ang="90,0,0" color="220,0,0" radius="0.5" length="4" />
 		<capsule pos="-12.5,-16,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
 		<capsule pos="-12.5,-16,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
 		<capsule pos="-12.5,-16,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
@@ -992,56 +932,6 @@
 		<capsule pos="11.5,11,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
 		<capsule pos="11.5,11,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
 		<capsule pos="11.5,11,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-16,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-16,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-16,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-16,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-16,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-13,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-13,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-13,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-13,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-13,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-10,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-10,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-10,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-10,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-10,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-7,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-7,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-7,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-7,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-7,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-4,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-4,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-4,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-4,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-4,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-1,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-1,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-1,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-1,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,-1,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,2,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,2,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,2,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,2,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,2,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,5,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,5,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,5,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,5,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,5,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,8,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,8,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,8,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,8,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,8,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,11,50" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,11,44" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,11,38" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,11,32" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
-		<capsule pos="14.5,11,26" vel="0,0,-15" mass="1" elasticityCoef="0.4" ang="0,0,0" color="0,0,220" radius="0.5" length="4" />
 
 	</objects>
 </config>
