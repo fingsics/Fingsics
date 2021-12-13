@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+	<objects>
+		<tile pos="0,-11,0" mass="1" elasticityCoef="0.8" ang="45,0,0" color="220,220,220" static="true" length="30" width="30"  />
+		<tile pos="0,-11,30" mass="1" elasticityCoef="0.8" ang="-45,0,0" color="220,220,220" static="true" length="30" width="30"  />
+		<sphere pos="4,-1,0" vel="0,10,0" acceleration="0,-9.8,0" mass="1" elasticityCoef="0.8" ang="0,0,0" color="220,0,0" radius="1" />
+		<capsule pos="-4,-1,0" acceleration="0,-9.8,0" mass="3" elasticityCoef="0.8" ang="0,45,0" color="0,220,0" radius="1" length="3" />
+	</objects>
+    <camera rad="50" />
+</config>
