@@ -44,7 +44,7 @@ void SimulationResults::addFrameResults(int numBroadPhaseCollisions, int numColl
 void LoggingManager::logRunResults(string folderName, string outputFileName, SimulationResults results) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime,BallBallTests,BallBallTime,BallCapsuleTests,BallCapsuleTime,CapsuleCapsuleTests,CapsuleCapsuleTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
     for (auto it = results.frameResults.begin(); it != results.frameResults.end(); ++it) {
         log(outputCSV, *it, 1);
     }
@@ -54,7 +54,7 @@ void LoggingManager::logRunResults(string folderName, string outputFileName, Sim
 void LoggingManager::logManyRunsResults(string folderName, string outputFileName, FrameResult* results, int numFrames, int numRuns) {
     ofstream outputCSV;
     outputCSV.open(folderName + "\\" + outputFileName);
-    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime,BallBallTests,BallBallTime,BallCapsuleTests,BallCapsuleTime,CapsuleCapsuleTests,CapsuleCapsuleTime\n";
+    outputCSV << "BPCDTime,NPCDTests,NPCDTime,Collisions,CRTime,DrawTime,TotalTime\n";
     for (int i = 0; i < numFrames; i++) {
         log(outputCSV, results[i], numRuns);
     }
@@ -194,25 +194,5 @@ void LoggingManager::log(std::ofstream& outputFile, FrameResult frameResult, int
     outputFile << frameResult.drawTime / divisor;
     outputFile << ",";
     outputFile << frameResult.totalTime / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballBallTests / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballBallTime / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballCapsuleTests / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballCapsuleTime / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.capsuleCapsuleTests / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.capsuleCapsuleTime / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballTileTests / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.ballTileTime / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.capsuleTileTests / divisor;
-    outputFile << ",";
-    outputFile << frameResult.npcdData.capsuleTileTime / divisor;
     outputFile << "\n";
 }
