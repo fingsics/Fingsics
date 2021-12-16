@@ -8,7 +8,7 @@ Tile::Tile(string id, Color color, Vector* positions, Matrix* rotationMatrices, 
     if (frames > 0) {
         this->position = positions[0];
         this->setRotation(rotationMatrices[0]);
-        this->obb = OBB(positions[0], Vector(width, EPSILON, length), rotationMatrices[0]);
+        this->obb = OBB(positions[0], Vector(length, EPSILON, width), rotationMatrices[0]);
     }
 }
 
@@ -17,7 +17,7 @@ Tile::Tile(string id, bool isStatic, Vector pos, Vector vel, Vector angle, Vecto
     this->invertedInertiaTensor = Matrix(0, 0, 0, 0, 0, 0, 0, 0, 0);
     this->axis1Length = length;
     this->axis2Length = width;
-    this->obb = OBB(pos, Vector(width, EPSILON, length), rotationMatrix);
+    this->obb = OBB(pos, Vector(length, EPSILON, width), rotationMatrix);
     this->setRotation(rotationMatrix);
 }
 
